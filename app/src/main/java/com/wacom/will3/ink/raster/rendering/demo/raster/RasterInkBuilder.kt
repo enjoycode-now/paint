@@ -33,7 +33,7 @@ class RasterInkBuilder() {
 
     fun updatePipeline(newTool: RasterTool) {
         tool = newTool
-        var layout = tool.getLayout()
+        val layout = tool.getLayout()
         // Path producer needs to know the layout
         pathProducer = PathProducer(layout, tool.getCalculator())
         smoother = SmoothingFilter(layout.size) // Dimension
@@ -52,7 +52,7 @@ class RasterInkBuilder() {
 
     fun updateInputMethod(isStylus: Boolean) {
         tool.isStylus = isStylus
-        var layout = tool.getLayout()
+        val layout = tool.getLayout()
         pathProducer = PathProducer(layout, tool.getCalculator())
         smoother = SmoothingFilter(layout.size)
         splineProducer = SplineProducer(layout)
