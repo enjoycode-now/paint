@@ -20,7 +20,7 @@ import com.wacom.will3.ink.raster.rendering.demo.tools.raster.RasterTool
  * - SplineInterpolator
  *
  */
-class RasterInkBuilder() {
+class RasterInkBuilder {
 
     // The pipeline components:
     lateinit var pathProducer: PathProducer
@@ -33,15 +33,14 @@ class RasterInkBuilder() {
 
     fun updatePipeline(newTool: RasterTool) {
         tool = newTool
-        var layout = tool.getLayout()
+        val layout = tool.getLayout()
         // Path producer needs to know the layout
         pathProducer = PathProducer(layout, tool.getCalculator())
         smoother = SmoothingFilter(layout.size) // Dimension
         splineProducer = SplineProducer(layout) // Layout
         splineInterpolator = DistanceBasedInterpolator(
             spacing = tool.brush.spacing, // Spacing between two successive sample.
-            splitCount = 1,               // Determines the number of iterations for the
-            // discretization.
+            splitCount = 1,               // Determines the number of iterations for the discretization.
             calculateDerivatives = true,  // Calculate derivatives
             interpolateByLength = true    // Interpolate by length
         )
@@ -52,7 +51,7 @@ class RasterInkBuilder() {
 
     fun updateInputMethod(isStylus: Boolean) {
         tool.isStylus = isStylus
-        var layout = tool.getLayout()
+        val layout = tool.getLayout()
         pathProducer = PathProducer(layout, tool.getCalculator())
         smoother = SmoothingFilter(layout.size)
         splineProducer = SplineProducer(layout)
@@ -93,29 +92,18 @@ class RasterInkBuilder() {
         val isLast = pathSegment.isLast
 
         val (smoothAddedGeometry, smoothPredictedGeomtry) = smoother.add(
-            isFirst,
-            isLast,
-            pathSegment.accumulatedAddition,
-            pathSegment.lastPrediction
+            isFirst, isLast, pathSegment.accumulatedAddition, pathSegment.lastPrediction
         )
         pathSegment.reset()
         val (addedSpline, predictedSpline) = splineProducer.add(
-            isFirst,
-            isLast,
-            smoothAddedGeometry,
-            smoothPredictedGeomtry
+            isFirst, isLast, smoothAddedGeometry, smoothPredictedGeomtry
         )
 
-        val result = splineInterpolator.add(isFirst, isLast, addedSpline, predictedSpline)
-
-        return result
+        return splineInterpolator.add(isFirst, isLast, addedSpline, predictedSpline)
     }
 
     fun processSpline(
-        added: Spline,
-        predicted: Spline?,
-        isFirst: Boolean = true,
-        isLast: Boolean = true
+        added: Spline, predicted: Spline?, isFirst: Boolean = true, isLast: Boolean = true
     ): ProcessorResult<InterpolatedSpline?> {
         return splineInterpolator.add(isFirst, isLast, added, predicted)
     }
