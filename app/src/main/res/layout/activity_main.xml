@@ -137,6 +137,134 @@
             android:layout_toEndOf="@+id/add"
             android:text="0" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/layerCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardElevation="10dp"
+            app:cardMaxElevation="10dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            android:background="@color/textGrey"
+            android:layout_alignParentEnd="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardLayout"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                >
+
+                <TextView
+                    android:id="@+id/userLayerText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="图层列表"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/layerRecycle"
+                    android:layout_width="144dp"
+                    android:layout_height="576dp"
+                    android:layout_marginTop="4dp"
+                    android:overScrollMode="never"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/userLayerText"/>
+
+
+                <View
+                    android:id="@+id/gradientView"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/btn_round"
+                    app:layout_constraintBottom_toBottomOf="@+id/layerRecycle"
+                    app:layout_constraintEnd_toEndOf="@+id/layerRecycle"
+                    app:layout_constraintStart_toStartOf="@+id/layerRecycle" />
+
+                <ImageView
+                    android:id="@+id/addLayerButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:onClick="add"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/lockLayerButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layerRecycle"
+                    app:srcCompat="@drawable/ic_icon_xz" />
+
+                <ImageView
+                    android:id="@+id/lockLayerButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:onClick="add"
+                    android:padding="4dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/copyLayerButton"
+                    app:layout_constraintStart_toEndOf="@+id/addLayerButton"
+                    app:layout_constraintTop_toBottomOf="@+id/layerRecycle"
+                    app:srcCompat="@drawable/ic_icon_sd" />
+
+                <ImageView
+                    android:id="@+id/copyLayerButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:onClick="add"
+                    android:padding="4dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/lockLayerButton"
+                    app:layout_constraintTop_toBottomOf="@+id/layerRecycle"
+                    app:srcCompat="@drawable/ic_icon_fz" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/background_waiting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+
     </RelativeLayout>
 
 
