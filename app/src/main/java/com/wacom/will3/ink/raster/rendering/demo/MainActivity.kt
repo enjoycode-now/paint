@@ -4,6 +4,7 @@
  */
 package com.wacom.will3.ink.raster.rendering.demo
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.*
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -43,44 +45,53 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
+    var lineProtect=false
 
     private var currentBackground = 3
 
     fun add(view:View){
         rasterDrawingSurface.nextLayer()
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
     }
 
     fun minus(view:View){
         rasterDrawingSurface.lastLayer()
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         resetInkModel()
 
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
-
         inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
 
         setColor(drawingColor) //set default color
 
         rasterDrawingSurface.setOnTouchListener { _, event ->
-            // We save the last event just in case we receive a CANCEL action
-            // when we have a CANCEL action we get indeterminate coordinate values,
-            // so in this case we pass the latest value coordinates
-            if ((event.action == MotionEvent.ACTION_DOWN) ||
+
+            if (event.action == MotionEvent.ACTION_DOWN)lineProtect = false
+
+            val distanceX = abs(event.x-(lastEvent?.x?:event.x))
+            val distancey = abs(event.y-(lastEvent?.y?:event.y))
+            val distance = distanceX*distanceX+distancey*distancey
+            if (distance>32768L){
+                lineProtect = true
+                lastEvent?.action=MotionEvent.ACTION_UP
+                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                lastEvent=null
+            }
+            if (lineProtect) return@setOnTouchListener true
+
+            if (
+                (event.action == MotionEvent.ACTION_DOWN) ||
                 (event.action == MotionEvent.ACTION_MOVE) ||
                 (event.action == MotionEvent.ACTION_UP)
-            ) lastEvent = MotionEvent.obtain(event)
-            else lastEvent?.action = MotionEvent.ACTION_UP //we convert the latest event in END event
-
-            if (lastEvent != null) rasterDrawingSurface.surfaceTouch(lastEvent!!)
-
-            if (event.action == MotionEvent.ACTION_UP) lastEvent = null
+            ) {
+                lastEvent = MotionEvent.obtain(event)
+                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                if (event.action == MotionEvent.ACTION_UP) lastEvent = null
+            }
             true
         }
 
