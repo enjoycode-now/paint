@@ -4,25 +4,35 @@
  */
 package com.wacom.will3.ink.raster.rendering.demo
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
 import com.wacom.ink.format.tree.groups.StrokeGroupNode
 import com.wacom.ink.model.Identifier
+import com.wacom.will3.ink.raster.rendering.demo.adapter.LayerAdapter
+import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityMainBinding
+import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.*
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -43,44 +53,75 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
+    var lineProtect=false
 
     private var currentBackground = 3
 
+    private lateinit var binding : ActivityMainBinding
+
+
+
+//    多图层
+    var layerListRecyclerCache = mutableListOf<RoomLayer>()
+
+    lateinit var popupwindow: PopupWindow
+
+
+    //   上一个图层
     fun add(view:View){
         rasterDrawingSurface.nextLayer()
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
+
     }
 
+    //   下一个图层
     fun minus(view:View){
         rasterDrawingSurface.lastLayer()
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
+
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    //   跳转到指定图层
+    fun changeToLayer(position : Int){
+        rasterDrawingSurface.changeToLayer(position)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         resetInkModel()
-
-        layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
 
         inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
 
         setColor(drawingColor) //set default color
 
         rasterDrawingSurface.setOnTouchListener { _, event ->
-            // We save the last event just in case we receive a CANCEL action
-            // when we have a CANCEL action we get indeterminate coordinate values,
-            // so in this case we pass the latest value coordinates
-            if ((event.action == MotionEvent.ACTION_DOWN) ||
+
+            if (event.action == MotionEvent.ACTION_DOWN)lineProtect = false
+
+            val distanceX = abs(event.x-(lastEvent?.x?:event.x))
+            val distanceY = abs(event.y-(lastEvent?.y?:event.y))
+            val distance = distanceX*distanceX+distanceY*distanceY
+            if (distance>65536){
+                lineProtect = true
+                lastEvent?.action=MotionEvent.ACTION_UP
+                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                lastEvent=null
+            }
+            if (lineProtect) return@setOnTouchListener true
+
+            if (
+                (event.action == MotionEvent.ACTION_DOWN) ||
                 (event.action == MotionEvent.ACTION_MOVE) ||
                 (event.action == MotionEvent.ACTION_UP)
-            ) lastEvent = MotionEvent.obtain(event)
-            else lastEvent?.action = MotionEvent.ACTION_UP //we convert the latest event in END event
-
-            if (lastEvent != null) rasterDrawingSurface.surfaceTouch(lastEvent!!)
-
-            if (event.action == MotionEvent.ACTION_UP) lastEvent = null
+            ) {
+                lastEvent = MotionEvent.obtain(event)
+                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                if (event.action == MotionEvent.ACTION_UP) lastEvent = null
+            }
             true
         }
 
@@ -88,6 +129,12 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.listener = this
 
         selectPaper(currentBackground)
+
+        //设置adpater
+        val layoutManager = LinearLayoutManager(this)
+        binding.layerRecycle.layoutManager = layoutManager
+        val adapter = LayerAdapter(this)
+        binding.layerRecycle.adapter = adapter
     }
 
     fun selectColor(view: View) {
@@ -216,6 +263,66 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 currentBackground = 3
             }
         }
+    }
+
+    // 弹出工具框
+    fun layerToolPopupWindow(view: View) {
+        val popupView = LayoutInflater.from(this).inflate(R.layout.item_toolsmenu, null)
+        popupwindow = PopupWindow(popupView, 450, 150, true)
+        popupwindow.showAsDropDown(view, -400, -200)
+        val popupDelete: ImageView = popupView.findViewById(R.id.delete)
+        if (rasterDrawingSurface.layerPos > 1) {
+            popupDelete.setOnClickListener {
+                runOnUiThread {
+                    AlertDialog.Builder(this)
+                        .setTitle("确定要删除该图层吗？")
+                        .setMessage("")
+                        .setCancelable(true)
+                        .setPositiveButton("确定") { _: DialogInterface?, _: Int ->
+                            deleteLayer(rasterDrawingSurface.layerPos)
+                            toast("删除成功")
+                        }
+                        .setNegativeButton("取消") { _: DialogInterface?, _: Int -> }
+                        .create()
+                        .show()
+                }
+                popupwindow.dismiss()
+            }
+        } else {
+            popupDelete.visibility = View.GONE
+        }
+        val popupFlower: ImageView = popupView.findViewById(R.id.flower)
+        val popupEraser: ImageView = popupView.findViewById(R.id.eraser)
+        popupwindow.isOutsideTouchable = true
+        popupwindow.isFocusable = false
+        if (rasterDrawingSurface.layerPos > 0) {
+            popupFlower.setOnClickListener {
+                toast("flower")
+                popupwindow.dismiss()
+            }
+            popupEraser.setOnClickListener {
+                runOnUiThread {
+                    AlertDialog.Builder(this)
+                        .setTitle("确定要清空该图层吗？")
+                        .setMessage("")
+                        .setCancelable(true)
+                        .setPositiveButton("确定") { _: DialogInterface?, _: Int ->
+
+                            binding.rasterDrawingSurface.clear()
+                            toast("清空图层")
+                        }
+                        .setNegativeButton("取消") { _: DialogInterface?, _: Int -> }
+                        .create()
+                        .show()
+                }
+                popupwindow.dismiss()
+            }
+        }
+    }
+
+    // 本地删除图层
+    fun deleteLayer(targetLayer: Int) {
+
     }
 
     fun changeBackground(background: Int, paper: Int) {

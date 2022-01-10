@@ -34,6 +34,7 @@ import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentMod
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.RasterTool
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.min
 
@@ -313,6 +314,20 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         refreshLayer()
     }
 
+
+    fun changeToLayer(position : Int) : Boolean{
+        if(position <= 0 || position > viewLayer.lastIndex){
+            toast("对应图层不存在")
+            return false
+        }
+
+        else{
+            layerPos = position
+            refreshLayer()
+        }
+        return true
+    }
+
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
         var resX = 0.0
         var resY = 0.0
@@ -328,6 +343,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             if (scaleFactor != 1f) stroke.data.spline.transform(scaleFactor, scaleFactor, scaleFactor, 0f, 0f, 0f, 0f, 0f)
         }
     }
+
+
 
     fun toBitmap(backgroundColor: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
