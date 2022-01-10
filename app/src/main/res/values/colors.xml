@@ -7,4 +7,8 @@
     <color name="navbar_bg_color">#363636</color>
 
     <color name="background_dim">#59000000</color>
+    <color name="textGrey">#FF888888</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="red">#F44336</color>
 </resources>
