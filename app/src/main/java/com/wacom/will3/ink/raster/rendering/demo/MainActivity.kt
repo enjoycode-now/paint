@@ -68,8 +68,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         setColor(drawingColor) //set default color
 
-        background_waiting.setOnTouchListener { _, event -> true }
-
         rasterDrawingSurface.setOnTouchListener { _, event ->
             // We save the last event just in case we receive a CANCEL action
             // when we have a CANCEL action we get indeterminate coordinate values,

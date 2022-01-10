@@ -197,14 +197,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         strokeNodeList.add(Pair(node, rasterTool.brush))
     }
 
-    fun addStroke(strokeNode: StrokeNode, brush: RasterBrush) {
-        strokeNodeList.add(Pair(strokeNode, brush))
-    }
-
-    fun addSensorData(sensorData: SensorData) {
-        sensorDataList.add(sensorData)
-    }
-
     fun setTool(tool: RasterTool) {
         newTool = true
         rasterTool = tool
