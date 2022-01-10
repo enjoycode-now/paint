@@ -29,23 +29,6 @@
                 android:src="@drawable/btn_paper_01" />
 
             <ImageView
-                android:id="@+id/btnLoad"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="wrap_content"
-                android:onClick="load"
-                android:src="@drawable/btn_load"
-                android:tint="@color/select_toolbar_button_stateful" />
-
-            <ImageView
-                android:id="@+id/btnSave"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/btn_separator"
-                android:onClick="selectSaveFile"
-                android:src="@drawable/btn_save"
-                android:tint="@color/select_toolbar_button_stateful" />
-
-            <ImageView
                 android:id="@+id/btnColor"
                 android:layout_width="@dimen/btn_width"
                 android:layout_height="wrap_content"
