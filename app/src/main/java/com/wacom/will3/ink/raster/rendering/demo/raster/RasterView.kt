@@ -344,15 +344,14 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-
-
-    fun toBitmap(backgroundColor: Int): Bitmap {
+    fun toBitmap(pos:Int): Bitmap {
         val bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
-        inkCanvas.setTarget(currentFrameLayer[layerPos])
-        inkCanvas.clearColor(backgroundColor)
-        inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
+        inkCanvas.setTarget(currentFrameLayer[pos])
+        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.drawLayer(strokesLayer[pos], BlendMode.SOURCE_OVER)
         inkCanvas.invalidate()
-        inkCanvas.readPixels(currentFrameLayer[layerPos], bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height);
+        inkCanvas.readPixels(currentFrameLayer[pos], bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
+        inkCanvas.setTarget(currentFrameLayer[layerPos])
         return bitmap
     }
 }
