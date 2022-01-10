@@ -4,47 +4,27 @@
  */
 package com.wacom.will3.ink.raster.rendering.demo
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.wacom.ink.format.InkModel
-import com.wacom.ink.format.input.SensorChannel
-import com.wacom.ink.format.rendering.RasterBrush
-import com.wacom.ink.format.serialization.Will3Codec
+import com.wacom.ink.format.input.*
 import com.wacom.ink.format.tree.groups.StrokeGroupNode
-import com.wacom.ink.format.tree.nodes.StrokeNode
 import com.wacom.ink.model.Identifier
-import com.wacom.will3.ink.raster.rendering.demo.brush.BrushPalette
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.util.*
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
-
-    val OPEN_FILE_ACTION = 1
-    val CREATE_FILE_ACTION = 2
 
     //-- Variables For serialisation
     private lateinit var mainGroup: StrokeGroupNode // This is a list of StrokeNode.
@@ -64,8 +44,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
 
-    private var tempStrokeFile = ""
-    private var refreshing = false
     private var currentBackground = 3
 
     fun add(view:View){
@@ -82,23 +60,13 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState != null) {
-            drawingColor = savedInstanceState.getInt("selectedColor")
-            defaultDrawingTool = savedInstanceState.getString("selectedTool") ?: ""
-            tempStrokeFile = savedInstanceState.getString("strokes") ?: ""
-            currentBackground = savedInstanceState.getInt("currentBackground")
-            refreshing = true
-        } else {
-            resetInkModel()
-        }
+        resetInkModel()
 
         layerNumber.text = "${rasterDrawingSurface.layerPos+1}"
 
         inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
 
         setColor(drawingColor) //set default color
-
-        background_waiting.setOnTouchListener { _, event -> true }
 
         rasterDrawingSurface.setOnTouchListener { _, event ->
             // We save the last event just in case we receive a CANCEL action
@@ -120,31 +88,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.listener = this
 
         selectPaper(currentBackground)
-    }
-
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
-
-        // save the current selected tool, color and strokes
-        refreshing = true
-        val tempFile = File(cacheDir, "tempStrokes.uim")
-        if (tempFile.exists()) tempFile.delete()
-        save(Uri.fromFile(tempFile))
-        savedInstanceState.putString("strokes", tempFile.absolutePath)
-        savedInstanceState.putString("selectedTool", drawingTool?.uri())
-        savedInstanceState.putInt("selectedColor", drawingColor)
-        savedInstanceState.putInt("currentBackground", currentBackground)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Make sure the request was successful
-        if (resultCode == Activity.RESULT_OK) {
-            // Check which request we're responding to
-            if (requestCode == OPEN_FILE_ACTION) CoroutineScope(Dispatchers.Default).launch { load(data!!.data!!) }
-            else if (requestCode == CREATE_FILE_ACTION) save(data!!.data!!)
-        }
     }
 
     fun selectColor(view: View) {
@@ -207,74 +150,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         view.isActivated = true
     }
 
-    fun load(view: View) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*";
-        startActivityForResult(intent, OPEN_FILE_ACTION)
-    }
-
-    fun load(path: Uri) {
-        this@MainActivity.runOnUiThread{
-            if (!refreshing) Toast.makeText(this, "Loading..", Toast.LENGTH_SHORT).show()
-            background_waiting.visibility = View.VISIBLE
-            // Before loading we clear the screen
-            rasterDrawingSurface.clear();
-
-        }
-
-        try {
-            contentResolver.openFileDescriptor(path, "r").use { pfd ->
-                FileInputStream(pfd?.fileDescriptor).use { fileInputStream ->
-
-                    val bytes = fileInputStream.readBytes()
-                    inkModel = Will3Codec.decode(bytes)
-                    mainGroup = inkModel.inkTree.root!! as StrokeGroupNode
-
-                    val it = inkModel.inkTree.root!!.iterator()
-                    while (it.hasNext()) {
-                        val stroke = it.next()
-                        if (stroke is StrokeNode) {
-                            val brushUri = stroke.data.style?.brushURI
-                            if (brushUri != null) {
-                                var brush = inkModel.brushRepository.getBrush(brushUri)
-                                if (brush == null) {
-                                    // try to find a compatible brush
-                                    brush = BrushPalette.getBrush(this, brushUri)
-                                }
-
-                                if (brush is RasterBrush) { // we are in raster tool
-                                    var sensorChannelList: List<SensorChannel>? = null
-                                    val sensorDataID = stroke.data.sensorDataID
-                                    if (sensorDataID != null) {
-                                        rasterDrawingSurface.addSensorData(inkModel.sensorDataRepository.get(sensorDataID)!!)
-                                        val inputContextId = inkModel.sensorDataRepository.get(sensorDataID)?.inputContextId
-                                        if (inputContextId != null) {
-                                            val sensorContextId = inkModel.inputConfiguration.getInputContext(inputContextId)?.sensorContextId
-                                            if (sensorContextId != null) sensorChannelList = inkModel.inputConfiguration.getSensorContext(sensorContextId)?.getSensorChannelsContexts()?.first()?.getAll()
-                                        }
-                                    }
-                                    this@MainActivity.runOnUiThread{rasterDrawingSurface.drawStroke(stroke,brush,sensorChannelList) }
-                                    rasterDrawingSurface.addStroke(stroke, brush)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) { e.printStackTrace()
-        }
-
-        this@MainActivity.runOnUiThread {
-            if (!refreshing) Toast.makeText(this, "Loading completed.", Toast.LENGTH_SHORT).show()
-            background_waiting.visibility = View.GONE
-            rasterDrawingSurface.setTool(drawingTool!!)
-            setColor(drawingColor)
-        }
-
-        refreshing = false
-    }
-
     private fun resetInkModel() {
         inkModel = InkModel()
         val root = StrokeGroupNode(Identifier())
@@ -286,43 +161,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         //TODO paths.clear()
     }
 
-
-    fun save(uri: Uri) {
-        if (!refreshing) Toast.makeText(this, "Saving..", Toast.LENGTH_SHORT).show()
-
-        inkEnvironmentModel.registerInModel(inkModel)
-        inkModel.knowledgeGraph.add(
-            inkModel.inkTree.root!!.id.toUUIDString(),
-            "created",
-            "" + System.currentTimeMillis()
-        )
-        inkModel.knowledgeGraph.add(inkModel.inkTree.root!!.id.toUUIDString(), "author", "WILL 3")
-
-
-        // For raster serialization
-        for (sensorData in rasterDrawingSurface.sensorDataList) {
-            inkModel.sensorDataRepository.add(sensorData)
-        }
-
-        for (stroke in rasterDrawingSurface.strokeNodeList) {
-            if (inkModel.brushRepository.getBrush(stroke.second.name) == null) inkModel.brushRepository.addRasterBrush(stroke.second)
-            if (!mainGroup.contains(stroke.first)) mainGroup.add(stroke.first)
-        }
-
-        val fileDescriptor = contentResolver.openFileDescriptor(uri, "w")?.fileDescriptor
-        val outputStream = FileOutputStream(fileDescriptor)
-        Will3Codec.encode(inkModel, outputStream)
-    }
-
     override fun onSurfaceCreated() {
         if (drawingTool != null) rasterDrawingSurface.setTool(drawingTool!!)
         else selectTool(defaultDrawingTool) // set default tool
-
-        CoroutineScope(Dispatchers.Default).launch {
-            load(Uri.fromFile(File(tempStrokeFile)))
-            File(tempStrokeFile).delete()
-            tempStrokeFile = ""
-        }
     }
 
     fun clear(view: View) {
@@ -381,14 +222,5 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         btnBackground.setImageResource(background)
         drawingLayout.setBackgroundResource(paper)
         if(this::popupWindow.isInitialized)popupWindow.dismiss()
-    }
-
-    fun selectSaveFile(view: View) {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-        intent.type = "*/*"
-        val time = Date().time%10000
-        intent.putExtra(Intent.EXTRA_TITLE, "$time.uim");
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        startActivityForResult(intent, CREATE_FILE_ACTION)
     }
 }

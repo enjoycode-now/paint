@@ -35,6 +35,7 @@ import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.RasterTool
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.min
 
 /**
  * This is a surface for drawing raster inking.
@@ -153,10 +154,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             when (channel.typeURI) {
                 InkSensorType.X -> sensorData.add(channel, pointerData.x)
                 InkSensorType.Y -> sensorData.add(channel, pointerData.y)
-                InkSensorType.TIMESTAMP -> sensorData.addTimestamp(
-                    channel,
-                    pointerData.timestamp
-                )
+                InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel,pointerData.timestamp)
                 InkSensorType.PRESSURE -> sensorData.add(channel, pointerData.force!!)
                 InkSensorType.ALTITUDE -> sensorData.add(channel, pointerData.altitudeAngle!!)
                 InkSensorType.AZIMUTH -> sensorData.add(channel, pointerData.azimuthAngle!!)
@@ -197,14 +195,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         node.data.sensorDataID = sensorData.id
         node.data.sensorDataOffset = 0
         strokeNodeList.add(Pair(node, rasterTool.brush))
-    }
-
-    fun addStroke(strokeNode: StrokeNode, brush: RasterBrush) {
-        strokeNodeList.add(Pair(strokeNode, brush))
-    }
-
-    fun addSensorData(sensorData: SensorData) {
-        sensorDataList.add(sensorData)
     }
 
     fun setTool(tool: RasterTool) {
@@ -255,11 +245,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     // Dispose the resources
     private fun releaseResources() {
         strokeRenderer.dispose()
-
         viewLayer[layerPos].dispose()
         strokesLayer[layerPos].dispose()
         currentFrameLayer[layerPos].dispose()
-
         inkCanvas.dispose()
     }
 
@@ -269,7 +257,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     fun drawStroke(stroke: StrokeNode, brush: RasterBrush, sensorChannelList: List<SensorChannel>?) {
         val style = stroke.data.style
-        val renderModeUri = stroke.data.style?.renderModeUri ?: ""
+        val renderModeUri = style?.renderModeUri ?: ""
         val renderMode = BlendMode.values().find { it.uri() == renderModeUri } ?: BlendMode.SOURCE_OVER
 
         defaults.red = style?.props?.red ?: 0f
@@ -283,7 +271,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (added != null) {
             strokeRenderer.strokeBrush = brush.toParticleBrush()
             strokeRenderer.drawPoints(added, defaults, true)
-
             strokeRenderer.blendStroke(strokesLayer[layerPos], renderMode)
             inkCanvas.setTarget(currentFrameLayer[layerPos])
             inkCanvas.clearColor()
@@ -295,7 +282,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun clear() {
         strokeNodeList.clear()
         sensorDataList.clear()
-        if ((inkCanvas != null) && (!inkCanvas.isDisposed)) {
+        if (!inkCanvas.isDisposed) {
             inkCanvas.clearLayer(currentFrameLayer[layerPos])
             inkCanvas.clearLayer(viewLayer[layerPos])
             inkCanvas.clearLayer(strokesLayer[layerPos])
@@ -337,7 +324,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         if ((resX > 0) && (resY > 0)) {
-            val scaleFactor = Math.min(resolution / resX, resolution / resY).toFloat()
+            val scaleFactor = min(resolution / resX, resolution / resY).toFloat()
             if (scaleFactor != 1f) stroke.data.spline.transform(scaleFactor, scaleFactor, scaleFactor, 0f, 0f, 0f, 0f, 0f)
         }
     }
@@ -349,7 +336,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
         inkCanvas.invalidate()
         inkCanvas.readPixels(currentFrameLayer[layerPos], bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height);
-
         return bitmap
     }
 }

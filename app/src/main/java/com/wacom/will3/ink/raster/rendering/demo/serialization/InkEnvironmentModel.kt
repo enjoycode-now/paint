@@ -96,11 +96,11 @@ class InkEnvironmentModel(val activity: Activity) {
             }
         }
 
-        var inputContextId = if (!inputProviders.containsKey(provider.id)) {
+        val inputContextId = if (!inputProviders.containsKey(provider.id)) {
             inputProviders[provider.id] = provider
 
             val channels = registerChannels(if (toolType == InkInputType.PEN) penChannels else touchChannels)
-            channelsForInput.put(provider.id, channels)
+            channelsForInput[provider.id] = channels
 
             val sensorChannelsContext = SensorChannelsContext(provider.id, inputDevice.id, channels)
             val sensorContext = SensorContext()
@@ -121,17 +121,13 @@ class InkEnvironmentModel(val activity: Activity) {
         }
 
         var channelList: List<SensorChannel>? = null
-        for ((id, channels) in channelsForInput) {
-            if (provider.id == id) {
-                channelList = channels
-            }
-        }
+        for ((id, channels) in channelsForInput) if(provider.id == id) channelList = channels
 
         if (channelList == null) {
             channelList = listOf() // empty list to avoid null pointer exceptions
         }
 
-        return Pair<SensorData, List<SensorChannel>>(SensorData(Identifier(UUID.randomUUID().toString()), inputContextId, InkState.PLANE), channelList)
+        return Pair(SensorData(Identifier(UUID.randomUUID().toString()), inputContextId, InkState.PLANE), channelList)
     }
 
 
