@@ -73,9 +73,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             if (event.action == MotionEvent.ACTION_DOWN)lineProtect = false
 
             val distanceX = abs(event.x-(lastEvent?.x?:event.x))
-            val distancey = abs(event.y-(lastEvent?.y?:event.y))
-            val distance = distanceX*distanceX+distancey*distancey
-            if (distance>32768L){
+            val distanceY = abs(event.y-(lastEvent?.y?:event.y))
+            val distance = distanceX*distanceX+distanceY*distanceY
+            if (distance>65536){
                 lineProtect = true
                 lastEvent?.action=MotionEvent.ACTION_UP
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
