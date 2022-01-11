@@ -16,13 +16,11 @@ class LayerAdapter(private val activity: MainActivity) :
     RecyclerView.Adapter<LayerAdapter.ViewHolder>() {
 
 
-    override fun getItemViewType(position: Int) =
-        if (position == activity.rasterDrawingSurface.layerPos) 0 else 1  //0:选中,1:未选中
+    override fun getItemViewType(position: Int) = if (position == activity.rasterDrawingSurface.layerPos) 0 else 1  //0:选中,1:未选中
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            ItemLayerSmallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemLayerSmallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val viewholder = ViewHolder(binding)
         viewholder.viewType = viewType
         return viewholder
