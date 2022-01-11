@@ -50,9 +50,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private lateinit var inkCanvas: InkCanvas
-    private lateinit var strokesLayer: MutableList<Layer>      // 第一层：笔划层
-    private lateinit var currentFrameLayer: MutableList<Layer> // 第二层：内存层
-    lateinit var viewLayer: MutableList<Layer>         // 第三层：视图层
+    lateinit var strokesLayer: MutableList<Layer>      // 第一层：笔划层
+    lateinit var currentFrameLayer: MutableList<Layer> // 第二层：内存层
+    lateinit var viewLayer: Layer                              // 第三层：视图层
 
     var layerPos = 0
     private lateinit var strokeRenderer: StrokeRenderer
@@ -94,7 +94,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 textureWidth=w
                 textureHeight=h
                 inkCanvas = InkCanvas(surfaceTexture,EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
-                viewLayer = mutableListOf(inkCanvas.createViewLayer(w, h))
+                viewLayer = inkCanvas.createViewLayer(w, h)
                 strokesLayer = mutableListOf(inkCanvas.createLayer(w, h))
                 currentFrameLayer = mutableListOf(inkCanvas.createLayer(w, h))
 
@@ -221,7 +221,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     // Renders the canvas content on the screen.
     private fun renderView() {
-        inkCanvas.setTarget(viewLayer[layerPos])
+        inkCanvas.setTarget(viewLayer)
         // Copy the current frame layer in the view layer to present it on the screen.
         inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.COPY)
         inkCanvas.invalidate()
@@ -249,9 +249,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     // Dispose the resources
     private fun releaseResources() {
         strokeRenderer.dispose()
-        viewLayer[layerPos].dispose()
-        strokesLayer[layerPos].dispose()
-        currentFrameLayer[layerPos].dispose()
+        viewLayer.dispose()
+        for (layer in strokesLayer)layer.dispose()
+        for (layer in currentFrameLayer)layer.dispose()
         inkCanvas.dispose()
     }
 
@@ -287,15 +287,15 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         strokeNodeList.clear()
         sensorDataList.clear()
         if (!inkCanvas.isDisposed) {
-            inkCanvas.clearLayer(currentFrameLayer[layerPos])
-            inkCanvas.clearLayer(viewLayer[layerPos])
-            inkCanvas.clearLayer(strokesLayer[layerPos])
+            for (layer in currentFrameLayer)inkCanvas.clearLayer(layer)
+            for (layer in strokesLayer)inkCanvas.clearLayer(layer)
+            inkCanvas.clearLayer(viewLayer)
             renderView()
         }
     }
 
     fun refreshLayer(){
-        inkCanvas.setTarget(viewLayer[layerPos])
+        inkCanvas.setTarget(viewLayer)
         inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.COPY)
         inkCanvas.invalidate()
     }
@@ -303,8 +303,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun nextLayer(){
         if (layerPos>=0xF)return
         layerPos++
-        if(layerPos>viewLayer.lastIndex){
-            viewLayer.add(inkCanvas.createViewLayer(textureWidth, textureHeight))
+        if(layerPos>currentFrameLayer.lastIndex){
             strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
             currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         }
@@ -319,7 +318,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
     fun changeToLayer(position : Int) : Boolean{
-        if(position < 0 || position > viewLayer.lastIndex){
+        if(position < 0 || position > currentFrameLayer.lastIndex){
             toast("对应图层不存在")
             return false
         }

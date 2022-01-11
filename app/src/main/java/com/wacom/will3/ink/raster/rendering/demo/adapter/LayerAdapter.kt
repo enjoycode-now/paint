@@ -3,10 +3,7 @@ package com.wacom.will3.ink.raster.rendering.demo.adapter
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wacom.will3.ink.raster.rendering.demo.MainActivity
 import com.wacom.will3.ink.raster.rendering.demo.R
@@ -32,57 +29,44 @@ class LayerAdapter(private val activity: MainActivity) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.layerListRecyclerCache[position], position, activity)
+        holder.bind(activity.smallLayerList[position], position, activity)
     }
 
-    override fun getItemCount() = activity.layerListRecyclerCache.size
+    override fun getItemCount() = activity.smallLayerList.size
 
-    class ViewHolder(binding: ItemLayerSmallBinding) : RecyclerView.ViewHolder(binding.root) {
-        val layerItem: View = binding.layerItem
-        val layerImage: ImageView = binding.layerImage
-        val imageLeft: ImageView = binding.imageLeft
-        val layerNameText: TextView = binding.layerNameText
-        val layerPercent: TextView = binding.textRight
+    class ViewHolder(val binding: ItemLayerSmallBinding) : RecyclerView.ViewHolder(binding.root) {
         var viewType: Int = 1
 
         @SuppressLint("SetTextI18n")
         fun bind(roomLayer: RoomLayer, position: Int, activity: MainActivity) {
-            layerImage.setImageBitmap(roomLayer.bitmap)
-            layerNameText.text = "图层${position}"
+            binding.layerImage.setImageBitmap(roomLayer.bitmap)
+            binding.layerNameText.text = "图层${position}"
 
 
-            layerItem.setOnClickListener {
+            binding.layerItem.setOnClickListener {
 
                 if (activity.rasterDrawingSurface.layerPos != position) {
                     activity.changeToLayer(position)
                 } else {
-                    activity.layerToolPopupWindow(layerImage)
+                    activity.layerToolPopupWindow(binding.layerImage)
                 }
                 activity.onTextureReady()
             }
             if (viewType == 0)
-                layerItem.setBackgroundColor(Color.parseColor("#00BCD4"))  //蓝色
+                binding.layerItem.setBackgroundColor(Color.parseColor("#00BCD4"))  //蓝色
 
-            imageLeft.setImageResource(
-                when (activity.layerListRecyclerCache[position].isShow) {
+            binding.imageLeft.setImageResource(
+                when (activity.smallLayerList[position].isShow) {
                     true -> R.drawable.ic_icon_xs
                     else -> R.drawable.ic_icon_yc
                 }
             )
 
-            imageLeft.setOnClickListener {
-                when (activity.layerListRecyclerCache[position].isShow) {
-                    true -> imageLeft.setImageResource(R.drawable.ic_icon_yc)
-                    else -> imageLeft.setImageResource(R.drawable.ic_icon_xs)
-                }
-
-                // ToDo 本地隐藏/显示图层
-//                activity.changeHideLayer(position)
+            binding.imageLeft.setOnClickListener {
+                activity.smallLayerList[position].isShow=!activity.smallLayerList[position].isShow
+                activity.layerAdapter.notifyItemChanged(position)
             }
-
-
         }
     }
-
 }
 

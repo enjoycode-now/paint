@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/imageLeft"
-        android:layout_width="28dp"
-        android:layout_height="48dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         app:layout_constraintBottom_toBottomOf="@+id/layerImage"
         app:layout_constraintEnd_toStartOf="@+id/layerImage"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,15 +29,16 @@
 
     <TextView
         android:id="@+id/textRight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:gravity="center"
         android:text="100%"
-        android:textSize="11sp"
+        android:textColor="@color/textGrey"
+        android:textSize="9dp"
         app:layout_constraintBottom_toBottomOf="@+id/layerImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layerImage"
-        app:layout_constraintTop_toTopOf="@+id/layerImage"
-        app:srcCompat="@color/red" />
+        app:layout_constraintTop_toTopOf="@+id/layerImage" />
 
     <TextView
         android:id="@+id/layerNameText"

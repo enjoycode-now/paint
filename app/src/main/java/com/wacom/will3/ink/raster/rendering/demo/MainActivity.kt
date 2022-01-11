@@ -6,16 +6,13 @@ package com.wacom.will3.ink.raster.rendering.demo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
@@ -30,7 +27,6 @@ import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
@@ -59,11 +55,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var lineProtect = false
 
     private var currentBackground = 3
-    val adapter = LayerAdapter(this)
+    val layerAdapter = LayerAdapter(this)
     private lateinit var binding: ActivityMainBinding
 
     // 多图层
-    var layerListRecyclerCache = mutableListOf<RoomLayer>()
+    var smallLayerList = mutableListOf(RoomLayer())
 
     lateinit var popupwindow: PopupWindow
 
@@ -89,13 +85,13 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
 
     fun onTextureReady() {
-        layerListRecyclerCache.clear()
-        for (i in 0..rasterDrawingSurface.viewLayer.lastIndex) {
+        smallLayerList.clear()
+        for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
             val roomLayer = RoomLayer()
             roomLayer.bitmap = rasterDrawingSurface.toBitmap(i)
-            layerListRecyclerCache.add(roomLayer)
+            smallLayerList.add(roomLayer)
         }
-        adapter.notifyDataSetChanged()
+        layerAdapter.notifyDataSetChanged()
     }
 
 
@@ -134,7 +130,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             ) {
                 lastEvent = MotionEvent.obtain(event)
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
-                if (event.action == MotionEvent.ACTION_UP) lastEvent = null
+                if (event.action == MotionEvent.ACTION_UP) {
+                    smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+                    layerAdapter.notifyItemChanged(rasterDrawingSurface.layerPos)
+                    lastEvent = null
+                }
             }
             true
         }
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         selectPaper(currentBackground)
 
         binding.layerRecycle.layoutManager = LinearLayoutManager(this)
-        binding.layerRecycle.adapter = adapter
+        binding.layerRecycle.adapter = layerAdapter
     }
 
     fun selectColor(view: View) {
@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         // 弹出PopUpWindow
         popupwindow = PopupWindow(popBind.root,288.dp(),128.dp(),true)
         popupwindow.isOutsideTouchable=true
-        popupwindow.showAsDropDown(view, (-352).dp(), (-128).dp())
+        popupwindow.showAsDropDown(view, (-352).dp(), (-160).dp())
     }
 
     // 本地删除图层
