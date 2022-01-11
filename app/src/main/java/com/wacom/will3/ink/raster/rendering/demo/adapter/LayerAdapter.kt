@@ -44,7 +44,6 @@ class LayerAdapter(private val activity: MainActivity) :
 
 
             binding.layerItem.setOnClickListener {
-
                 if (activity.rasterDrawingSurface.layerPos != position) {
                     activity.changeToLayer(position)
                 } else {

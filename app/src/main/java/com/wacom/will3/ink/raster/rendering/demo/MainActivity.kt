@@ -289,6 +289,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
+        rasterDrawingSurface.refreshLayer()
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
 
         // 弹出PopUpWindow
