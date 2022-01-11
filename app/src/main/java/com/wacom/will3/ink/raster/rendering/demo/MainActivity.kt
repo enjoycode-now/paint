@@ -304,8 +304,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     }
 
     fun changeBackground(background: Int, paper: Int) {
-        btnBackground.setImageResource(background)
-        drawingLayout.setBackgroundResource(paper)
+        binding.btnBackground.setImageResource(background)
+        binding.drawingLayout.setBackgroundResource(paper)
         if (this::popupWindow.isInitialized) popupWindow.dismiss()
     }
 }
