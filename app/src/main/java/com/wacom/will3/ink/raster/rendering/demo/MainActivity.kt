@@ -14,6 +14,7 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
@@ -300,5 +301,15 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         binding.btnBackground.setImageResource(background)
         binding.drawingLayout.setBackgroundResource(paper)
         if (this::popupWindow.isInitialized) popupWindow.dismiss()
+    }
+
+    fun smallLayer(view: android.view.View) {
+
+        binding.btnSmallLayer.setOnClickListener{
+            when(binding.layerCard.visibility){
+                View.VISIBLE->binding.layerCard.visibility = View.GONE
+                View.GONE->binding.layerCard.visibility = View.VISIBLE
+            }
+        }
     }
 }
