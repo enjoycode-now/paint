@@ -7,15 +7,15 @@
     android:layout_height="140dp"
     android:background="#FFFFFF">
 
-        <ImageView
-            android:id="@+id/imageLeft"
-            android:layout_width="28dp"
-            android:layout_height="48dp"
-            app:layout_constraintBottom_toBottomOf="@+id/layerImage"
-            app:layout_constraintEnd_toStartOf="@+id/layerImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/layerImage"
-            app:srcCompat="@drawable/ic_icon_xs" />
+    <ImageView
+        android:id="@+id/imageLeft"
+        android:layout_width="28dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="@+id/layerImage"
+        app:layout_constraintEnd_toStartOf="@+id/layerImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layerImage"
+        app:srcCompat="@drawable/ic_icon_xs" />
 
     <ImageView
         android:id="@+id/layerImage"
@@ -27,28 +27,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="100%"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@+id/layerImage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/layerImage"
-            app:layout_constraintTop_toTopOf="@+id/layerImage"
-            app:srcCompat="@color/red" />
+    <TextView
+        android:id="@+id/textRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="100%"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/layerImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layerImage"
+        app:layout_constraintTop_toTopOf="@+id/layerImage"
+        app:srcCompat="@color/red" />
 
-        <TextView
-            android:id="@+id/layerNameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="图层名"
-            android:gravity="center"
-            android:textColor="#AAAAAA"
-            app:layout_constraintBottom_toBottomOf="@+id/layerImage"
-            app:layout_constraintEnd_toEndOf="@+id/layerImage"
-            app:layout_constraintStart_toEndOf="@+id/imageLeft" />
+    <TextView
+        android:id="@+id/layerNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"
+        android:text="图层名"
+        android:textColor="#AAAAAA"
+        app:layout_constraintBottom_toBottomOf="@+id/layerImage"
+        app:layout_constraintEnd_toEndOf="@+id/layerImage"
+        app:layout_constraintStart_toEndOf="@+id/imageLeft" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

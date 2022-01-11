@@ -27,6 +27,7 @@ import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
@@ -53,64 +54,77 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
-    var lineProtect=false
+    var lineProtect = false
 
     private var currentBackground = 3
+    val adapter = LayerAdapter(this)
+    private lateinit var binding: ActivityMainBinding
 
-    private lateinit var binding : ActivityMainBinding
-
-
-
-//    多图层
+    // 多图层
     var layerListRecyclerCache = mutableListOf<RoomLayer>()
 
     lateinit var popupwindow: PopupWindow
 
+    // popupWindow是否已显示
+    var isShowFlag = false
+
 
     //   上一个图层
-    fun add(view:View){
+    fun add(view: View) {
         rasterDrawingSurface.nextLayer()
-
+        onTextureReady()
     }
 
     //   下一个图层
-    fun minus(view:View){
+    fun minus(view: View) {
         rasterDrawingSurface.lastLayer()
-
+        onTextureReady()
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     //   跳转到指定图层
-    fun changeToLayer(position : Int){
+    fun changeToLayer(position: Int) {
         rasterDrawingSurface.changeToLayer(position)
     }
+
+
+    fun onTextureReady() {
+        layerListRecyclerCache.clear()
+        for (i in 0..rasterDrawingSurface.viewLayer.lastIndex) {
+            val roomLayer = RoomLayer()
+            roomLayer.bitmap = rasterDrawingSurface.toBitmap(i)
+            layerListRecyclerCache.add(roomLayer)
+        }
+        adapter.notifyDataSetChanged()
+    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         resetInkModel()
-
-
-
-        inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
+        app = this
+        inkEnvironmentModel =
+            InkEnvironmentModel(this) // Initializes the environment data for serialization
 
         setColor(drawingColor) //set default color
 
+        rasterDrawingSurface.mainActivity = this
         rasterDrawingSurface.setOnTouchListener { _, event ->
 
-            if (event.action == MotionEvent.ACTION_DOWN)lineProtect = false
+            if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
 
-            val distanceX = abs(event.x-(lastEvent?.x?:event.x))
-            val distanceY = abs(event.y-(lastEvent?.y?:event.y))
-            val distance = distanceX*distanceX+distanceY*distanceY
-            if (distance>65536){
+            val distanceX = abs(event.x - (lastEvent?.x ?: event.x))
+            val distanceY = abs(event.y - (lastEvent?.y ?: event.y))
+            val distance = distanceX * distanceX + distanceY * distanceY
+            if (distance > 65536) {
                 lineProtect = true
-                lastEvent?.action=MotionEvent.ACTION_UP
+                lastEvent?.action = MotionEvent.ACTION_UP
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
-                lastEvent=null
+                lastEvent = null
             }
             if (lineProtect) return@setOnTouchListener true
 
@@ -131,10 +145,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         selectPaper(currentBackground)
 
-        //设置adpater
-        val layoutManager = LinearLayoutManager(this)
-        binding.layerRecycle.layoutManager = layoutManager
-        val adapter = LayerAdapter(this)
+        binding.layerRecycle.layoutManager = LinearLayoutManager(this)
         binding.layerRecycle.adapter = adapter
     }
 
@@ -233,7 +244,12 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         // which view you pass in doesn't matter, it is only used for the window tolken
         val screenPos = IntArray(2)
         view.getLocationOnScreen(screenPos)
-        popupWindow.showAtLocation(view, Gravity.NO_GRAVITY,screenPos[0],screenPos[1]+navbar_container.height)
+        popupWindow.showAtLocation(
+            view,
+            Gravity.NO_GRAVITY,
+            screenPos[0],
+            screenPos[1] + navbar_container.height
+        )
     }
 
     fun selectPaper(pos: Int) {
@@ -268,11 +284,19 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
+
+        if ( this::popupWindow.isInitialized && isShowFlag) {
+            popupWindow.dismiss()
+            isShowFlag = false
+            return
+        }
+
         val popupView = LayoutInflater.from(this).inflate(R.layout.item_toolsmenu, null)
         popupwindow = PopupWindow(popupView, 450, 150, true)
         popupwindow.showAsDropDown(view, -400, -200)
+        isShowFlag = true
         val popupDelete: ImageView = popupView.findViewById(R.id.delete)
-        if (rasterDrawingSurface.layerPos > 1) {
+        if (rasterDrawingSurface.layerPos > 0) {
             popupDelete.setOnClickListener {
                 runOnUiThread {
                     AlertDialog.Builder(this)
@@ -288,6 +312,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                         .show()
                 }
                 popupwindow.dismiss()
+                isShowFlag = false
             }
         } else {
             popupDelete.visibility = View.GONE
@@ -300,6 +325,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             popupFlower.setOnClickListener {
                 toast("flower")
                 popupwindow.dismiss()
+                isShowFlag = false
             }
             popupEraser.setOnClickListener {
                 runOnUiThread {
@@ -317,6 +343,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                         .show()
                 }
                 popupwindow.dismiss()
+                isShowFlag = false
             }
         }
     }
@@ -329,6 +356,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun changeBackground(background: Int, paper: Int) {
         btnBackground.setImageResource(background)
         drawingLayout.setBackgroundResource(paper)
-        if(this::popupWindow.isInitialized)popupWindow.dismiss()
+        if (this::popupWindow.isInitialized) popupWindow.dismiss()
     }
 }

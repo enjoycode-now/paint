@@ -141,7 +141,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/layerRecycle"
                     android:layout_width="144dp"
-                    android:layout_height="576dp"
+                    android:layout_height="567dp"
                     android:layout_marginTop="4dp"
                     android:overScrollMode="never"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -172,19 +172,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/layerRecycle"
                     app:srcCompat="@drawable/ic_icon_xz" />
 
-                <ImageView
-                    android:id="@+id/addLayerButton2"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:onClick="minus"
-                    android:padding="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/lockLayerButton"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layerRecycle"
-                    app:srcCompat="@drawable/ic_icon_xz" />
 
 
 

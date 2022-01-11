@@ -30,6 +30,7 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
+import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
@@ -51,10 +52,11 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private lateinit var inkCanvas: InkCanvas
     private lateinit var strokesLayer: MutableList<Layer>      // 第一层：笔划层
     private lateinit var currentFrameLayer: MutableList<Layer> // 第二层：内存层
-    private lateinit var viewLayer: MutableList<Layer>         // 第三层：视图层
+    lateinit var viewLayer: MutableList<Layer>         // 第三层：视图层
 
     var layerPos = 0
     private lateinit var strokeRenderer: StrokeRenderer
+    lateinit var mainActivity: MainActivity
 
     private var rasterInkBuilder = RasterInkBuilder() //The ink builder
     var rasterTool: RasterTool = PencilTool(context)
@@ -101,6 +103,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 drawStrokes(strokeNodeList)
                 renderView()
                 listener.onSurfaceCreated()
+                mainActivity.onTextureReady()
             }
 
             override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, w: Int, h: Int) {
@@ -316,7 +319,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
     fun changeToLayer(position : Int) : Boolean{
-        if(position <= 0 || position > viewLayer.lastIndex){
+        if(position < 0 || position > viewLayer.lastIndex){
             toast("对应图层不存在")
             return false
         }
@@ -345,7 +348,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     fun toBitmap(pos:Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
         inkCanvas.setTarget(currentFrameLayer[pos])
         inkCanvas.clearColor(Color.WHITE)
         inkCanvas.drawLayer(strokesLayer[pos], BlendMode.SOURCE_OVER)

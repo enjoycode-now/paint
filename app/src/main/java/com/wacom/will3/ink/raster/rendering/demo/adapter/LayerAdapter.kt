@@ -20,7 +20,7 @@ class LayerAdapter(private val activity: MainActivity) :
 
 
     override fun getItemViewType(position: Int) =
-        if (position == activity.rasterDrawingSurface.layerPos - 1 ) 0 else 1  //0:蓝色,1:红色
+        if (position == activity.rasterDrawingSurface.layerPos) 0 else 1  //0:选中,1:未选中
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,12 +32,10 @@ class LayerAdapter(private val activity: MainActivity) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.layerListRecyclerCache[position + 1], position + 1, activity)
+        holder.bind(activity.layerListRecyclerCache[position], position, activity)
     }
 
-    override fun getItemCount(): Int {
-        return if (activity.layerListRecyclerCache.size == 0) 0 else activity.layerListRecyclerCache.size - 1
-    }
+    override fun getItemCount() = activity.layerListRecyclerCache.size
 
     class ViewHolder(binding: ItemLayerSmallBinding) : RecyclerView.ViewHolder(binding.root) {
         val layerItem: View = binding.layerItem
@@ -60,20 +58,25 @@ class LayerAdapter(private val activity: MainActivity) :
                 } else {
                     activity.layerToolPopupWindow(layerImage)
                 }
+                activity.onTextureReady()
             }
-            if (viewType == 0) layerItem.setBackgroundColor(Color.parseColor("#00BCD4"))  //蓝色
+            if (viewType == 0)
+                layerItem.setBackgroundColor(Color.parseColor("#00BCD4"))  //蓝色
+
             imageLeft.setImageResource(
                 when (activity.layerListRecyclerCache[position].isShow) {
                     true -> R.drawable.ic_icon_xs
                     else -> R.drawable.ic_icon_yc
                 }
             )
+
             imageLeft.setOnClickListener {
                 when (activity.layerListRecyclerCache[position].isShow) {
                     true -> imageLeft.setImageResource(R.drawable.ic_icon_yc)
                     else -> imageLeft.setImageResource(R.drawable.ic_icon_xs)
                 }
-                // 本地隐藏/显示图层
+
+                // ToDo 本地隐藏/显示图层
 //                activity.changeHideLayer(position)
             }
 
