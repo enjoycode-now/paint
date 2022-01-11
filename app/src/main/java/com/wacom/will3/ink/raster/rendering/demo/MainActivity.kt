@@ -7,6 +7,7 @@ package com.wacom.will3.ink.raster.rendering.demo
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.wacom.ink.format.tree.groups.StrokeGroupNode
 import com.wacom.ink.model.Identifier
 import com.wacom.will3.ink.raster.rendering.demo.adapter.LayerAdapter
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityMainBinding
+import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemToolsmenuBinding
 import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
@@ -64,9 +66,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var layerListRecyclerCache = mutableListOf<RoomLayer>()
 
     lateinit var popupwindow: PopupWindow
-
-    // popupWindow是否已显示
-    var isShowFlag = false
 
 
     //   上一个图层
@@ -282,70 +281,18 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         }
     }
 
+    fun Int.dp(): Int {
+        return this * Resources.getSystem().displayMetrics.density.toInt()
+    }
+
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
+        val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
 
-        if ( this::popupWindow.isInitialized && isShowFlag) {
-            popupWindow.dismiss()
-            isShowFlag = false
-            return
-        }
-
-        val popupView = LayoutInflater.from(this).inflate(R.layout.item_toolsmenu, null)
-        popupwindow = PopupWindow(popupView, 450, 150, true)
-        popupwindow.showAsDropDown(view, -400, -200)
-        isShowFlag = true
-        val popupDelete: ImageView = popupView.findViewById(R.id.delete)
-        if (rasterDrawingSurface.layerPos > 0) {
-            popupDelete.setOnClickListener {
-                runOnUiThread {
-                    AlertDialog.Builder(this)
-                        .setTitle("确定要删除该图层吗？")
-                        .setMessage("")
-                        .setCancelable(true)
-                        .setPositiveButton("确定") { _: DialogInterface?, _: Int ->
-                            deleteLayer(rasterDrawingSurface.layerPos)
-                            toast("删除成功")
-                        }
-                        .setNegativeButton("取消") { _: DialogInterface?, _: Int -> }
-                        .create()
-                        .show()
-                }
-                popupwindow.dismiss()
-                isShowFlag = false
-            }
-        } else {
-            popupDelete.visibility = View.GONE
-        }
-        val popupFlower: ImageView = popupView.findViewById(R.id.flower)
-        val popupEraser: ImageView = popupView.findViewById(R.id.eraser)
-        popupwindow.isOutsideTouchable = true
-        popupwindow.isFocusable = false
-        if (rasterDrawingSurface.layerPos > 0) {
-            popupFlower.setOnClickListener {
-                toast("flower")
-                popupwindow.dismiss()
-                isShowFlag = false
-            }
-            popupEraser.setOnClickListener {
-                runOnUiThread {
-                    AlertDialog.Builder(this)
-                        .setTitle("确定要清空该图层吗？")
-                        .setMessage("")
-                        .setCancelable(true)
-                        .setPositiveButton("确定") { _: DialogInterface?, _: Int ->
-
-                            binding.rasterDrawingSurface.clear()
-                            toast("清空图层")
-                        }
-                        .setNegativeButton("取消") { _: DialogInterface?, _: Int -> }
-                        .create()
-                        .show()
-                }
-                popupwindow.dismiss()
-                isShowFlag = false
-            }
-        }
+        // 弹出PopUpWindow
+        popupwindow = PopupWindow(popBind.root,288.dp(),128.dp(),true)
+        popupwindow.isOutsideTouchable=true
+        popupwindow.showAsDropDown(view, (-352).dp(), (-128).dp())
     }
 
     // 本地删除图层
