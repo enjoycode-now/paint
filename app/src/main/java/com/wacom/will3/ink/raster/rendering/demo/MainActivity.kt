@@ -75,6 +75,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     //   跳转到指定图层
     fun changeToLayer(position: Int) {
         rasterDrawingSurface.changeToLayer(position)
+        rasterDrawingSurface.refreshView()
+        rasterDrawingSurface.invalidate()
     }
 
 
@@ -221,7 +223,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun clear(view: View) {
         resetInkModel()
         rasterDrawingSurface.clear()
-        smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+        rasterDrawingSurface.refreshView()
+        smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap()
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -284,7 +287,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
-
         // 弹出PopUpWindow
         popupwindow = PopupWindow(popBind.root,288.dp(),128.dp(),true)
         popupwindow.isOutsideTouchable=true

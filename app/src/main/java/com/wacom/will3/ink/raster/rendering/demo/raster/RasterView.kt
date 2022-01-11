@@ -90,7 +90,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 // here, once the surface is crated, we are going to initialize ink canvas
 
                 // first we check that there is no other inkCanvas, in case there is we dispose it
-                //if (!inkCanvas.isDisposed) releaseResources();
+                //if (!inkCanvas.isDisposed) releaseResources()
                 textureWidth=w
                 textureHeight=h
                 inkCanvas = InkCanvas(surfaceTexture,EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
@@ -102,7 +102,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 inkCanvas.clearLayer(currentFrameLayer[layerPos])
                 strokeRenderer = StrokeRenderer(inkCanvas, PencilTool(context).brush.toParticleBrush(), w, h)
                 drawStrokes(strokeNodeList)
-                renderView()
+                refreshView()
                 listener.onSurfaceCreated()
                 mainActivity.onTextureReady()
             }
@@ -221,13 +221,23 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
     // Renders the canvas content on the screen.
-    private fun renderView() {
+    fun renderView() {
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
         inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.COPY)
         for ((i,layer) in strokesLayer.withIndex()){
             if(i==layerPos)continue
+            inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
+        }
+        inkCanvas.invalidate()
+    }
+
+    fun refreshView() {
+        inkCanvas.setTarget(finalLayer)
+        inkCanvas.clearColor(Color.WHITE)
+        // Copy the current frame layer in the view layer to present it on the screen.
+        for ((i,layer) in strokesLayer.withIndex()){
             inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -285,39 +295,29 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
-            renderView()
         }
     }
 
     fun clear() {
         strokeNodeList.clear()
         sensorDataList.clear()
-        if (!inkCanvas.isDisposed) {
-            for (layer in currentFrameLayer)inkCanvas.clearLayer(layer)
-            for (layer in strokesLayer)inkCanvas.clearLayer(layer)
-            inkCanvas.clearLayer(finalLayer)
-        }
-        renderView()
+        inkCanvas.clearLayer(currentFrameLayer[layerPos])
+        inkCanvas.clearLayer(strokesLayer[layerPos])
+        inkCanvas.clearLayer(finalLayer)
+        refreshView()
     }
 
     fun addLayer(){
         if (currentFrameLayer.size>=0xF)return
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
-        layerPos = currentFrameLayer.lastIndex
-        renderView()
+        changeToLayer(currentFrameLayer.lastIndex)
     }
 
 
-    fun changeToLayer(position : Int) : Boolean{
-        if(position < 0 || position > currentFrameLayer.lastIndex){
-            toast("对应图层不存在")
-            return false
-        }else{
-            layerPos = position
-            renderView()
-        }
-        return true
+    fun changeToLayer(position : Int){
+        layerPos = position
+        refreshView()
     }
 
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
@@ -336,7 +336,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-    fun toBitmap(pos:Int): Bitmap {
+    fun toBitmap(pos:Int=layerPos): Bitmap {
         val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
         inkCanvas.setTarget(currentFrameLayer[pos])
         inkCanvas.clearColor(Color.WHITE)
