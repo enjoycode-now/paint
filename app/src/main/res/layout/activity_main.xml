@@ -152,11 +152,21 @@
                 <View
                     android:id="@+id/gradientView"
                     android:layout_width="0dp"
-                    android:layout_height="60dp"
+                    android:layout_height="8dp"
                     android:background="@drawable/btn_round"
                     app:layout_constraintBottom_toBottomOf="@+id/layerRecycle"
                     app:layout_constraintEnd_toEndOf="@+id/layerRecycle"
                     app:layout_constraintStart_toStartOf="@+id/layerRecycle" />
+
+                <View
+                    android:id="@+id/gradientView2"
+                    android:layout_width="0dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/btn_round"
+                    android:rotation="180"
+                    app:layout_constraintEnd_toEndOf="@+id/layerRecycle"
+                    app:layout_constraintStart_toStartOf="@+id/layerRecycle"
+                    app:layout_constraintTop_toTopOf="@+id/layerRecycle" />
 
                 <ImageView
                     android:id="@+id/addLayerButton"

@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
                     smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
-                    layerAdapter.notifyItemChanged(rasterDrawingSurface.layerPos)
+                    layerAdapter.notifyDataSetChanged()
                     lastEvent = null
                 }
             }
@@ -227,6 +227,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun clear(view: View) {
         resetInkModel()
         rasterDrawingSurface.clear()
+        smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+        layerAdapter.notifyDataSetChanged()
     }
 
     fun openPaperDialog(view: View) {

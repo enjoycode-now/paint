@@ -40,7 +40,7 @@ class LayerAdapter(private val activity: MainActivity) :
         @SuppressLint("SetTextI18n")
         fun bind(roomLayer: RoomLayer, position: Int, activity: MainActivity) {
             binding.layerImage.setImageBitmap(roomLayer.bitmap)
-            binding.layerNameText.text = "图层${position}"
+            binding.layerNameText.text = "图层${position+1}"
 
 
             binding.layerItem.setOnClickListener {
