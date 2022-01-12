@@ -312,18 +312,16 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     }
 
     // expandAndCloseSmallLayer
-    fun smallLayer(view: android.view.View) {
-
+    fun smallLayer(view: View) {
         when (binding.layerCard.visibility) {
             View.VISIBLE -> {
                 binding.layerCard.visibility = View.GONE
                 binding.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
             }
-            View.GONE -> {
+            else -> {
                 binding.layerCard.visibility = View.VISIBLE
                 binding.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
             }
         }
-
     }
 }
