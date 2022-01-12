@@ -30,13 +30,10 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
-import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.RasterTool
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.min
 
 /**
@@ -237,7 +234,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
-        for ((i,layer) in strokesLayer.withIndex()){
+        for (layer in strokesLayer){
             inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
