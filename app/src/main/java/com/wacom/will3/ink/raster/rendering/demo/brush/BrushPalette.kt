@@ -26,7 +26,130 @@ class BrushPalette {
                 uri.toLowerCase().contains("waterbrush") -> brush = waterbrush(context)
                 uri.toLowerCase().contains("crayon") -> brush = crayonbrush(context)
                 uri.toLowerCase().contains("eraser") -> brush = eraser(context)
+                uri.toLowerCase().contains("pen") -> brush = pen(context)
+                uri.toLowerCase().contains("pen") -> brush = pen2(context)
+                uri.toLowerCase().contains("pen") -> brush = pen3(context)
             }
+
+            return brush
+        }
+
+        fun pen(context: Context): RasterBrush {
+            val opts = BitmapFactory.Options()
+            opts.inSampleSize = 1
+            opts.inScaled = false
+            // Texture for shape
+            val shapeTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_shape, opts)
+            // Texture for fill
+            val fillTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_fill_11, opts)
+
+            val stream = ByteArrayOutputStream()
+            shapeTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val shapeTextureByteArray = stream.toByteArray()
+
+            val stream2 = ByteArrayOutputStream()
+            fillTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream2)
+            val fillTextureByteArray = stream2.toByteArray()
+
+            // Create the raster brush
+            var brush = RasterBrush(
+                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                0.15f,                                          // spacing
+                0.15f,                                         // scattering
+                RotationMode.RANDOM,                                    // rotation mode
+                listOf(shapeTextureByteArray),                          // shape texture
+                listOf(), fillTextureByteArray,                         // fill texture
+                "",                                         // fill texture URI
+                fillTexture.width.toFloat(),                            // width of texture
+                fillTexture.height.toFloat(),                           // height of texture
+                false,                                       // randomized fill
+                BlendMode.MAX                                            // mode of blending
+            )
+
+            shapeTexture.recycle()
+            fillTexture.recycle()
+
+            return brush
+        }
+
+        fun pen2(context: Context): RasterBrush {
+            val opts = BitmapFactory.Options()
+            opts.inSampleSize = 1
+            opts.inScaled = false
+            // Texture for shape
+            val shapeTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_shape, opts)
+            // Texture for fill
+            val fillTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_fill_11, opts)
+
+            val stream = ByteArrayOutputStream()
+            shapeTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val shapeTextureByteArray = stream.toByteArray()
+
+            val stream2 = ByteArrayOutputStream()
+            fillTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream2)
+            val fillTextureByteArray = stream2.toByteArray()
+
+            // Create the raster brush
+            var brush = RasterBrush(
+                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                0.15f,                                          // spacing
+                0.15f,                                         // scattering
+                RotationMode.RANDOM,                                    // rotation mode
+                listOf(shapeTextureByteArray),                          // shape texture
+                listOf(), fillTextureByteArray,                         // fill texture
+                "",                                         // fill texture URI
+                fillTexture.width.toFloat(),                            // width of texture
+                fillTexture.height.toFloat(),                           // height of texture
+                false,                                       // randomized fill
+                BlendMode.MAX                                            // mode of blending
+            )
+
+            shapeTexture.recycle()
+            fillTexture.recycle()
+
+            return brush
+        }
+
+        fun pen3(context: Context): RasterBrush {
+            val opts = BitmapFactory.Options()
+            opts.inSampleSize = 1
+            opts.inScaled = false
+            // Texture for shape
+            val shapeTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_shape, opts)
+            // Texture for fill
+            val fillTexture =
+                BitmapFactory.decodeResource(context.resources, R.drawable.essential_fill_11, opts)
+
+            val stream = ByteArrayOutputStream()
+            shapeTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val shapeTextureByteArray = stream.toByteArray()
+
+            val stream2 = ByteArrayOutputStream()
+            fillTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream2)
+            val fillTextureByteArray = stream2.toByteArray()
+
+            // Create the raster brush
+            var brush = RasterBrush(
+                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                0.15f,                                          // spacing
+                0.15f,                                         // scattering
+                RotationMode.RANDOM,                                    // rotation mode
+                listOf(shapeTextureByteArray),                          // shape texture
+                listOf(), fillTextureByteArray,                         // fill texture
+                "",                                         // fill texture URI
+                fillTexture.width.toFloat(),                            // width of texture
+                fillTexture.height.toFloat(),                           // height of texture
+                false,                                       // randomized fill
+                BlendMode.MAX                                            // mode of blending
+            )
+
+            shapeTexture.recycle()
+            fillTexture.recycle()
 
             return brush
         }

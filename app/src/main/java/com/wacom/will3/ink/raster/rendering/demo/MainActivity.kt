@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private lateinit var popupWindow: PopupWindow
 
-    private var drawingColor: Int = Color.argb(255, 74, 74, 74)
+    private var  drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
     var lineProtect = false
 
@@ -173,6 +173,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             WaterbrushTool.uri -> btn_water_brush
             CrayonTool.uri -> btn_crayon
             EraserRasterTool.uri -> btn_eraser
+            PenTool.uri -> btn_pen
+            Pen2Tool.uri ->btn_pen2
+            Pen3Tool.uri ->btn_pen3
             else -> btn_pencil
         }
         selectTool(view)
@@ -184,6 +187,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             R.id.btn_water_brush -> setTool(view, WaterbrushTool(this))
             R.id.btn_crayon -> setTool(view, CrayonTool(this))
             R.id.btn_eraser -> setTool(view, EraserRasterTool(this))
+            R.id.btn_pen -> setTool(view,PenTool(this))
+            R.id.btn_pen2 -> setTool(view,Pen2Tool(this))
+            R.id.btn_pen3 -> setTool(view,Pen3Tool(this))
         }
     }
 
@@ -196,6 +202,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun highlightTool(view: View) {
         btn_pencil.isActivated = false
+        btn_pen.isActivated = false
+        btn_pen2.isActivated = false
+        btn_pen3.isActivated = false
         btn_water_brush.isActivated = false
         btn_ink_brush.isActivated = false
         btn_crayon.isActivated = false
