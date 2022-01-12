@@ -309,8 +309,14 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         binding.btnSmallLayer.setOnClickListener{
             when(binding.layerCard.visibility){
-                View.VISIBLE->binding.layerCard.visibility = View.GONE
-                View.GONE->binding.layerCard.visibility = View.VISIBLE
+                View.VISIBLE->{
+                    binding.layerCard.visibility = View.GONE
+                    binding.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
+                }
+                View.GONE->{
+                    binding.layerCard.visibility = View.VISIBLE
+                    binding.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
+                }
             }
         }
     }
