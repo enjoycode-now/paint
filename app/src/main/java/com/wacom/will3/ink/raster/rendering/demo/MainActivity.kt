@@ -30,6 +30,8 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
+import java.lang.Integer.max
+import java.lang.Math.min
 import java.util.*
 import kotlin.math.abs
 
@@ -75,16 +77,29 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     //   跳转到指定图层
     fun changeToLayer(position: Int) {
         rasterDrawingSurface.changeToLayer(position)
-        rasterDrawingSurface.refreshView()
+//        rasterDrawingSurface.refreshView()
+        rasterDrawingSurface.renderViewOnlyVisible()
         rasterDrawingSurface.invalidate()
     }
 
 
     fun onTextureReady() {
+        //  Store the visible state of each layer
+        val layerVisibilityList: MutableList<Boolean> = mutableListOf()
+        for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
+            if(i>=smallLayerList.size){
+                layerVisibilityList.add(true)
+            }else{
+                layerVisibilityList.add(smallLayerList[i].isShow)
+            }
+        }
         smallLayerList.clear()
+
+        //  Update the bitmap of each layer
         for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
             val roomLayer = RoomLayer()
             roomLayer.bitmap = rasterDrawingSurface.toBitmap(i)
+            roomLayer.isShow = layerVisibilityList[i]
             smallLayerList.add(roomLayer)
         }
         layerAdapter.notifyDataSetChanged()
@@ -229,7 +244,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         layerAdapter.notifyDataSetChanged()
     }
 
-    fun changeVisibilityOfSmallLayer(){
+    fun changeVisibilityOfSmallLayer() {
         resetInkModel()
         rasterDrawingSurface.renderViewOnlyVisible()
     }

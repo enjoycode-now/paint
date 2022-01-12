@@ -37,6 +37,7 @@ import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.RasterTool
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlin.math.min
 
 /**
@@ -124,6 +125,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     // This function is going to be call when we touch the surface
     fun surfaceTouch(event: MotionEvent) {
+
         if (event.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
@@ -252,7 +254,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
         for ((i,layer) in strokesLayer.withIndex()){
-            if(mainActivity.smallLayerList[i].isShow)
+            if(i<mainActivity.smallLayerList.size && mainActivity.smallLayerList[i].isShow)
                 inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -332,7 +334,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     fun changeToLayer(position : Int){
         layerPos = position
-        refreshView()
+//        refreshView()
+        renderViewOnlyVisible()
     }
 
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
