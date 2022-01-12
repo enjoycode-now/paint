@@ -78,8 +78,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     //   跳转到指定图层
     fun changeToLayer(position: Int) {
         rasterDrawingSurface.changeToLayer(position)
-//        rasterDrawingSurface.refreshView()
-        rasterDrawingSurface.renderViewOnlyVisible()
+        rasterDrawingSurface.refreshView()
         rasterDrawingSurface.invalidate()
     }
 
