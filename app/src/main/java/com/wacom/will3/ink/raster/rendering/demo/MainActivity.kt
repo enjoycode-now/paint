@@ -306,6 +306,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         if (this::popupWindow.isInitialized) popupWindow.dismiss()
     }
 
+    // expandAndCloseSmallLayer
     fun smallLayer(view: android.view.View) {
 
         when (binding.layerCard.visibility) {
