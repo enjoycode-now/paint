@@ -16,7 +16,7 @@ class LayerAdapter(private val activity: MainActivity) :
     RecyclerView.Adapter<LayerAdapter.ViewHolder>() {
 
 
-    override fun getItemViewType(position: Int) = if (position == activity.rasterDrawingSurface.layerPos) 0 else 1  //0:选中,1:未选中
+    override fun getItemViewType(position: Int) = if (position == activity.layerPos) 0 else 1  //0:选中,1:未选中
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,12 +42,11 @@ class LayerAdapter(private val activity: MainActivity) :
 
 
             binding.layerItem.setOnClickListener {
-                if (activity.rasterDrawingSurface.layerPos != position) {
+                if (activity.layerPos != position) {
                     activity.changeToLayer(position)
                 } else {
                     activity.layerToolPopupWindow(binding.layerImage)
                 }
-                activity.onTextureReady()
             }
             if (viewType == 0)
                 binding.layerItem.setBackgroundColor(Color.parseColor("#00BCD4"))  //蓝色

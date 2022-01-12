@@ -30,8 +30,6 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
-import java.lang.Integer.max
-import java.lang.Math.min
 import java.util.*
 import kotlin.math.abs
 
@@ -64,44 +62,31 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var smallLayerList = mutableListOf(RoomLayer())
 
     lateinit var popupwindow: PopupWindow
-
+    var layerPos = 0
 
     //   加一个图层
     fun add(view: View) {
+        if (smallLayerList.size>=0xF)return
+        smallLayerList.add(RoomLayer())
         rasterDrawingSurface.addLayer()
         rasterDrawingSurface.refreshView()
-        onTextureReady()
+        smallLayerList.last().bitmap = rasterDrawingSurface.toBitmap(smallLayerList.lastIndex)
+        layerAdapter.notifyDataSetChanged()
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     //   跳转到指定图层
     fun changeToLayer(position: Int) {
-        rasterDrawingSurface.changeToLayer(position)
+        layerPos = position
+        layerAdapter.notifyDataSetChanged()
         rasterDrawingSurface.refreshView()
         rasterDrawingSurface.invalidate()
     }
 
 
     fun onTextureReady() {
-        //  Store the visible state of each layer
-        val layerVisibilityList: MutableList<Boolean> = mutableListOf()
-        for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
-            if(i>=smallLayerList.size){
-                layerVisibilityList.add(true)
-            }else{
-                layerVisibilityList.add(smallLayerList[i].isShow)
-            }
-        }
-        smallLayerList.clear()
-
-        //  Update the bitmap of each layer
-        for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
-            val roomLayer = RoomLayer()
-            roomLayer.bitmap = rasterDrawingSurface.toBitmap(i)
-            roomLayer.isShow = layerVisibilityList[i]
-            smallLayerList.add(roomLayer)
-        }
+        smallLayerList[0].bitmap = rasterDrawingSurface.toBitmap(0)
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -118,9 +103,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         setColor(drawingColor) //set default color
 
-        rasterDrawingSurface.mainActivity = this
+        rasterDrawingSurface.activity = this
         rasterDrawingSurface.setOnTouchListener { _, event ->
-
+            if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
 
             val distanceX = abs(event.x - (lastEvent?.x ?: event.x))
@@ -142,8 +127,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lastEvent = MotionEvent.obtain(event)
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
-                    smallLayerList[rasterDrawingSurface.layerPos].bitmap =
-                        rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+                    smallLayerList[layerPos].bitmap =
+                        rasterDrawingSurface.toBitmap(layerPos)
                     layerAdapter.notifyDataSetChanged()
                     lastEvent = null
                 }
@@ -174,8 +159,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 override fun onColorPicked(color: Int) {
                     this@MainActivity.setColor(color)
                 }
-
-                fun onColor(color: Int, fromUser: Boolean) {}
             })
     }
 
@@ -240,11 +223,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         resetInkModel()
         rasterDrawingSurface.clear()
         rasterDrawingSurface.refreshView()
-        smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap()
+        smallLayerList[layerPos].bitmap = rasterDrawingSurface.toBitmap()
         layerAdapter.notifyDataSetChanged()
     }
 
-    fun changeVisibilityOfSmallLayer() {
+    fun changeVisibilityOfSmallLayer(){
         resetInkModel()
         rasterDrawingSurface.refreshView()
     }
