@@ -232,7 +232,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun changeVisibilityOfSmallLayer(){
         resetInkModel()
-        rasterDrawingSurface.renderViewOnlyVisible()
+        rasterDrawingSurface.refreshView()
     }
 
     fun openPaperDialog(view: View) {
