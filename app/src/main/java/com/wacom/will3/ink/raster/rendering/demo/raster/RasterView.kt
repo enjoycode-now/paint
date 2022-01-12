@@ -240,6 +240,21 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.invalidate()
     }
 
+    // 只渲染可视的图层到屏幕上
+    fun renderViewOnlyVisible(){
+
+        inkCanvas.clearLayer(finalLayer)
+        inkCanvas.setTarget(finalLayer)
+        inkCanvas.clearColor(Color.WHITE)
+
+
+        for ((i,layer) in strokesLayer.withIndex()){
+            if(mainActivity.smallLayerList[i].isShow)
+                inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
+        }
+        inkCanvas.invalidate()
+    }
+
     // Draw stroke
     private fun drawStroke(event: MotionEvent, added: InterpolatedSpline, predicted: InterpolatedSpline?) {
         strokeRenderer.drawPoints(added, defaults, event.action == MotionEvent.ACTION_UP)

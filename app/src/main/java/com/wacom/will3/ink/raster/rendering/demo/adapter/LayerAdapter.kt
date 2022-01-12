@@ -62,6 +62,7 @@ class LayerAdapter(private val activity: MainActivity) :
             binding.imageLeft.setOnClickListener {
                 activity.smallLayerList[position].isShow=!activity.smallLayerList[position].isShow
                 activity.layerAdapter.notifyItemChanged(position)
+                activity.changeVisibilityOfSmallLayer()
             }
         }
     }
