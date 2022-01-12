@@ -121,10 +121,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     // This function is going to be call when we touch the surface
     fun surfaceTouch(event: MotionEvent) {
-
-        if (!mainActivity.smallLayerList[layerPos].isShow) {
-            return
-        }
         if (event.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
