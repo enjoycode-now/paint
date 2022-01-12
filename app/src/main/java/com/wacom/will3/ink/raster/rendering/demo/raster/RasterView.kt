@@ -226,17 +226,13 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
         for ((i,layer) in strokesLayer.withIndex()){
-            if(i==layerPos) inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.SOURCE_OVER)
+            if (i==layerPos) inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.SOURCE_OVER)
             else inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
     }
 
     fun refreshView() {
-        inkCanvas.setTarget(currentFrameLayer[layerPos])
-        inkCanvas.clearColor(Color.WHITE)
-        inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
-        inkCanvas.invalidate()
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
@@ -344,7 +340,11 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun toBitmap(pos:Int=layerPos): Bitmap {
         refreshView()
         val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
-        inkCanvas.readPixels(currentFrameLayer[pos], bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
+        val tempLayer = inkCanvas.createLayer(textureWidth, textureHeight)
+        inkCanvas.setTarget(tempLayer)
+        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.drawLayer(strokesLayer[pos],BlendMode.SOURCE_OVER)
+        inkCanvas.readPixels(tempLayer, bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
         return bitmap
     }
 }
