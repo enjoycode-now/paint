@@ -51,9 +51,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
     lateinit var finalLayer: Layer                      // 第三层：合成层
 
-    var layerPos = 0
+
     private lateinit var strokeRenderer: StrokeRenderer
-    lateinit var mainActivity: MainActivity
+    lateinit var activity: MainActivity
 
     private var rasterInkBuilder = RasterInkBuilder() //The ink builder
     var rasterTool: RasterTool = PencilTool(context)
@@ -96,12 +96,12 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 currentFrameLayer = mutableListOf(inkCanvas.createLayer(w, h))
                 finalLayer = inkCanvas.createViewLayer(w, h)
 
-                inkCanvas.clearLayer(currentFrameLayer[layerPos])
+                inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
                 strokeRenderer = StrokeRenderer(inkCanvas, PencilTool(context).brush.toParticleBrush(), w, h)
                 drawStrokes(strokeNodeList)
                 refreshView()
+                activity.onTextureReady()
                 listener.onSurfaceCreated()
-                mainActivity.onTextureReady()
             }
 
             override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, w: Int, h: Int) {
@@ -220,10 +220,11 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     // Renders the canvas content on the screen.
     fun renderView() {
         inkCanvas.setTarget(finalLayer)
-        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
         for ((i,layer) in strokesLayer.withIndex()){
-            if (i==layerPos) inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.SOURCE_OVER)
+            if (!activity.smallLayerList[i].isShow)continue
+            if (i==activity.layerPos) inkCanvas.drawLayer(currentFrameLayer[activity.layerPos], BlendMode.SOURCE_OVER)
             else inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -231,9 +232,10 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     fun refreshView() {
         inkCanvas.setTarget(finalLayer)
-        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
-        for (layer in strokesLayer){
+        for ((i,layer) in strokesLayer.withIndex()){
+            if (!activity.smallLayerList[i].isShow)continue
             inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -246,15 +248,15 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (predicted != null) strokeRenderer.drawPrelimPoints(predicted, defaults)
 
         if (event.action != MotionEvent.ACTION_UP) {
-            inkCanvas.setTarget(currentFrameLayer[layerPos], strokeRenderer.strokeUpdatedArea)
+            inkCanvas.setTarget(currentFrameLayer[activity.layerPos], strokeRenderer.strokeUpdatedArea)
             inkCanvas.clearColor()
-            inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
-            strokeRenderer.blendStrokeUpdatedArea(currentFrameLayer[layerPos], rasterTool.getBlendMode())
+            inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
+            strokeRenderer.blendStrokeUpdatedArea(currentFrameLayer[activity.layerPos], rasterTool.getBlendMode())
         } else {
-            strokeRenderer.blendStroke(strokesLayer[layerPos], rasterTool.getBlendMode())
-            inkCanvas.setTarget(currentFrameLayer[layerPos])
+            strokeRenderer.blendStroke(strokesLayer[activity.layerPos], rasterTool.getBlendMode())
+            inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
-            inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
+            inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
         }
     }
 
@@ -287,24 +289,23 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (added != null) {
             strokeRenderer.strokeBrush = brush.toParticleBrush()
             strokeRenderer.drawPoints(added, defaults, true)
-            strokeRenderer.blendStroke(strokesLayer[layerPos], renderMode)
-            inkCanvas.setTarget(currentFrameLayer[layerPos])
+            strokeRenderer.blendStroke(strokesLayer[activity.layerPos], renderMode)
+            inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
-            inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
+            inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
         }
     }
 
     fun clear() {
         strokeNodeList.clear()
         sensorDataList.clear()
-        inkCanvas.clearLayer(currentFrameLayer[layerPos])
-        inkCanvas.clearLayer(strokesLayer[layerPos])
+        inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
+        inkCanvas.clearLayer(strokesLayer[activity.layerPos])
         inkCanvas.clearLayer(finalLayer)
         refreshView()
     }
 
     fun addLayer(){
-        if (currentFrameLayer.size>=0xF)return
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         changeToLayer(currentFrameLayer.lastIndex)
@@ -312,7 +313,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
     fun changeToLayer(position : Int){
-        layerPos = position
         refreshView()
     }
 
@@ -332,7 +332,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-    fun toBitmap(pos:Int=layerPos): Bitmap {
+    fun toBitmap(pos:Int=activity.layerPos): Bitmap {
         refreshView()
         val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
         val tempLayer = inkCanvas.createLayer(textureWidth, textureHeight)

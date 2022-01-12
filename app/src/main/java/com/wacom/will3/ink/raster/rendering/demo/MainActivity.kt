@@ -62,32 +62,31 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var smallLayerList = mutableListOf(RoomLayer())
 
     lateinit var popupwindow: PopupWindow
-
+    var layerPos = 0
 
     //   加一个图层
     fun add(view: View) {
+        if (smallLayerList.size>=0xF)return
+        smallLayerList.add(RoomLayer())
         rasterDrawingSurface.addLayer()
         rasterDrawingSurface.refreshView()
-        onTextureReady()
+        smallLayerList.last().bitmap = rasterDrawingSurface.toBitmap(smallLayerList.lastIndex)
+        layerAdapter.notifyDataSetChanged()
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     //   跳转到指定图层
     fun changeToLayer(position: Int) {
-        rasterDrawingSurface.changeToLayer(position)
+        layerPos = position
+        layerAdapter.notifyDataSetChanged()
         rasterDrawingSurface.refreshView()
         rasterDrawingSurface.invalidate()
     }
 
 
     fun onTextureReady() {
-        smallLayerList.clear()
-        for (i in 0..rasterDrawingSurface.currentFrameLayer.lastIndex) {
-            val roomLayer = RoomLayer()
-            roomLayer.bitmap = rasterDrawingSurface.toBitmap(i)
-            smallLayerList.add(roomLayer)
-        }
+        smallLayerList[0].bitmap = rasterDrawingSurface.toBitmap(0)
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -104,9 +103,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         setColor(drawingColor) //set default color
 
-        rasterDrawingSurface.mainActivity = this
+        rasterDrawingSurface.activity = this
         rasterDrawingSurface.setOnTouchListener { _, event ->
-
+            if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
 
             val distanceX = abs(event.x - (lastEvent?.x ?: event.x))
@@ -128,8 +127,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lastEvent = MotionEvent.obtain(event)
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
-                    smallLayerList[rasterDrawingSurface.layerPos].bitmap =
-                        rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+                    smallLayerList[layerPos].bitmap =
+                        rasterDrawingSurface.toBitmap(layerPos)
                     layerAdapter.notifyDataSetChanged()
                     lastEvent = null
                 }
@@ -160,8 +159,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 override fun onColorPicked(color: Int) {
                     this@MainActivity.setColor(color)
                 }
-
-                fun onColor(color: Int, fromUser: Boolean) {}
             })
     }
 
@@ -226,7 +223,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         resetInkModel()
         rasterDrawingSurface.clear()
         rasterDrawingSurface.refreshView()
-        smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap()
+        smallLayerList[layerPos].bitmap = rasterDrawingSurface.toBitmap()
         layerAdapter.notifyDataSetChanged()
     }
 
