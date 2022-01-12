@@ -30,7 +30,6 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
-import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
@@ -51,9 +50,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private lateinit var inkCanvas: InkCanvas
-    lateinit var strokesLayer: MutableList<Layer>      // 第一层：笔划层
-    lateinit var currentFrameLayer: MutableList<Layer> // 第二层：内存层
-    lateinit var finalLayer: Layer                     // 第三层：视图层
+    lateinit var currentFrameLayer: MutableList<Layer>  // 第一层：直接笔画层
+    lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
+    lateinit var finalLayer: Layer                      // 第三层：合成层
 
     var layerPos = 0
     private lateinit var strokeRenderer: StrokeRenderer
@@ -125,7 +124,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     // This function is going to be call when we touch the surface
     fun surfaceTouch(event: MotionEvent) {
-
         if (event.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
@@ -227,31 +225,21 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
-        inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.COPY)
         for ((i,layer) in strokesLayer.withIndex()){
-            if(i==layerPos)continue
-            inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
+            if(i==layerPos) inkCanvas.drawLayer(currentFrameLayer[layerPos], BlendMode.SOURCE_OVER)
+            else inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
     }
 
     fun refreshView() {
+        inkCanvas.setTarget(currentFrameLayer[layerPos])
+        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.drawLayer(strokesLayer[layerPos], BlendMode.SOURCE_OVER)
+        inkCanvas.invalidate()
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor(Color.WHITE)
         // Copy the current frame layer in the view layer to present it on the screen.
-        for ((i,layer) in strokesLayer.withIndex()){
-            inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
-        }
-        inkCanvas.invalidate()
-    }
-
-    // 只渲染可视的图层到屏幕上
-    fun renderViewOnlyVisible(){
-
-        inkCanvas.clearLayer(finalLayer)
-        inkCanvas.setTarget(finalLayer)
-        inkCanvas.clearColor(Color.WHITE)
-
 
         for ((i,layer) in strokesLayer.withIndex()){
             if(i<mainActivity.smallLayerList.size && mainActivity.smallLayerList[i].isShow)
@@ -334,8 +322,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     fun changeToLayer(position : Int){
         layerPos = position
-//        refreshView()
-        renderViewOnlyVisible()
+        refreshView()
     }
 
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
@@ -355,13 +342,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     fun toBitmap(pos:Int=layerPos): Bitmap {
+        refreshView()
         val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
-        inkCanvas.setTarget(currentFrameLayer[pos])
-        inkCanvas.clearColor(Color.WHITE)
-        inkCanvas.drawLayer(strokesLayer[pos], BlendMode.SOURCE_OVER)
-        inkCanvas.invalidate()
         inkCanvas.readPixels(currentFrameLayer[pos], bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
-        inkCanvas.setTarget(currentFrameLayer[layerPos])
         return bitmap
     }
 }

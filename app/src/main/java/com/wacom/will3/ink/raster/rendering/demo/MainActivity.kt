@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     //   加一个图层
     fun add(view: View) {
         rasterDrawingSurface.addLayer()
+        rasterDrawingSurface.refreshView()
         onTextureReady()
     }
 
@@ -246,7 +247,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun changeVisibilityOfSmallLayer() {
         resetInkModel()
-        rasterDrawingSurface.renderViewOnlyVisible()
+        rasterDrawingSurface.refreshView()
     }
 
     fun openPaperDialog(view: View) {
