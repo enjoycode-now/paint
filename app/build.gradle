@@ -56,7 +56,9 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.17.3'
     implementation 'com.google.protobuf:protobuf-java-util:3.17.3'
 
-    implementation 'com.github.duanhong169:colorpicker:1.1.6'
+    // ColorPicker
+    implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
+    implementation 'com.github.g39088902:ColorPicker:1.1.6'
 
     implementation 'androidx.multidex:multidex:2.0.1'
 }

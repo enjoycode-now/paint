@@ -51,7 +51,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
     lateinit var finalLayer: Layer                      // 第三层：合成层
 
-
     private lateinit var strokeRenderer: StrokeRenderer
     lateinit var activity: MainActivity
 
