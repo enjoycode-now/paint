@@ -128,7 +128,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lastEvent = MotionEvent.obtain(event)
                 rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
-                    smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
+                    smallLayerList[rasterDrawingSurface.layerPos].bitmap =
+                        rasterDrawingSurface.toBitmap(rasterDrawingSurface.layerPos)
                     layerAdapter.notifyDataSetChanged()
                     lastEvent = null
                 }
@@ -289,8 +290,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
         // 弹出PopUpWindow
-        popupwindow = PopupWindow(popBind.root,288.dp(),128.dp(),true)
-        popupwindow.isOutsideTouchable=true
+        popupwindow = PopupWindow(popBind.root, 288.dp(), 128.dp(), true)
+        popupwindow.isOutsideTouchable = true
         popupwindow.showAsDropDown(view, (-352).dp(), (-160).dp())
     }
 
@@ -307,17 +308,16 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun smallLayer(view: android.view.View) {
 
-        binding.btnSmallLayer.setOnClickListener{
-            when(binding.layerCard.visibility){
-                View.VISIBLE->{
-                    binding.layerCard.visibility = View.GONE
-                    binding.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
-                }
-                View.GONE->{
-                    binding.layerCard.visibility = View.VISIBLE
-                    binding.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
-                }
+        when (binding.layerCard.visibility) {
+            View.VISIBLE -> {
+                binding.layerCard.visibility = View.GONE
+                binding.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
+            }
+            View.GONE -> {
+                binding.layerCard.visibility = View.VISIBLE
+                binding.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
             }
         }
+
     }
 }
