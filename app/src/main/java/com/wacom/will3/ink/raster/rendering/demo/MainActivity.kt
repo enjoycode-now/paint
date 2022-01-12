@@ -14,7 +14,6 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
@@ -228,6 +227,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.refreshView()
         smallLayerList[rasterDrawingSurface.layerPos].bitmap = rasterDrawingSurface.toBitmap()
         layerAdapter.notifyDataSetChanged()
+    }
+
+    fun changeVisibilityOfSmallLayer(){
+        resetInkModel()
+        rasterDrawingSurface.renderViewOnlyVisible()
     }
 
     fun openPaperDialog(view: View) {
