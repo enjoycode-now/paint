@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.wacom.will3.ink.raster.rendering.demo"
-        minSdkVersion 17
+        minSdkVersion 29
         targetSdkVersion 30
         versionCode 1
         versionName "1.1"

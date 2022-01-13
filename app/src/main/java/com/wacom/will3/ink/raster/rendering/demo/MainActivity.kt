@@ -10,9 +10,11 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
@@ -27,6 +29,7 @@ import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
@@ -152,8 +155,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             .enableAlpha(true) // Enable alpha slider or not
             .okTitle("Choose")
             .cancelTitle("Cancel")
-            .showIndicator(false)
-            .showValue(false)
+            .showIndicator(true)
+            .showValue(true)
             .build()
             .show(view, object : ColorPickerObserver() {
                 override fun onColorPicked(color: Int) {

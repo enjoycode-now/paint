@@ -27,8 +27,8 @@ class BrushPalette {
                 uri.toLowerCase().contains("crayon") -> brush = crayonbrush(context)
                 uri.toLowerCase().contains("eraser") -> brush = eraser(context)
                 uri.toLowerCase().contains("pen") -> brush = pen(context)
-                uri.toLowerCase().contains("pen") -> brush = pen2(context)
-                uri.toLowerCase().contains("pen") -> brush = pen3(context)
+                uri.toLowerCase().contains("pen2") -> brush = pen2(context)
+                uri.toLowerCase().contains("pen3") -> brush = pen3(context)
             }
 
             return brush
@@ -55,7 +55,7 @@ class BrushPalette {
 
             // Create the raster brush
             var brush = RasterBrush(
-                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                URIBuilder.getBrushURI("raster", "Pen"), // name of the brush
                 0.15f,                                          // spacing
                 0.15f,                                         // scattering
                 RotationMode.RANDOM,                                    // rotation mode
@@ -95,7 +95,7 @@ class BrushPalette {
 
             // Create the raster brush
             var brush = RasterBrush(
-                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                URIBuilder.getBrushURI("raster", "Pen2"), // name of the brush
                 0.15f,                                          // spacing
                 0.15f,                                         // scattering
                 RotationMode.RANDOM,                                    // rotation mode
@@ -135,7 +135,7 @@ class BrushPalette {
 
             // Create the raster brush
             var brush = RasterBrush(
-                URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
+                URIBuilder.getBrushURI("raster", "Pen3"), // name of the brush
                 0.15f,                                          // spacing
                 0.15f,                                         // scattering
                 RotationMode.RANDOM,                                    // rotation mode

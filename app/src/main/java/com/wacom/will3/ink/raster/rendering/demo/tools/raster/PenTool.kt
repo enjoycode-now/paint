@@ -25,10 +25,10 @@ class PenTool(context: Context) : RasterTool(context) {
         val MAX_PENCIL_SIZE = 10.5f
 
         // Minimum alpha values for the particles
-        val MIN_ALPHA = 0.05f
+        var MIN_ALPHA = 0.05f
 
         // Maximum alpha values for the particles
-        val MAX_ALPHA = 0.2f
+        var MAX_ALPHA = 0.2f
 
         //  Unit for speed is px/second.
         //  NOTE: This needs to be optimized for different Pixel densities of different devices

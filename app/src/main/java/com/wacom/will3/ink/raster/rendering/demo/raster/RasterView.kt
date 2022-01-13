@@ -212,7 +212,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         defaults.red = Color.red(color) / 255f
         defaults.green = Color.green(color) / 255f
         defaults.blue = Color.blue(color) / 255f
-        //defaults.alpha = 1f
+        defaults.alpha = Color.alpha(color) / 255f
     }
 
 

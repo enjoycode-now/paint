@@ -13,7 +13,7 @@ class Pen3Tool(context: Context) : RasterTool(context) {
     private var previousSize = MIN_PENCIL_SIZE
 
     companion object {
-        val uri = URIBuilder.getToolURI("raster", "pen")
+        val uri = URIBuilder.getToolURI("raster", "pen3")
 
         // Minimum size of the pencil tip
         val MIN_PENCIL_SIZE = 1f
@@ -38,7 +38,7 @@ class Pen3Tool(context: Context) : RasterTool(context) {
         val MIN_ALTITUDE_ANGLE = 0.4
     }
 
-    override var brush = BrushPalette.pen(context)
+    override var brush = BrushPalette.pen3(context)
     var previousAlpha = 0.2f
 
     override fun getLayout(): PathPointLayout {
