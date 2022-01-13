@@ -6,6 +6,7 @@ package com.wacom.will3.ink.raster.rendering.demo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -15,6 +16,7 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wacom.ink.format.InkModel
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private lateinit var popupWindow: PopupWindow
 
-    private var  drawingColor: Int = Color.argb(255, 74, 74, 74)
+    private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
     var lineProtect = false
 
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     //   加一个图层
     fun add(view: View) {
-        if (smallLayerList.size>=0xF)return
+        if (smallLayerList.size >= 0xF) return
         smallLayerList.add(RoomLayer())
         rasterDrawingSurface.addLayer()
         rasterDrawingSurface.refreshView()
@@ -177,8 +179,8 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             CrayonTool.uri -> btn_crayon
             EraserRasterTool.uri -> btn_eraser
             PenTool.uri -> btn_pen
-            Pen2Tool.uri ->btn_pen2
-            Pen3Tool.uri ->btn_pen3
+            Pen2Tool.uri -> btn_pen2
+            Pen3Tool.uri -> btn_pen3
             else -> btn_pencil
         }
         selectTool(view)
@@ -190,9 +192,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             R.id.btn_water_brush -> setTool(view, WaterbrushTool(this))
             R.id.btn_crayon -> setTool(view, CrayonTool(this))
             R.id.btn_eraser -> setTool(view, EraserRasterTool(this))
-            R.id.btn_pen -> setTool(view,PenTool(this))
-            R.id.btn_pen2 -> setTool(view,Pen2Tool(this))
-            R.id.btn_pen3 -> setTool(view,Pen3Tool(this))
+            R.id.btn_pen -> setTool(view, PenTool(this))
+            R.id.btn_pen2 -> setTool(view, Pen2Tool(this))
+            R.id.btn_pen3 -> setTool(view, Pen3Tool(this))
         }
     }
 
@@ -239,7 +241,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         layerAdapter.notifyDataSetChanged()
     }
 
-    fun changeVisibilityOfSmallLayer(){
+    fun changeVisibilityOfSmallLayer() {
         resetInkModel()
         rasterDrawingSurface.refreshView()
     }
@@ -307,11 +309,44 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         popupwindow = PopupWindow(popBind.root, 288.dp(), 128.dp(), true)
         popupwindow.isOutsideTouchable = true
         popupwindow.showAsDropDown(view, (-352).dp(), (-160).dp())
+
+        popBind.delete.setOnClickListener {
+            deleteLayer()
+        }
+
+        popBind.eraser.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(this)
+            alertDialog
+                .setTitle("你是否要清空图层")
+                .setCancelable(true)
+                .setPositiveButton(
+                    "确定",
+                    DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+                        this@MainActivity.clear(popBind.eraser)
+                        dialog.dismiss()
+                        toast("图层清空")
+                    })
+                .setNegativeButton("取消",null)
+                .create()
+                .show()
+
+        }
     }
 
-    // 本地删除图层
-    fun deleteLayer(targetLayer: Int) {
-
+    // 删除当前图层
+    fun deleteLayer() {
+        if (smallLayerList.size == 1) {
+            toast("默认图层禁止删除")
+            return
+        }
+        smallLayerList.removeAt(layerPos)
+        rasterDrawingSurface.strokesLayer.removeAt(layerPos)
+        rasterDrawingSurface.currentFrameLayer.removeAt(layerPos)
+        if (layerPos > 0) {
+            layerPos--
+        }
+        rasterDrawingSurface.refreshView()
+        layerAdapter.notifyDataSetChanged()
     }
 
     fun changeBackground(background: Int, paper: Int) {
