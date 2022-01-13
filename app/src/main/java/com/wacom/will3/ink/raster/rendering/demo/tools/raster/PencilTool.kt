@@ -121,8 +121,26 @@ class PencilTool(context: Context) : RasterTool(context) {
             ((PI_HALF - current.altitudeAngle!!) / (PI_HALF - MIN_ALTITUDE_ANGLE).toFloat()))
         // now, based on the tilt of the pencil the size of the brush size is increasing, as the
         // pencil tip is covering a larger area
-        val size = max( MIN_PENCIL_SIZE, MIN_PENCIL_SIZE + (MAX_PENCIL_SIZE - MIN_PENCIL_SIZE)
-                * tiltScale)
+        val size = if (current.force == -1f) {
+            current.computeValueBasedOnSpeed(
+                previous,
+                next,
+                minValue = MIN_PENCIL_SIZE,
+                maxValue = MAX_PENCIL_SIZE,
+                minSpeed = 0f,
+                maxSpeed = 3500f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+            )
+
+        } else {
+            current.computeValueBasedOnPressure(
+                minValue = MIN_PENCIL_SIZE,
+                maxValue = MAX_PENCIL_SIZE,
+                minPressure = 0.0f,
+                maxPressure = 1.0f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+            )
+        }
         // Change the intensity of alpha value by pressure of speed, if available else use speed
         var alpha = if (current.force == -1f) {
             current.computeValueBasedOnSpeed(

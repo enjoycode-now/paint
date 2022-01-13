@@ -99,10 +99,26 @@ class CrayonTool(context: Context) : RasterTool(context) {
         val tiltScale = min(1f,
             ((PencilTool.PI_HALF - current.altitudeAngle!!) / (PencilTool.PI_HALF - PencilTool.MIN_ALTITUDE_ANGLE).toFloat()))
 
-        val size = max(
-            CrayonTool.MIN_CRAYON_SIZE, CrayonTool.MIN_CRAYON_SIZE
-                    + (CrayonTool.MAX_CRAYON_SIZE - CrayonTool.MIN_CRAYON_SIZE)
-                * tiltScale)
+        val size = if (current.force == -1f) {
+            current.computeValueBasedOnSpeed(
+                previous,
+                next,
+                minValue = MIN_CRAYON_SIZE,
+                maxValue = MAX_CRAYON_SIZE,
+                minSpeed = 0f,
+                maxSpeed = 3500f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+            )
+
+        } else {
+            current.computeValueBasedOnPressure(
+                minValue = MIN_CRAYON_SIZE,
+                maxValue = MAX_CRAYON_SIZE,
+                minPressure = 0.0f,
+                maxPressure = 1.0f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+            )
+        }
         // Change the intensity of alpha value by pressure of speed, if available else use speed
         var alpha = if (current.force == -1f) {
             current.computeValueBasedOnSpeed(
