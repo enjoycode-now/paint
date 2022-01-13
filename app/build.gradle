@@ -6,7 +6,6 @@ apply plugin: 'com.google.protobuf'
 android {
     compileSdkVersion 30
 
-
     defaultConfig {
         applicationId "com.wacom.will3.ink.raster.rendering.demo"
         minSdkVersion 29
@@ -17,8 +16,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-
 
     buildTypes {
         release {

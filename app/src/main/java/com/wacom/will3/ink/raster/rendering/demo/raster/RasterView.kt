@@ -30,6 +30,7 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
+import com.wacom.will3.ink.raster.rendering.demo.model.StepModel
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
@@ -171,6 +172,19 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         renderView()
     }
 
+    fun setStepModel(stepModel:StepModel){
+        with(stepModel){
+            inkCanvas.setTarget(currentFrameLayer[index])
+            inkCanvas.clearColor()
+            inkCanvas.drawLayer(layer,BlendMode.COPY)
+            inkCanvas.invalidate()
+            inkCanvas.setTarget(strokesLayer[index])
+            inkCanvas.clearColor()
+            inkCanvas.drawLayer(layer,BlendMode.COPY)
+            inkCanvas.invalidate()
+        }
+    }
+
     private fun addStroke() {
         // Adding the style
         val style = Style(
@@ -256,6 +270,10 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
+            val stepModel = StepModel(activity.layerPos,inkCanvas.createLayer(textureWidth,textureHeight),toBitmap(activity.layerPos))
+            inkCanvas.setTarget(stepModel.layer)
+            inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
+            activity.stepStack.addStep(stepModel)
         }
     }
 
@@ -311,7 +329,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
 
-    fun changeToLayer(position : Int){
+    fun changeToLayer(pos : Int){
+        activity.stepStack.addStep(StepModel(pos,strokesLayer[pos],toBitmap(pos)))
         refreshView()
     }
 

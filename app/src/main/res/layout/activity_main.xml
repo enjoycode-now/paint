@@ -47,6 +47,24 @@
                 android:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
+                android:id="@+id/btnUndo"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/btn_separator"
+                android:onClick="undo"
+                android:src="@drawable/btn_undo_selected"
+                android:tint="@color/select_toolbar_button_stateful" />
+
+            <ImageView
+                android:id="@+id/btnRedo"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/btn_separator"
+                android:onClick="redo"
+                android:src="@drawable/btn_redo_selected"
+                android:tint="@color/select_toolbar_button_stateful" />
+
+            <ImageView
                 android:id="@+id/btn_pencil"
                 android:layout_width="@dimen/btn_width"
                 android:layout_height="wrap_content"

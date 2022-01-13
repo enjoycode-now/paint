@@ -19,14 +19,17 @@ import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
 import com.wacom.ink.format.tree.groups.StrokeGroupNode
 import com.wacom.ink.model.Identifier
+import com.wacom.ink.rasterization.Layer
 import com.wacom.will3.ink.raster.rendering.demo.adapter.LayerAdapter
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityMainBinding
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemToolsmenuBinding
 import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
+import com.wacom.will3.ink.raster.rendering.demo.model.StepStack
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
@@ -63,6 +66,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     lateinit var popupwindow: PopupWindow
     var layerPos = 0
+    val stepStack = StepStack()
 
     //   加一个图层
     fun add(view: View) {
@@ -72,6 +76,22 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.refreshView()
         smallLayerList.last().bitmap = rasterDrawingSurface.toBitmap(smallLayerList.lastIndex)
         layerAdapter.notifyDataSetChanged()
+    }
+
+    fun undo(view:View){
+        val stepModel = stepStack.undo()
+        if (stepModel == null) toast("无法继续撤回")
+        else rasterDrawingSurface.setStepModel(stepModel)
+        rasterDrawingSurface.refreshView()
+        rasterDrawingSurface.invalidate()
+    }
+
+    fun redo(view:View){
+        val stepModel = stepStack.redo()
+        if (stepModel == null) toast("无法继续重做")
+        else rasterDrawingSurface.setStepModel(stepModel)
+        rasterDrawingSurface.refreshView()
+        rasterDrawingSurface.invalidate()
     }
 
 
