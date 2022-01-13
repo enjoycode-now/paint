@@ -59,7 +59,7 @@ fun MotionEvent.toPointerData(): PointerData {
  * @param index the index of the historical point
  * @return the PointerData for the historical point
  */
-fun MotionEvent.historicalToPointerData(index: Int): PointerData {
+fun MotionEvent.historicalToPointerData(index: Int, forceBias:Float): PointerData {
     val phase = Phase.UPDATE
     val orientationAngle = getHistoricalOrientation(0, index) + PI /2
     val azimuthAngle = if (orientationAngle > PI) {
@@ -71,7 +71,7 @@ fun MotionEvent.historicalToPointerData(index: Int): PointerData {
     return PointerData(
         getHistoricalX(index), getHistoricalY(index),
         phase, timestamp = getHistoricalEventTime(index),
-        force = getHistoricalPressure(index),
+        force = getHistoricalPressure(index)*forceBias,
         altitudeAngle = altitudeAngle,
         azimuthAngle = azimuthAngle
     )
@@ -163,8 +163,8 @@ fun PointerData.computeValueBasedOnPressure(
     maxValue: Float,
     minPressure: Float = 100f, maxPressure: Float = 4000f,
     reverse: Boolean = false,
-    remap: ((Float) -> (Float))? = null
-): Float? {
+    remap: ((Float) -> (Float))
+): Float {
     val normalizePressure = if (reverse) {
         minPressure + (1-force!!) * (maxPressure - minPressure)
     } else {
@@ -174,8 +174,7 @@ fun PointerData.computeValueBasedOnPressure(
     val pressureClamped = min(max(normalizePressure, minPressure), maxPressure)
     var k = (pressureClamped - minPressure) / (maxPressure - minPressure)
 
-    if (remap != null)
-        k = remap(k)
+    k = remap(k)
 
     return minValue + k * (maxValue - minValue)
 }

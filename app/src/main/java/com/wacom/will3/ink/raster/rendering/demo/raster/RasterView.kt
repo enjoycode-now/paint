@@ -135,7 +135,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         for (i in 0 until event.historySize) {
-            val pointerData = event.historicalToPointerData(i)
+            val pointerData = event.historicalToPointerData(i,defaults.alpha)
             rasterInkBuilder.add(pointerData.phase, pointerData, null)
         }
 
@@ -212,7 +212,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         defaults.red = Color.red(color) / 255f
         defaults.green = Color.green(color) / 255f
         defaults.blue = Color.blue(color) / 255f
-        //defaults.alpha = 1f
+        defaults.alpha = Color.alpha(color) / 255f
     }
 
 
