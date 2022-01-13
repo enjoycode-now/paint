@@ -145,11 +145,9 @@ class PencilTool(context: Context) : RasterTool(context) {
             )
         }
 
-        if (alpha == null) {
-            alpha = previousAlpha
-        } else {
-            previousAlpha = alpha
-        }
+        if (alpha == null) alpha = previousAlpha
+        else previousAlpha = alpha
+
         PathPoint(
             current.x, current.y,
             alpha = alpha, size = size, rotation = rotation,

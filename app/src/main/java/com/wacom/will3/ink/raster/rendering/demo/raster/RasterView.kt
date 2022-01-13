@@ -135,7 +135,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         for (i in 0 until event.historySize) {
-            val pointerData = event.historicalToPointerData(i)
+            val pointerData = event.historicalToPointerData(i,defaults.alpha)
             rasterInkBuilder.add(pointerData.phase, pointerData, null)
         }
 
