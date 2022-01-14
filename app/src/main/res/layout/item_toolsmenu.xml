@@ -21,6 +21,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/layer_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="图层设置"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+
             <ImageView
                 android:id="@+id/delete"
                 android:layout_width="48dp"
@@ -30,7 +44,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/layer_note"
                 app:srcCompat="@drawable/ic_icon_delete" />
 
             <ImageView
@@ -42,7 +56,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/delete"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layer_note"
                 app:srcCompat="@drawable/ic_icon_eraser" />
 
             <ImageView
@@ -54,8 +68,50 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/eraser"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layer_note"
                 app:srcCompat="@drawable/ic_icon_flower" />
+
+
+            <TextView
+                android:id="@+id/delete_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/eraser"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.38"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/layer_note"
+                android:text="删除图层"/>
+
+
+            <TextView
+                android:id="@+id/clear_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/flower"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.38"
+                app:layout_constraintStart_toEndOf="@+id/delete"
+                app:layout_constraintTop_toTopOf="@id/layer_note"
+                android:text="清空图层"/>
+
+            <TextView
+                android:id="@+id/unsure_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.38"
+                app:layout_constraintStart_toEndOf="@+id/eraser"
+                app:layout_constraintTop_toTopOf="@id/layer_note"
+                android:text="待定"/>
+
 
 
             <TextView
@@ -64,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:text="不透明度："
                 android:textSize="15sp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginStart="10dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
