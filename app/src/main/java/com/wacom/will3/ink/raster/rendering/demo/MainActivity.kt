@@ -26,7 +26,6 @@ import com.wacom.will3.ink.raster.rendering.demo.adapter.LayerAdapter
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityMainBinding
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemToolsmenuBinding
 import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
-import com.wacom.will3.ink.raster.rendering.demo.model.StepModel
 import com.wacom.will3.ink.raster.rendering.demo.model.StepStack
 import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
@@ -41,9 +40,6 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import android.view.WindowManager
-
-
-
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -74,7 +70,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var smallLayerList = mutableListOf<RoomLayer>()
 
     lateinit var popupwindow: PopupWindow
-    var layerPos = 0
+    var layerPos = -1
     val stepStack = StepStack()
 
     //   加一个图层
@@ -85,6 +81,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.refreshView()
         rasterDrawingSurface.invalidate()
         smallLayerList.last().bitmap = rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(rasterDrawingSurface.inkCanvas)
+        changeToLayer(smallLayerList.lastIndex)
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -93,8 +90,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         if (stepModel == null) toast("无法继续撤回")
         else {
             rasterDrawingSurface.setStepModel(stepModel)
-            rasterDrawingSurface.refreshView()
-            rasterDrawingSurface.invalidate()
+            layerPos = stepModel.index
             smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
             layerAdapter.notifyDataSetChanged()
         }
@@ -105,8 +101,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         if (stepModel == null) toast("无法继续重做")
         else {
             rasterDrawingSurface.setStepModel(stepModel)
-            rasterDrawingSurface.refreshView()
-            rasterDrawingSurface.invalidate()
+            layerPos = stepModel.index
             smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
             layerAdapter.notifyDataSetChanged()
         }
@@ -124,6 +119,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun onTextureReady() {
         add(addLayerButton)
+        changeToLayer(0)
         smallLayerList[0].bitmap = rasterDrawingSurface.strokesLayer[0].toBitmap(rasterDrawingSurface.inkCanvas)
         layerAdapter.notifyDataSetChanged()
     }
@@ -178,7 +174,9 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         selectPaper(currentBackground)
 
-        binding.layerRecycle.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.reverseLayout = true
+        binding.layerRecycle.layoutManager = layoutManager
         binding.layerRecycle.adapter = layerAdapter
     }
 
@@ -261,7 +259,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         rasterDrawingSurface.clear()
         rasterDrawingSurface.refreshView()
         rasterDrawingSurface.invalidate()
-        stepStack.addStep(StepModel(layerPos,rasterDrawingSurface.strokesLayer[layerPos]))
+        stepStack.addStep(rasterDrawingSurface.getStepModel())
         smallLayerList[layerPos].bitmap = rasterDrawingSurface.strokesLayer[layerPos].toBitmap(rasterDrawingSurface.inkCanvas)
         layerAdapter.notifyDataSetChanged()
     }

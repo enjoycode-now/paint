@@ -5,7 +5,6 @@
 package com.wacom.will3.ink.raster.rendering.demo.raster
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.SurfaceTexture
 import android.util.AttributeSet
@@ -177,6 +176,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(strokesLayer[index])
             inkCanvas.drawLayer(layer,BlendMode.COPY)
         }
+        refreshView()
+        invalidate()
     }
 
     private fun addStroke() {
@@ -264,7 +265,10 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
-            val stepModel = StepModel(activity.layerPos,inkCanvas.createLayer(textureWidth,textureHeight))
+            val stepModel = StepModel(
+                inkCanvas.createLayer(textureWidth,textureHeight),
+                activity.layerPos
+            )
             inkCanvas.setTarget(stepModel.layer)
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
             activity.stepStack.addStep(stepModel)
@@ -272,7 +276,10 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     fun getStepModel():StepModel {
-        val stepModel = StepModel(activity.layerPos, inkCanvas.createLayer(textureWidth, textureHeight))
+        val stepModel = StepModel(
+            inkCanvas.createLayer(textureWidth, textureHeight),
+            activity.layerPos
+        )
         inkCanvas.setTarget(stepModel.layer)
         inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
         return stepModel

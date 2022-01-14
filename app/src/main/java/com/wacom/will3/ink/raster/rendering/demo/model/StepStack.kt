@@ -1,6 +1,5 @@
 package com.wacom.will3.ink.raster.rendering.demo.model
 
-import android.graphics.Bitmap
 import com.wacom.ink.rasterization.Layer
 
 class StepStack {
@@ -31,4 +30,4 @@ class StepStack {
 
 }
 
-class StepModel(var index:Int,val layer:Layer,val isChangeLayer: Boolean = false)
+class StepModel(val layer: Layer, var index: Int)
