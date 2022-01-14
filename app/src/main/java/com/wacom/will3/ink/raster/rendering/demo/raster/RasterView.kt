@@ -30,6 +30,7 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
+import com.wacom.will3.ink.raster.rendering.demo.model.StepModel
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
@@ -46,7 +47,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         fun onSurfaceCreated()
     }
 
-    private lateinit var inkCanvas: InkCanvas
+    lateinit var inkCanvas: InkCanvas
     lateinit var currentFrameLayer: MutableList<Layer>  // 第一层：直接笔画层
     lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
     lateinit var finalLayer: Layer                      // 第三层：合成层
@@ -91,15 +92,13 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 textureHeight=h
                 inkCanvas = InkCanvas(surfaceTexture,EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
 
-                strokesLayer = mutableListOf(inkCanvas.createLayer(w, h))
-                currentFrameLayer = mutableListOf(inkCanvas.createLayer(w, h))
+                strokesLayer = mutableListOf()
+                currentFrameLayer = mutableListOf()
                 finalLayer = inkCanvas.createViewLayer(w, h)
-
+                activity.onTextureReady()
                 inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
                 strokeRenderer = StrokeRenderer(inkCanvas, PencilTool(context).brush.toParticleBrush(), w, h)
                 drawStrokes(strokeNodeList)
-                refreshView()
-                activity.onTextureReady()
                 listener.onSurfaceCreated()
             }
 
@@ -171,12 +170,21 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         renderView()
     }
 
+    fun setStepModel(stepModel:StepModel){
+        with(stepModel){
+            inkCanvas.setTarget(currentFrameLayer[index])
+            inkCanvas.drawLayer(layer,BlendMode.COPY)
+            inkCanvas.setTarget(strokesLayer[index])
+            inkCanvas.drawLayer(layer,BlendMode.COPY)
+        }
+    }
+
     private fun addStroke() {
         // Adding the style
         val style = Style(
-            rasterTool.brush.name,              // Brush URI
-            1,           // Particle random seed
-            props = PathPointProperties(   // Coloring path properties
+            rasterTool.brush.name,          // Brush URI
+            particlesRandomSeed = 1,        // Particle random seed
+            props = PathPointProperties(    // Coloring path properties
                 red = defaults.red,
                 green = defaults.green,
                 blue = defaults.blue,
@@ -256,7 +264,18 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
+            val stepModel = StepModel(activity.layerPos,inkCanvas.createLayer(textureWidth,textureHeight))
+            inkCanvas.setTarget(stepModel.layer)
+            inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
+            activity.stepStack.addStep(stepModel)
         }
+    }
+
+    fun getStepModel():StepModel {
+        val stepModel = StepModel(activity.layerPos, inkCanvas.createLayer(textureWidth, textureHeight))
+        inkCanvas.setTarget(stepModel.layer)
+        inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
+        return stepModel
     }
 
     // Dispose the resources
@@ -307,12 +326,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun addLayer(){
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
-        changeToLayer(currentFrameLayer.lastIndex)
-    }
-
-
-    fun changeToLayer(position : Int){
-        refreshView()
     }
 
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
@@ -329,16 +342,5 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val scaleFactor = min(resolution / resX, resolution / resY).toFloat()
             if (scaleFactor != 1f) stroke.data.spline.transform(scaleFactor, scaleFactor, scaleFactor, 0f, 0f, 0f, 0f, 0f)
         }
-    }
-
-    fun toBitmap(pos:Int=activity.layerPos): Bitmap {
-        refreshView()
-        val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
-        val tempLayer = inkCanvas.createLayer(textureWidth, textureHeight)
-        inkCanvas.setTarget(tempLayer)
-        inkCanvas.clearColor(Color.WHITE)
-        inkCanvas.drawLayer(strokesLayer[pos],BlendMode.SOURCE_OVER)
-        inkCanvas.readPixels(tempLayer, bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
-        return bitmap
     }
 }
