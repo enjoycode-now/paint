@@ -6,11 +6,14 @@ package com.wacom.will3.ink.raster.rendering.demo
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.view.MotionEvent
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
 import com.wacom.ink.format.enums.InkInputType
 import com.wacom.ink.format.rendering.RasterBrush
+import com.wacom.ink.rasterization.InkCanvas
+import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.ParticleBrush
 import com.wacom.ink.rasterization.RotationMode
 import com.wacom.ink.rendering.BlendMode
@@ -191,4 +194,14 @@ fun BlendMode.uri(): String {
         "MAX" -> "will://rasterization/3.0/blend-mode/Max"
         else -> "will://rasterization/3.0/blend-mode/SourceOver"
     }
+}
+
+fun Layer.toBitmap(inkCanvas:InkCanvas): Bitmap {
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val tempLayer = inkCanvas.createLayer(width, height)
+    inkCanvas.setTarget(tempLayer)
+    inkCanvas.clearColor(Color.WHITE)
+    inkCanvas.drawLayer(this, BlendMode.SOURCE_OVER)
+    inkCanvas.readPixels(tempLayer, bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
+    return bitmap
 }
