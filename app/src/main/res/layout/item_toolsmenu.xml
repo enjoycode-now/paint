@@ -57,17 +57,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_icon_flower" />
 
-            <SeekBar
-                android:id="@+id/alpha_seekbar"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginVertical="10dp"
-                android:max="100"
-                android:progress="60"
-                android:progressDrawable="@drawable/bg_alpha_seekbar"
-                android:thumb="@null"
-                app:layout_constraintEnd_toEndOf="parent"
+
+            <TextView
+                android:id="@+id/alpha_num_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="不透明度："
+                android:textSize="15sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/delete" />
 
@@ -75,13 +74,52 @@
                 android:id="@+id/alpha_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="当前透明值：60/100"
-                android:textSize="20sp"
+                android:text="100%"
+                android:textSize="15sp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/alpha_seekbar" />
+                app:layout_constraintBaseline_toBaselineOf="@id/alpha_num_note"
+                />
+
+            <ImageView
+                android:id="@+id/minus_alpha_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginVertical="15dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/ic_minus"
+                app:layout_constraintTop_toBottomOf="@id/alpha_num_note"
+                app:layout_constraintEnd_toStartOf="@id/alpha_seekbar"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+
+            <SeekBar
+                android:id="@+id/alpha_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="5dp"
+                android:max="100"
+                android:progress="60"
+                android:progressDrawable="@drawable/bg_alpha_seekbar"
+                android:thumb="@null"
+                app:layout_constraintEnd_toStartOf="@+id/add_alpha_btn"
+                app:layout_constraintStart_toEndOf="@+id/minus_alpha_btn"
+                app:layout_constraintTop_toBottomOf="@id/alpha_num_note" />
+
+            <ImageView
+                android:id="@+id/add_alpha_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginVertical="15dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_add"
+                app:layout_constraintTop_toBottomOf="@id/alpha_num_note"
+                app:layout_constraintStart_toEndOf="@id/alpha_seekbar"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

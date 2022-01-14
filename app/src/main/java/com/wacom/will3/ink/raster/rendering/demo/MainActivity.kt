@@ -301,12 +301,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
         var progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
         popBind.alphaSeekbar.progress = progress
-        popBind.alphaNum.text = "当前透明值：${progress}/100"
+        popBind.alphaNum.text = "${progress}%"
 
         // 弹出PopUpWindow
-        popupwindow = PopupWindow(popBind.root, 350.dp(), 300.dp(), true)
+        popupwindow = PopupWindow(popBind.root, 500.dp(), 450.dp(), true)
         popupwindow.isOutsideTouchable = true
-//        popupwindow.showAsDropDown(view, (-552).dp(), (-160).dp())
         popupwindow.showAtLocation(binding.root,Gravity.CENTER,0,0)
 
         popBind.delete.setOnClickListener {
@@ -332,13 +331,11 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         popBind.alphaSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                popBind.alphaNum.text = "当前透明值：${progress}/100"
+                popBind.alphaNum.text = "${progress}%"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 if (seekBar != null) {
                     // 向上取整函数ceil()
@@ -347,6 +344,22 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 layerAdapter.notifyDataSetChanged()
             }
         })
+
+        popBind.addAlphaBtn.setOnClickListener{
+            popBind.alphaSeekbar.progress++
+            popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
+            smallLayerList[layerPos].alpha = ceil(popBind.alphaSeekbar.progress*2.55).toInt()
+            layerAdapter.notifyDataSetChanged()
+        }
+
+
+        popBind.minusAlphaBtn.setOnClickListener{
+            popBind.alphaSeekbar.progress--
+            popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
+            smallLayerList[layerPos].alpha = ceil(popBind.alphaSeekbar.progress*2.55).toInt()
+            layerAdapter.notifyDataSetChanged()
+        }
+
     }
 
 
