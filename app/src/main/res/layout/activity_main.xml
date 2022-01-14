@@ -80,35 +80,7 @@
                 android:src="@drawable/btn_crayon"
                 android:tint="@color/select_toolbar_button_stateful" />
 
-            <ImageView
-                android:id="@+id/btn_pen"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/btn_separator"
-                android:onClick="selectTool"
-                android:src="@drawable/btn_feather"
-                android:tint="@color/select_toolbar_button_stateful"
-                 />
 
-            <ImageView
-                android:id="@+id/btn_pen2"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/btn_separator"
-                android:onClick="selectTool"
-                android:src="@drawable/btn_feather"
-                android:tint="@color/select_toolbar_button_stateful"
-                />
-
-            <ImageView
-                android:id="@+id/btn_pen3"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/btn_separator"
-                android:onClick="selectTool"
-                android:src="@drawable/btn_feather"
-                android:tint="@color/select_toolbar_button_stateful"
-                />
 
             <ImageView
                 android:id="@+id/btn_eraser"

@@ -1,9 +1,13 @@
 package com.wacom.will3.ink.raster.rendering.demo.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.recyclerview.widget.RecyclerView
 import com.wacom.will3.ink.raster.rendering.demo.MainActivity
 import com.wacom.will3.ink.raster.rendering.demo.R
@@ -16,11 +20,13 @@ class LayerAdapter(private val activity: MainActivity) :
     RecyclerView.Adapter<LayerAdapter.ViewHolder>() {
 
 
-    override fun getItemViewType(position: Int) = if (position == activity.layerPos) 0 else 1  //0:选中,1:未选中
+    override fun getItemViewType(position: Int) =
+        if (position == activity.layerPos) 0 else 1  //0:选中,1:未选中
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemLayerSmallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemLayerSmallBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val viewholder = ViewHolder(binding)
         viewholder.viewType = viewType
         return viewholder
@@ -34,11 +40,11 @@ class LayerAdapter(private val activity: MainActivity) :
 
     class ViewHolder(val binding: ItemLayerSmallBinding) : RecyclerView.ViewHolder(binding.root) {
         var viewType: Int = 1
-
         @SuppressLint("SetTextI18n")
         fun bind(roomLayer: RoomLayer, position: Int, activity: MainActivity) {
             binding.layerImage.setImageBitmap(roomLayer.bitmap)
-            binding.layerNameText.text = "图层${position+1}"
+            binding.layerNameText.text = "图层${position + 1}"
+            binding.textRight.text = "${String.format("%.0f",roomLayer.alpha*100/255f)}%"
 
 
             binding.layerItem.setOnClickListener {
@@ -59,10 +65,20 @@ class LayerAdapter(private val activity: MainActivity) :
             )
 
             binding.imageLeft.setOnClickListener {
-                activity.smallLayerList[position].isShow=!activity.smallLayerList[position].isShow
+                activity.smallLayerList[position].isShow = !activity.smallLayerList[position].isShow
                 activity.layerAdapter.notifyItemChanged(position)
                 activity.changeVisibilityOfSmallLayer()
             }
+
+            binding.textRight.setOnClickListener {
+                if (activity.layerPos != position) {
+                    activity.changeToLayer(position)
+                }else{
+                    activity.layerToolPopupWindow(binding.textRight)
+                }
+
+            }
+
         }
     }
 }

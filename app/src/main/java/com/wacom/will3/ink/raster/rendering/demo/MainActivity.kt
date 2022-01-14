@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -33,10 +34,12 @@ import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_layer_small.view.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.ceil
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -178,9 +181,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             WaterbrushTool.uri -> btn_water_brush
             CrayonTool.uri -> btn_crayon
             EraserRasterTool.uri -> btn_eraser
-            PenTool.uri -> btn_pen
-            Pen2Tool.uri -> btn_pen2
-            Pen3Tool.uri -> btn_pen3
             else -> btn_pencil
         }
         selectTool(view)
@@ -192,9 +192,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             R.id.btn_water_brush -> setTool(view, WaterbrushTool(this))
             R.id.btn_crayon -> setTool(view, CrayonTool(this))
             R.id.btn_eraser -> setTool(view, EraserRasterTool(this))
-            R.id.btn_pen -> setTool(view, PenTool(this))
-            R.id.btn_pen2 -> setTool(view, Pen2Tool(this))
-            R.id.btn_pen3 -> setTool(view, Pen3Tool(this))
         }
     }
 
@@ -207,9 +204,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun highlightTool(view: View) {
         btn_pencil.isActivated = false
-        btn_pen.isActivated = false
-        btn_pen2.isActivated = false
-        btn_pen3.isActivated = false
         btn_water_brush.isActivated = false
         btn_ink_brush.isActivated = false
         btn_crayon.isActivated = false
@@ -305,10 +299,15 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
+        var progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
+        popBind.alphaSeekbar.progress = progress
+        popBind.alphaNum.text = "当前透明值：${progress}/100"
+
         // 弹出PopUpWindow
-        popupwindow = PopupWindow(popBind.root, 288.dp(), 128.dp(), true)
+        popupwindow = PopupWindow(popBind.root, 350.dp(), 300.dp(), true)
         popupwindow.isOutsideTouchable = true
-        popupwindow.showAsDropDown(view, (-352).dp(), (-160).dp())
+//        popupwindow.showAsDropDown(view, (-552).dp(), (-160).dp())
+        popupwindow.showAtLocation(binding.root,Gravity.CENTER,0,0)
 
         popBind.delete.setOnClickListener {
             deleteLayer()
@@ -326,12 +325,30 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                         dialog.dismiss()
                         toast("图层清空")
                     })
-                .setNegativeButton("取消",null)
+                .setNegativeButton("取消", null)
                 .create()
                 .show()
-
         }
+
+        popBind.alphaSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                popBind.alphaNum.text = "当前透明值：${progress}/100"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (seekBar != null) {
+                    // 向上取整函数ceil()
+                    smallLayerList[layerPos].alpha = ceil(seekBar.progress*2.55).toInt()
+                }
+                layerAdapter.notifyDataSetChanged()
+            }
+        })
     }
+
 
     // 删除当前图层
     fun deleteLayer() {

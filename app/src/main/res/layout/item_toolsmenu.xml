@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="256dp"
-    android:layout_height="96dp">
+    android:layout_width="350dp"
+    android:layout_height="300dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/ItemToolsMenuCardView"
@@ -11,6 +11,7 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,6 +28,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/eraser"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_icon_delete" />
@@ -38,6 +40,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/flower"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/delete"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_icon_eraser" />
@@ -49,9 +52,36 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/eraser"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_icon_flower" />
+
+            <SeekBar
+                android:id="@+id/alpha_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="10dp"
+                android:max="100"
+                android:progress="60"
+                android:progressDrawable="@drawable/bg_alpha_seekbar"
+                android:thumb="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/delete" />
+
+            <TextView
+                android:id="@+id/alpha_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="当前透明值：60/100"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/alpha_seekbar" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
