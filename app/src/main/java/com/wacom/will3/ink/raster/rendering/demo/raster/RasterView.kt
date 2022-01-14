@@ -182,9 +182,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun addStroke() {
         // Adding the style
         val style = Style(
-            rasterTool.brush.name,              // Brush URI
-            1,           // Particle random seed
-            props = PathPointProperties(   // Coloring path properties
+            rasterTool.brush.name,          // Brush URI
+            particlesRandomSeed = 1,        // Particle random seed
+            props = PathPointProperties(    // Coloring path properties
                 red = defaults.red,
                 green = defaults.green,
                 blue = defaults.blue,
