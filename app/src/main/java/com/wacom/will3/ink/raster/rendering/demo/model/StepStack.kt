@@ -31,4 +31,4 @@ class StepStack {
 
 }
 
-class StepModel(var index:Int,val layer:Layer,val bitmap: Bitmap)
+class StepModel(var index:Int,val layer:Layer,val isChangeLayer: Boolean = false)

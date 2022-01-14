@@ -47,7 +47,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         fun onSurfaceCreated()
     }
 
-    private lateinit var inkCanvas: InkCanvas
+    lateinit var inkCanvas: InkCanvas
     lateinit var currentFrameLayer: MutableList<Layer>  // 第一层：直接笔画层
     lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
     lateinit var finalLayer: Layer                      // 第三层：合成层
@@ -92,15 +92,13 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 textureHeight=h
                 inkCanvas = InkCanvas(surfaceTexture,EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
 
-                strokesLayer = mutableListOf(inkCanvas.createLayer(w, h))
-                currentFrameLayer = mutableListOf(inkCanvas.createLayer(w, h))
+                strokesLayer = mutableListOf()
+                currentFrameLayer = mutableListOf()
                 finalLayer = inkCanvas.createViewLayer(w, h)
-
+                activity.onTextureReady()
                 inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
                 strokeRenderer = StrokeRenderer(inkCanvas, PencilTool(context).brush.toParticleBrush(), w, h)
                 drawStrokes(strokeNodeList)
-                refreshView()
-                activity.onTextureReady()
                 listener.onSurfaceCreated()
             }
 
@@ -175,13 +173,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun setStepModel(stepModel:StepModel){
         with(stepModel){
             inkCanvas.setTarget(currentFrameLayer[index])
-            inkCanvas.clearColor()
             inkCanvas.drawLayer(layer,BlendMode.COPY)
-            inkCanvas.invalidate()
             inkCanvas.setTarget(strokesLayer[index])
-            inkCanvas.clearColor()
             inkCanvas.drawLayer(layer,BlendMode.COPY)
-            inkCanvas.invalidate()
         }
     }
 
@@ -270,11 +264,18 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
-            val stepModel = StepModel(activity.layerPos,inkCanvas.createLayer(textureWidth,textureHeight),toBitmap(activity.layerPos))
+            val stepModel = StepModel(activity.layerPos,inkCanvas.createLayer(textureWidth,textureHeight))
             inkCanvas.setTarget(stepModel.layer)
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
             activity.stepStack.addStep(stepModel)
         }
+    }
+
+    fun getStepModel():StepModel {
+        val stepModel = StepModel(activity.layerPos, inkCanvas.createLayer(textureWidth, textureHeight))
+        inkCanvas.setTarget(stepModel.layer)
+        inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.COPY)
+        return stepModel
     }
 
     // Dispose the resources
@@ -325,13 +326,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun addLayer(){
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
-        changeToLayer(currentFrameLayer.lastIndex)
-    }
-
-
-    fun changeToLayer(pos : Int){
-        activity.stepStack.addStep(StepModel(pos,strokesLayer[pos],toBitmap(pos)))
-        refreshView()
     }
 
     fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
@@ -348,16 +342,5 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val scaleFactor = min(resolution / resX, resolution / resY).toFloat()
             if (scaleFactor != 1f) stroke.data.spline.transform(scaleFactor, scaleFactor, scaleFactor, 0f, 0f, 0f, 0f, 0f)
         }
-    }
-
-    fun toBitmap(pos:Int=activity.layerPos): Bitmap {
-        refreshView()
-        val bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888)
-        val tempLayer = inkCanvas.createLayer(textureWidth, textureHeight)
-        inkCanvas.setTarget(tempLayer)
-        inkCanvas.clearColor(Color.WHITE)
-        inkCanvas.drawLayer(strokesLayer[pos],BlendMode.SOURCE_OVER)
-        inkCanvas.readPixels(tempLayer, bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
-        return bitmap
     }
 }
