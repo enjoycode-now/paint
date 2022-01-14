@@ -11,12 +11,10 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,6 +38,10 @@ import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
+import android.view.WindowManager
+
+
+
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -306,6 +308,21 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         // 弹出PopUpWindow
         popupwindow = PopupWindow(popBind.root, 500.dp(), 450.dp(), true)
         popupwindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f //设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        popupwindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
         popupwindow.showAtLocation(binding.root,Gravity.CENTER,0,0)
 
         popBind.delete.setOnClickListener {
