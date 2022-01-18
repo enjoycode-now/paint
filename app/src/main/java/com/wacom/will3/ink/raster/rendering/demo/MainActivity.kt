@@ -27,7 +27,7 @@ import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityMainBinding
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemToolsmenuBinding
 import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import com.wacom.will3.ink.raster.rendering.demo.model.StepStack
-import com.wacom.will3.ink.raster.rendering.demo.raster.RasterView
+import com.wacom.will3.ink.raster.rendering.demo.views.RasterView
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.*
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app

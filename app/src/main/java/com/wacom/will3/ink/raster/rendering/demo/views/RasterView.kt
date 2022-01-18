@@ -2,7 +2,7 @@
  * Copyright (C) 2020 Wacom.
  * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
  */
-package com.wacom.will3.ink.raster.rendering.demo.raster
+package com.wacom.will3.ink.raster.rendering.demo.views
 
 import android.content.Context
 import android.graphics.Color
@@ -30,6 +30,7 @@ import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.*
 import com.wacom.will3.ink.raster.rendering.demo.model.StepModel
+import com.wacom.will3.ink.raster.rendering.demo.raster.RasterInkBuilder
 import com.wacom.will3.ink.raster.rendering.demo.serialization.InkEnvironmentModel
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.EraserRasterTool
 import com.wacom.will3.ink.raster.rendering.demo.tools.raster.PencilTool
