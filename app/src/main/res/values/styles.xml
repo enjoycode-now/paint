@@ -9,4 +9,8 @@
         <item name="android:textColor">@color/textGrey</item>
     </style>
 
+    <style name="myCheckBox" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="buttonTint">#B5A0FF</item>
+    </style>
+
 </resources>
