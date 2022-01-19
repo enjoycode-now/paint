@@ -59,7 +59,8 @@ dependencies {
     implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
     implementation 'com.github.g39088902:ColorPicker:1.1.6'
 
-
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
 
     implementation 'androidx.multidex:multidex:2.0.1'
 

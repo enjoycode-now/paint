@@ -14,14 +14,15 @@ import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import android.graphics.PixelFormat
 
 import android.graphics.drawable.Drawable
+import com.bumptech.glide.Glide
 
 class UserActivity : AppCompatActivity() {
 
 
     val supportWorksList = mutableListOf<Bitmap>()
     private lateinit var  binding : ActivityUserBinding
-    val adapter = SupportWorksAdapter(this)
-    val RESQUEST_CODE = 1
+    private val adapter = SupportWorksAdapter(this)
+    private val RESQUEST_CODE = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +47,7 @@ class UserActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode == RESQUEST_CODE && resultCode == RESULT_OK){
-
+            Glide.with(this).load(data?.data).into(binding.userAvatar)
         }
     }
 
