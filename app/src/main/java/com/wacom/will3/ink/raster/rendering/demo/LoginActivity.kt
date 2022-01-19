@@ -47,14 +47,8 @@ class LoginActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            val arn = sharedPref.getString("arn","") ?: ""
-            val userPoolId = sharedPref.getString("userPoolId","") ?: ""
-            val id = sharedPref.getString("id","") ?: ""
-            val token = sharedPref.getString("token","") ?: ""
-            val nickname = sharedPref.getString("nickname","") ?: ""
-            val photo = sharedPref.getString("photo","") ?: ""
-            user = User(arn = arn, userPoolId = userPoolId, id=id,token=token, nickname = nickname,photo = photo)
-            authenticationClient.setCurrentUser(user)
+            authenticationClient.token = sharedPref.getString("token","") ?: ""
+            user = authenticationClient.getCurrentUser().execute()
             val response = authenticationClient.checkLoginStatus().execute()
             toast(response.message ?: "")
             if(response.code == 200) runOnUiThread {

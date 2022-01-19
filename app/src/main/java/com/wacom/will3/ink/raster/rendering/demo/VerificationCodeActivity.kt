@@ -38,16 +38,7 @@ class VerificationCodeActivity : AppCompatActivity() {
                         LoginByPhoneCodeInput(phoneNumber, code)
                     ).execute()
                     val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
-                    with(sharedPref.edit()){
-                        putString("arn",user.arn)
-                        putString("userPoolId",user.userPoolId)
-                        putString("id",user.id)
-                        putString("token",user.token)
-                        putString("nickname",user.nickname)
-                        putString("photo",user.photo)
-                        commit()
-                    }
-
+                    sharedPref.edit().putString("token",user.token).commit()
                     runOnUiThread {
                         startActivity(intent)
                     }
