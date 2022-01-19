@@ -16,6 +16,7 @@ import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.view.View
+import cn.authing.core.types.User
 import com.bumptech.glide.Glide
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
@@ -47,11 +48,6 @@ class UserActivity : AppCompatActivity() {
         authorName.text = user.nickname
         authorId.text = "ID:${user.id}"
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val bioString:String = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
-            runOnUiThread { biography.text = bioString}
-        }
-
         binding.userAvatar.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
@@ -66,6 +62,11 @@ class UserActivity : AppCompatActivity() {
         if(requestCode == RESQUEST_CODE && resultCode == RESULT_OK){
             Glide.with(this).load(data?.data).into(binding.userAvatar)
         }
+    }
+
+    fun buyScallop(view:View){
+        val intent = Intent(this, VerificationCodeActivity::class.java)
+        startActivity(intent)
     }
 
     fun copyAddress(view: View) {
@@ -86,14 +87,13 @@ class UserActivity : AppCompatActivity() {
 
 
     fun simulateData(){
-        for (i in 1..10){
-            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link);
+        repeat(10){
+            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link)
             if(drawable !=null){
                 val bitmap = drawableToBitmap(drawable)
                 if (bitmap!=null)
                 supportWorksList.add(bitmap)
             }
-
         }
     }
 

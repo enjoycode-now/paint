@@ -23,5 +23,6 @@ public class SoftInputUtils {
         if (imm != null) {
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
+        
     }
 }
