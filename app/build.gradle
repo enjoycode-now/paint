@@ -59,6 +59,8 @@ dependencies {
     implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
     implementation 'com.github.g39088902:ColorPicker:1.1.6'
 
+
+
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'com.github.javiersantos:AppUpdater:2.7'

@@ -1,5 +1,6 @@
 package com.wacom.will3.ink.raster.rendering.demo
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -20,6 +21,8 @@ class UserActivity : AppCompatActivity() {
     val supportWorksList = mutableListOf<Bitmap>()
     private lateinit var  binding : ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
+    val RESQUEST_CODE = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +33,23 @@ class UserActivity : AppCompatActivity() {
         simulateData()
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
+
+        binding.userAvatar.setOnClickListener{
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            startActivityForResult(intent,RESQUEST_CODE)
+        }
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == RESQUEST_CODE && resultCode == RESULT_OK){
+
+        }
+    }
+
 
 
     fun simulateData(){
