@@ -1,13 +1,5 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/red</item>
-        <item name="colorPrimaryDark">@color/red</item>
-        <item name="colorAccent">@color/red</item>
-        <item name="android:textColor">@color/textGrey</item>
-    </style>
 
     <style name="myCheckBox" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="buttonTint">#B5A0FF</item>
