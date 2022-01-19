@@ -15,6 +15,8 @@ import com.wacom.will3.ink.raster.rendering.demo.adapter.SupportWorksAdapter
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
@@ -24,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.URL
 
 class UserActivity : AppCompatActivity() {
 
@@ -49,7 +52,12 @@ class UserActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val bioString:String = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
-            runOnUiThread { biography.text = bioString}
+            val userAvatarUrl = user.photo
+            runOnUiThread {
+                biography.text = bioString
+                Log.i("TAG", userAvatarUrl.toString())
+                Glide.with(this@UserActivity).load(userAvatarUrl).error(R.drawable.avatar_sample).into(binding.userAvatar)
+            }
         }
 
         binding.userAvatar.setOnClickListener{
