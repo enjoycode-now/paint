@@ -1,8 +1,10 @@
 package com.wacom.will3.ink.raster.rendering.demo
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,17 +14,24 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.wacom.will3.ink.raster.rendering.demo.adapter.SupportWorksAdapter
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import android.graphics.PixelFormat
-
 import android.graphics.drawable.Drawable
+import android.view.View
 import com.bumptech.glide.Glide
+import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
+import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
+import kotlinx.android.synthetic.main.activity_user.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UserActivity : AppCompatActivity() {
 
 
     val supportWorksList = mutableListOf<Bitmap>()
     private lateinit var  binding : ActivityUserBinding
-    private val adapter = SupportWorksAdapter(this)
-    private val RESQUEST_CODE = 1
+    val adapter = SupportWorksAdapter(this)
+    val RESQUEST_CODE = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +43,14 @@ class UserActivity : AppCompatActivity() {
         simulateData()
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
+
+        authorName.text = user.nickname
+        authorId.text = "ID:${user.id}"
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val bioString:String = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            runOnUiThread { biography.text = bioString}
+        }
 
         binding.userAvatar.setOnClickListener{
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -51,13 +68,28 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
+    fun copyAddress(view: View) {
+        val address : String  = binding.blockchainAddress.text.replaceRange(0, 6, "").toString()
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("blockchainAddress", address)
+        clipboardManager.setPrimaryClip(clipData)
+        toast("地址复制成功")
+    }
+
+    fun copyId(view: View) {
+        val id : String  = binding.authorId.text.replaceRange(0, 3, "").toString()
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("authorId", id)
+        clipboardManager.setPrimaryClip(clipData)
+        toast("ID复制成功")
+    }
 
 
     fun simulateData(){
         for (i in 1..10){
             val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link);
             if(drawable !=null){
-                var bitmap = drawableToBitmap(drawable)
+                val bitmap = drawableToBitmap(drawable)
                 if (bitmap!=null)
                 supportWorksList.add(bitmap)
             }
