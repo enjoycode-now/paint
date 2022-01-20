@@ -22,8 +22,7 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.06"
+        android:layout_height="48dp"
         android:background="#303030"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -33,9 +32,7 @@
         android:layout_height="0dp"
         android:text="首页"
         android:textColor="#ffffff"
-        android:autoSizeMaxTextSize="30sp"
-        android:autoSizeMinTextSize="10sp"
-        android:layout_marginVertical="20px"
+        android:textSize="21dp"
         android:onClick="onHomePage"
         android:gravity="center"
         android:background="@drawable/btn_selector_homepage"
@@ -44,23 +41,21 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/myPageBtn"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintWidth_percent="0.14" />
+        app:layout_constraintWidth_percent="0.2" />
 
     <TextView
         android:id="@+id/myPageBtn"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:autoSizeMaxTextSize="30sp"
-        android:autoSizeMinTextSize="10sp"
-        android:layout_marginVertical="20px"
+        android:textSize="21dp"
         android:gravity="center"
         android:background="@drawable/btn_selector_homepage"
-        android:onClick="onUserPage"
         android:text="我的"
+        android:onClick="onUserPage"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toEndOf="@+id/homePageBtn"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintWidth_percent="0.14" />
+        app:layout_constraintWidth_percent="0.2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

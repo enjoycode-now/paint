@@ -6,10 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -41,6 +43,7 @@ class UserActivity : AppCompatActivity() {
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        HignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
 
@@ -87,6 +90,16 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
+    fun HignLightBtn(view: View){
+        val textview = view as TextView
+        binding.homePageBtn.isSelected = false
+        binding.myPageBtn.isSelected = false
+        binding.homePageBtn.setTextColor(Color.rgb(179,179,179))
+        binding.myPageBtn.setTextColor(Color.rgb(179,179,179))
+        textview.isSelected = true
+        textview.setTextColor(Color.rgb(255,255,255))
+    }
+
     fun onChangeAvatar(view:View){
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
@@ -99,6 +112,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onHomePage(view:View){
+        HignLightBtn(binding.homePageBtn)
         startActivity(Intent(this,HomePageActivity::class.java))
         overridePendingTransition(0,0)
         finish()
@@ -141,5 +155,9 @@ class UserActivity : AppCompatActivity() {
         //把drawable内容画到画布中
         drawable.draw(canvas)
         return bitmap
+    }
+
+    fun onUserPage(view: android.view.View) {
+        HignLightBtn(binding.myPageBtn)
     }
 }
