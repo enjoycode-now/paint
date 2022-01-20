@@ -252,9 +252,50 @@ OOTD｜每日速写｜潮流插画｜复古油画风\n
         android:id="@+id/supportWorksRecylerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/supportWorks" />
+
+
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
+        android:background="#303030"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/homePageBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="首页"
+        android:textColor="#ffffff"
+        android:autoSizeMaxTextSize="30sp"
+        android:autoSizeMinTextSize="10sp"
+        android:gravity="center"
+        android:background="@drawable/btn_selector_homepage"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomBar"
+        app:layout_constraintTop_toTopOf="@+id/bottomBar"
+        app:layout_constraintStart_toStartOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="@+id/myPageBtn"
+        app:layout_constraintWidth_percent="0.2" />
+
+    <TextView
+        android:id="@+id/myPageBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#303030"
+        android:textColor="#ffffff"
+        android:autoSizeMaxTextSize="30sp"
+        android:autoSizeMinTextSize="10sp"
+        android:text="我的"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomBar"
+        app:layout_constraintTop_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="@+id/bottomBar"
+        app:layout_constraintStart_toStartOf="@+id/homePageBtn"
+        app:layout_constraintWidth_percent="0.2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
