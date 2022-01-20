@@ -42,34 +42,45 @@ class LoginActivity : AppCompatActivity() {
 
         binding.phoneText.setText(phoneNumber)
         binding.phoneText.doAfterTextChanged {
-            if(isPhoneNumber(it.toString())) binding.submitButton.setColorFilter(Color.rgb(181,160,255))
-            else binding.submitButton.setColorFilter(Color.rgb(228,220,252))
+            binding.submitButton.setColorFilter(
+                if(isPhoneNumber(it.toString()))Color.rgb(181,160,255)
+                else Color.rgb(228,220,252)
+            )
         }
     }
 
     fun onSubmit(view: View){
-        val phonetext = binding.phoneText.text.toString()
-        if (!isPhoneNumber(phonetext))toast("请输入正确的手机号")
+        if (!isPhoneNumber(phoneNumber))toast("请输入正确的手机号")
         else if (!binding.checkbox.isChecked) toast("请同意《用户协议》《隐私政策》")
         else {
             val intent = Intent(this, VerificationCodeActivity::class.java)
             CoroutineScope(Dispatchers.IO).launch{
                 try {
-                    authenticationClient.sendSmsCode(phonetext).execute()
+                    authenticationClient.sendSmsCode(phoneNumber).execute()
                     runOnUiThread {
-                        intent.putExtra("phoneNumber",phonetext)
+                        intent.putExtra("phoneNumber",phoneNumber)
                         startActivity(intent)
                         finish()
                     }
                 }catch (e:IOException){
-                    if(e.message?.contains("1分钟") == true){
-                        runOnUiThread {
-                            intent.putExtra("phoneNumber",phonetext)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }else toast(e.message ?: "发生错误")
+                    handleSmsError(e.message ?: "")
                 }
+            }
+        }
+    }
+
+    fun handleSmsError(cause:String){
+        with(cause) {
+            when {
+                contains("1分钟") -> {
+                    runOnUiThread {
+                        intent.putExtra("phoneNumber", phoneNumber)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+                contains("格式") -> toast("请输入正确的手机号")
+                else -> toast(cause ?: "发生错误")
             }
         }
     }

@@ -1,20 +1,15 @@
 package com.wacom.will3.ink.raster.rendering.demo.adapter
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.wacom.will3.ink.raster.rendering.demo.UserActivity
-import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemSupportWorksBinding
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 
 class SupportWorksAdapter(private val activity : UserActivity) : RecyclerView.Adapter<SupportWorksAdapter.ViewHolder>() {
-
-
-
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemSupportWorksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,26 +18,22 @@ class SupportWorksAdapter(private val activity : UserActivity) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.supportWorksList[position], position, activity)
+        holder.bind(activity.sponsorList[position], position, activity)
     }
 
-    override fun getItemCount() = activity.supportWorksList.size
-
-
+    override fun getItemCount() = activity.sponsorList.size
 
     class ViewHolder(val binding : ItemSupportWorksBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(bitmap: Bitmap, position: Int, activity: UserActivity) {
-            binding.image.setImageBitmap(bitmap)
-
+        fun bind(url:String, position: Int, activity: UserActivity) {
+            Glide.with(activity)
+                .load(url)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.image)
 
             binding.image.setOnClickListener{
-                ToastUtils.toast("你点击了第${position+1}张图片")
+                toast("你点击了第${position+1}张图片")
             }
         }
-
-
-
     }
-
-
 }

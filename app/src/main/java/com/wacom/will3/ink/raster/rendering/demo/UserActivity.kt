@@ -6,40 +6,33 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import com.bugsnag.android.Bugsnag
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import com.wacom.will3.ink.raster.rendering.demo.adapter.SupportWorksAdapter
-import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.util.Log
+import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import cn.authing.core.graphql.GraphQLException
-import cn.authing.core.types.User
+import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
-import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils
+import com.wacom.will3.ink.raster.rendering.demo.adapter.SupportWorksAdapter
+import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityUserBinding
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
+import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.biography
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
-import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URL
 
 class UserActivity : AppCompatActivity() {
 
-
-    val supportWorksList = mutableListOf<Bitmap>()
+    val sponsorList = mutableListOf<String>()
     private lateinit var  binding : ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,29 +40,42 @@ class UserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        simulateData()
-        binding.homePageBtn.isSelected = false
-        binding.myPageBtn.isSelected = true
+
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
 
+        CoroutineScope(Dispatchers.Default).launch{
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPref = ToastUtils.app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            updateInfo()
+            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token","") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
             }catch (e: GraphQLException){
-                runOnUiThread { startActivity(Intent(ToastUtils.app, LoginActivity::class.java)) }
+                runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch
             }
-            val bioString:String = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
-            val userAvatarUrl = user.photo
-            runOnUiThread {
-                authorName.text = user.nickname
-                authorId.text = "ID:${user.id}"
-                biography.text = bioString
-                Glide.with(this@UserActivity).load(userAvatarUrl).error(R.drawable.avatar_sample).into(binding.userAvatar)
-            }
+            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            updateInfo()
+
+            // 应援记录数据
+            repeat(16){sponsorList.add("https://api.ghser.com/random/pe.php")}
+            runOnUiThread { adapter.notifyDataSetChanged() }
+        }
+    }
+
+    fun updateInfo(){
+        runOnUiThread {
+            binding.authorName.text = user.nickname
+            binding.authorId.text = "ID:${user.id}"
+            binding.biography.text = biography
+            Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample).into(binding.userAvatar)
         }
     }
 
@@ -87,6 +93,11 @@ class UserActivity : AppCompatActivity() {
         startActivityForResult(intent,RESQUEST_CODE)
     }
 
+    fun onSetting(view: View){
+        startActivity(Intent(this,SettingActivity::class.java))
+        finish()
+    }
+
     fun onHomePage(view:View){
         startActivity(Intent(this,HomePageActivity::class.java))
         overridePendingTransition(0,0)
@@ -94,7 +105,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun buyScallop(view:View){
-        val intent = Intent(this, VerificationCodeActivity::class.java)
+        val intent = Intent(this, PayActivity::class.java)
         startActivity(intent)
     }
 
@@ -114,18 +125,6 @@ class UserActivity : AppCompatActivity() {
         toast("ID复制成功")
     }
 
-
-    fun simulateData(){
-        repeat(10){
-            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link)
-            if(drawable !=null){
-                val bitmap = drawableToBitmap(drawable)
-                if (bitmap!=null)
-                supportWorksList.add(bitmap)
-            }
-        }
-    }
-
     //将drawable转为bitmap
     private fun drawableToBitmap(drawable: Drawable): Bitmap? {
         //取drawable的宽高
@@ -143,6 +142,4 @@ class UserActivity : AppCompatActivity() {
         drawable.draw(canvas)
         return bitmap
     }
-
-    fun onUserPage(view: android.view.View) {}
 }

@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".SettingActivity">
 
+    <TextView
+        android:id="@+id/onBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:drawableStart="@drawable/ic_back_deep_gray"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:onClick="onFinish"
+        android:textSize="21sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="0dp"
@@ -18,18 +31,17 @@
         app:layout_constraintBottom_toTopOf="@+id/logoutBtn"
         app:layout_constraintEnd_toEndOf="@+id/logoutBtn"
         app:layout_constraintStart_toStartOf="@+id/logoutBtn" />
+
     <Button
         android:id="@+id/logoutBtn"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:onClick="onLogout"
         android:text="退出登录"
         android:textSize="40px"
-        android:textColor="@color/white"
-        android:onClick="onclick"
-        android:background="@drawable/bg_logout_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.8" />
 </androidx.constraintlayout.widget.ConstraintLayout>

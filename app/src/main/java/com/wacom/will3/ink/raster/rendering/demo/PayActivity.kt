@@ -8,10 +8,10 @@ class PayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pay)
-
     }
 
     fun onFinish(view: View) {
         finish()
+        overridePendingTransition(0,0)
     }
 }
