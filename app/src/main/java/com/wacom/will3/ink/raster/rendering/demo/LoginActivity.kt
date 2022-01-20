@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.phoneText.setText(phoneNumber)
         binding.phoneText.doAfterTextChanged {
+            phoneNumber = binding.phoneText.text.toString()
             binding.submitButton.setColorFilter(
                 if(isPhoneNumber(it.toString()))Color.rgb(181,160,255)
                 else Color.rgb(228,220,252)
