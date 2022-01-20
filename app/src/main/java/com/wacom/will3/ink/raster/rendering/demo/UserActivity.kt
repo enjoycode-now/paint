@@ -28,11 +28,13 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.lang.Exception
 
 class UserActivity : AppCompatActivity() {
 
     val sponsorList = mutableListOf<String>()
-    private lateinit var  binding : ActivityUserBinding
+    private lateinit var binding: ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
 
@@ -44,10 +46,10 @@ class UserActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         HignLightBtn(binding.myPageBtn)
-        binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
+        binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
 
-        CoroutineScope(Dispatchers.Default).launch{
+        CoroutineScope(Dispatchers.Default).launch {
 
         }
     }
@@ -56,75 +58,82 @@ class UserActivity : AppCompatActivity() {
         super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
             updateInfo()
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            authenticationClient.token = sharedPref.getString("token","") ?: ""
+            val sharedPref =
+                app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
-            }catch (e: GraphQLException){
+            } catch (e: GraphQLException) {
                 runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch
+            }catch (e : IOException){
+                toast("用户信息获取失败")
             }
-            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            biography =
+                (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
 
             // 应援记录数据
-            repeat(16){sponsorList.add("https://api.ghser.com/random/pe.php")}
+            repeat(16) { sponsorList.add("https://api.ghser.com/random/pe.php") }
             runOnUiThread { adapter.notifyDataSetChanged() }
         }
     }
 
-    fun updateInfo(){
+    fun updateInfo() {
         runOnUiThread {
             binding.authorName.text = user.nickname
             binding.authorId.text = "ID:${user.id}"
             binding.biography.text = biography
-            Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample).into(binding.userAvatar)
+            try {
+                Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
+                    .into(binding.userAvatar)
+            } catch (e: Exception) {}
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == RESQUEST_CODE && resultCode == RESULT_OK){
+        if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) {
             Glide.with(this).load(data?.data).into(binding.userAvatar)
         }
     }
 
-    fun HignLightBtn(view: View){
+    fun HignLightBtn(view: View) {
         val textview = view as TextView
         binding.homePageBtn.isSelected = false
         binding.myPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.rgb(179,179,179))
-        binding.myPageBtn.setTextColor(Color.rgb(179,179,179))
+        binding.homePageBtn.setTextColor(Color.rgb(179, 179, 179))
+        binding.myPageBtn.setTextColor(Color.rgb(179, 179, 179))
         textview.isSelected = true
-        textview.setTextColor(Color.rgb(255,255,255))
+        textview.setTextColor(Color.rgb(255, 255, 255))
     }
 
-    fun onChangeAvatar(view:View){
+    fun onChangeAvatar(view: View) {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
-        startActivityForResult(intent,RESQUEST_CODE)
+        startActivityForResult(intent, RESQUEST_CODE)
     }
 
-    fun onSetting(view: View){
-        startActivity(Intent(this,SettingActivity::class.java))
+    fun onSetting(view: View) {
+        startActivity(Intent(this, SettingActivity::class.java))
         finish()
     }
 
-    fun onHomePage(view:View){
+    fun onHomePage(view: View) {
         HignLightBtn(binding.homePageBtn)
-        startActivity(Intent(this,HomePageActivity::class.java))
-        overridePendingTransition(0,0)
+        startActivity(Intent(this, HomePageActivity::class.java))
+        overridePendingTransition(0, 0)
         finish()
     }
 
-    fun buyScallop(view:View){
+    fun buyScallop(view: View) {
         val intent = Intent(this, PayActivity::class.java)
         startActivity(intent)
     }
 
     fun copyAddress(view: View) {
-        val address : String  = binding.blockchainAddress.text.replaceRange(0, 6, "").toString()
+        val address: String = binding.blockchainAddress.text.replaceRange(0, 6, "").toString()
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("blockchainAddress", address)
         clipboardManager.setPrimaryClip(clipData)
@@ -132,7 +141,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun copyId(view: View) {
-        val id : String  = binding.authorId.text.replaceRange(0, 3, "").toString()
+        val id: String = binding.authorId.text.replaceRange(0, 3, "").toString()
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
