@@ -33,13 +33,10 @@ class HomePageActivity : AppCompatActivity() {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
         }
 
-        binding.mainViewPager.setOnClickListener{
-
-        }
-
-
         binding.myPageBtn.setOnClickListener{
-
+            startActivity(Intent(this,UserActivity::class.java))
+            overridePendingTransition(0,0)
+            finish()
         }
 
         CoroutineScope(Dispatchers.IO).launch {
