@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".SettingActivity">
 
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="关注官方公众号【XXXX】，最新资讯尽在掌握"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeMaxTextSize="30sp"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/logoutBtn"
+        app:layout_constraintEnd_toEndOf="@+id/logoutBtn"
+        app:layout_constraintStart_toStartOf="@+id/logoutBtn" />
     <Button
         android:id="@+id/logoutBtn"
         android:layout_width="0dp"
