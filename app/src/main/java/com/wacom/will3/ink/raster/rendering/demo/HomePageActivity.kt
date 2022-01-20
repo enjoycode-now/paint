@@ -33,7 +33,8 @@ class HomePageActivity : AppCompatActivity() {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
         }
 
-        binding.mainViewPager.setOnClickListener{
+
+        binding.homePageBtn.setOnClickListener{
 
         }
 
