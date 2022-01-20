@@ -26,25 +26,25 @@ class HomePageActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-        HignLightBtn(binding.homePageBtn)
+        highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             offscreenPageLimit=2
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
         }
     }
 
-    fun HignLightBtn(view: View){
-        val textview = view as TextView
+    fun highLightBtn(view: View){
+        view as TextView
         binding.homePageBtn.isSelected = false
         binding.myPageBtn.isSelected = false
         binding.homePageBtn.setTextColor(Color.rgb(179,179,179))
         binding.myPageBtn.setTextColor(Color.rgb(179,179,179))
-        textview.isSelected = true
-        textview.setTextColor(Color.rgb(255,255,255))
+        view.isSelected = true
+        view.setTextColor(Color.rgb(255,255,255))
     }
 
     fun onUserPage(view: View){
-        HignLightBtn(binding.myPageBtn)
+        highLightBtn(binding.myPageBtn)
         binding.homePageBtn.isSelected = false
         binding.myPageBtn.isSelected = true
         startActivity(Intent(this,UserActivity::class.java))

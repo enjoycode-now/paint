@@ -4,16 +4,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.PixelFormat
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.authing.core.graphql.GraphQLException
 import com.bugsnag.android.Bugsnag
@@ -45,7 +40,7 @@ class UserActivity : AppCompatActivity() {
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        HignLightBtn(binding.myPageBtn)
+        hignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
     }
@@ -93,14 +88,14 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    fun HignLightBtn(view: View) {
-        val textview = view as TextView
+    fun hignLightBtn(view: View) {
+        view as TextView
         binding.homePageBtn.isSelected = false
         binding.myPageBtn.isSelected = false
         binding.homePageBtn.setTextColor(Color.rgb(179, 179, 179))
         binding.myPageBtn.setTextColor(Color.rgb(179, 179, 179))
-        textview.isSelected = true
-        textview.setTextColor(Color.rgb(255, 255, 255))
+        view.isSelected = true
+        view.setTextColor(Color.rgb(255, 255, 255))
     }
 
     fun onChangeAvatar(view: View) {
@@ -114,7 +109,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onHomePage(view: View) {
-        HignLightBtn(binding.homePageBtn)
+        hignLightBtn(binding.homePageBtn)
         startActivity(Intent(this, HomePageActivity::class.java))
         overridePendingTransition(0, 0)
         finish()
