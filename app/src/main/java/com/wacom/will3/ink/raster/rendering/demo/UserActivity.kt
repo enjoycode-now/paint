@@ -22,6 +22,7 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.lang.Exception
@@ -63,8 +64,13 @@ class UserActivity : AppCompatActivity() {
             updateInfo()
 
             // 应援记录数据
-            repeat(16) { sponsorList.add("https://api.ghser.com/random/pe.php") }
-            runOnUiThread { adapter.notifyDataSetChanged() }
+            CoroutineScope(Dispatchers.Default).launch {
+                for(i in 0..127){
+                    sponsorList.add("https://api.ghser.com/random/pe.php")
+                    delay(250)
+                    runOnUiThread { adapter.notifyItemChanged(i) }
+                }
+            }
         }
     }
 
