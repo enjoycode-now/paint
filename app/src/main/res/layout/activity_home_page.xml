@@ -9,11 +9,49 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/mainViewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <View
+        android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
+        android:background="#303030"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
+    <TextView
+        android:id="@+id/homePageBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="首页"
+        android:textColor="#ffffff"
+        android:gravity="center"
+        android:background="@drawable/btn_selector_homepage"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/myPageBtn"
+        app:layout_constraintWidth_percent="0.2" />
 
-
-
+    <TextView
+        android:id="@+id/myPageBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#303030"
+        android:textColor="#ffffff"
+        android:text="我的"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/homePageBtn"
+        app:layout_constraintWidth_percent="0.2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

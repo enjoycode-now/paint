@@ -33,6 +33,15 @@ class HomePageActivity : AppCompatActivity() {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
         }
 
+        binding.mainViewPager.setOnClickListener{
+
+        }
+
+
+        binding.myPageBtn.setOnClickListener{
+
+        }
+
         CoroutineScope(Dispatchers.IO).launch {
             val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             AuthingUtils.authenticationClient.token = sharedPref.getString("token","") ?: ""
