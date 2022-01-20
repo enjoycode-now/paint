@@ -15,13 +15,12 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import kotlinx.android.synthetic.main.activity_home_page.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomePageActivity : AppCompatActivity() {
     lateinit var binding : ActivityHomePageBinding
     val photoUri = "https://api.ghser.com/random/pe.php"
-    val picList = mutableListOf(LiveFragment(photoUri))
+    val picList = mutableListOf(LiveFragment(photoUri),LiveFragment(photoUri),LiveFragment(photoUri))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +48,7 @@ class HomePageActivity : AppCompatActivity() {
         override fun getItemCount() = Int.MAX_VALUE
 
         override fun createFragment(position: Int): Fragment {
-            CoroutineScope(Dispatchers.Default).launch {
-                while (position>picList.lastIndex-3){
-                    delay(250)
-                    picList.add(LiveFragment(photoUri))
-                }
-            }
+            while (position>picList.lastIndex-3)picList.add(LiveFragment(photoUri))
             return picList[position]
         }
     }
