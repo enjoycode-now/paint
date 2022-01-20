@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 class UserActivity : AppCompatActivity() {
 
-    val supportWorksList = mutableListOf<Bitmap>()
+    val sponsorList = mutableListOf<String>()
     private lateinit var  binding : ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
@@ -40,10 +40,17 @@ class UserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        simulateData()
+
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
 
+        CoroutineScope(Dispatchers.Default).launch{
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
             updateInfo()
             val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
@@ -56,6 +63,10 @@ class UserActivity : AppCompatActivity() {
             }
             biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
+
+            // 应援记录数据
+            repeat(16){sponsorList.add("https://api.ghser.com/random/pe.php")}
+            runOnUiThread { adapter.notifyDataSetChanged() }
         }
     }
 
@@ -112,18 +123,6 @@ class UserActivity : AppCompatActivity() {
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
         toast("ID复制成功")
-    }
-
-
-    fun simulateData(){
-        repeat(10){
-            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link)
-            if(drawable !=null){
-                val bitmap = drawableToBitmap(drawable)
-                if (bitmap!=null)
-                supportWorksList.add(bitmap)
-            }
-        }
     }
 
     //将drawable转为bitmap
