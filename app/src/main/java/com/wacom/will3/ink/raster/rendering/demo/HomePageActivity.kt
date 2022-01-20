@@ -26,7 +26,6 @@ class HomePageActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-
         HignLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             offscreenPageLimit=2
@@ -51,12 +50,6 @@ class HomePageActivity : AppCompatActivity() {
         startActivity(Intent(this,UserActivity::class.java))
         overridePendingTransition(0,0)
         finish()
-    }
-
-    fun onHomePage(view:View){
-        HignLightBtn(binding.homePageBtn)
-        binding.homePageBtn.isSelected = true
-        binding.myPageBtn.isSelected = false
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {

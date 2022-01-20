@@ -48,18 +48,13 @@ class UserActivity : AppCompatActivity() {
         HignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-
-        CoroutineScope(Dispatchers.Default).launch {
-
-        }
     }
 
     override fun onResume() {
         super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
             updateInfo()
-            val sharedPref =
-                app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
@@ -69,8 +64,7 @@ class UserActivity : AppCompatActivity() {
             }catch (e : IOException){
                 toast("用户信息获取失败")
             }
-            biography =
-                (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
 
             // 应援记录数据
@@ -117,7 +111,6 @@ class UserActivity : AppCompatActivity() {
 
     fun onSetting(view: View) {
         startActivity(Intent(this, SettingActivity::class.java))
-        finish()
     }
 
     fun onHomePage(view: View) {
@@ -146,27 +139,5 @@ class UserActivity : AppCompatActivity() {
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
         toast("ID复制成功")
-    }
-
-    //将drawable转为bitmap
-    private fun drawableToBitmap(drawable: Drawable): Bitmap? {
-        //取drawable的宽高
-        val width = drawable.intrinsicWidth
-        val height = drawable.intrinsicHeight
-        //取drawable的颜色格式
-        val config =
-            if (drawable.opacity != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
-        //创建对应的bitmap
-        val bitmap = Bitmap.createBitmap(width, height, config)
-        //创建对应的bitmap的画布
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, width, height)
-        //把drawable内容画到画布中
-        drawable.draw(canvas)
-        return bitmap
-    }
-
-    fun onUserPage(view: android.view.View) {
-        HignLightBtn(binding.myPageBtn)
     }
 }

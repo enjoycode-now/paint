@@ -22,11 +22,6 @@ class SettingActivity : AppCompatActivity() {
         app = this
     }
 
-    override fun onBackPressed() {
-        startActivity(Intent(this,UserActivity::class.java))
-        finish()
-    }
-
     fun onFinish(view: View) = onBackPressed()
 
     fun onLogout(view: View){
