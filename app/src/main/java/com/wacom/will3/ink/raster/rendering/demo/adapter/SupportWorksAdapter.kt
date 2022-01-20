@@ -29,6 +29,7 @@ class SupportWorksAdapter(private val activity : UserActivity) : RecyclerView.Ad
                 .load(url)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .centerCrop()
                 .into(binding.image)
 
             binding.image.setOnClickListener{

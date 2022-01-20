@@ -37,13 +37,17 @@ class LiveFragment(uri : String ) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        var fragmentBinding = FragmentLiveBinding.inflate(inflater,container,false)
+    ): View {
+        val fragmentBinding = FragmentLiveBinding.inflate(inflater,container,false)
         val view = fragmentBinding.root
 
         activity?.runOnUiThread{
-            Glide.with(this).load(photoUri).skipMemoryCache(true).diskCacheStrategy(
-                DiskCacheStrategy.NONE).centerCrop().into(fragmentBinding.image)
+            Glide.with(this)
+                .load(photoUri)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .centerCrop()
+                .into(fragmentBinding.image)
         }
 
 
