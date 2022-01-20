@@ -267,37 +267,72 @@ OOTD｜每日速写｜潮流插画｜复古油画风\n
         android:background="#303030"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homePageBtn"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:autoSizeMaxTextSize="30sp"
-        android:autoSizeMinTextSize="10sp"
-        android:background="@drawable/btn_selector_homepage"
-        android:gravity="center"
-        android:onClick="onHomePage"
-        android:text="首页"
-        android:textColor="#ffffff"
+        android:layout_marginHorizontal="60px"
         app:layout_constraintBottom_toBottomOf="@+id/bottomBar"
-        app:layout_constraintEnd_toEndOf="@+id/myPageBtn"
-        app:layout_constraintStart_toStartOf="@+id/bottomBar"
         app:layout_constraintTop_toTopOf="@+id/bottomBar"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintStart_toStartOf="@+id/bottomBar"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintEnd_toStartOf="@+id/myPageBtn"
+        >
 
-    <TextView
+        <TextView
+            android:id="@+id/homePageBtn_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textSize="36px"
+            android:layout_marginVertical="20px"
+            android:background="@drawable/btn_selector_homepage"
+            android:gravity="center"
+            android:onClick="onHomePage"
+            android:text="首页"
+            android:textColor="#ffffff"
+            app:layout_constraintHorizontal_weight="0.4"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/myPageBtn"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#303030"
-        android:textColor="#ffffff"
-        android:autoSizeMaxTextSize="30sp"
-        android:autoSizeMinTextSize="10sp"
-        android:text="我的"
-        android:gravity="center"
+        android:layout_marginHorizontal="60px"
         app:layout_constraintBottom_toBottomOf="@+id/bottomBar"
         app:layout_constraintTop_toTopOf="@+id/bottomBar"
         app:layout_constraintEnd_toEndOf="@+id/bottomBar"
-        app:layout_constraintStart_toStartOf="@+id/homePageBtn"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintStart_toEndOf="@+id/homePageBtn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        >
+
+        <TextView
+            android:id="@+id/myPageBtn_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignParentStart="true"
+            android:textSize="36px"
+            android:layout_marginVertical="20px"
+            android:background="@drawable/btn_selector_homepage"
+            android:gravity="center"
+            android:onClick="onUserPage"
+            android:text="我的"
+            android:textColor="#ffffff"
+            app:layout_constraintHorizontal_weight="0.4"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

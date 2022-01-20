@@ -23,6 +23,8 @@ class HomePageActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
+        binding.homePageBtn.isSelected = true
+        binding.myPageBtn.isSelected = false
         binding.mainViewPager.apply {
             offscreenPageLimit=2
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
@@ -30,9 +32,17 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onUserPage(view: View){
+
+        binding.homePageBtn.isSelected = false
+        binding.myPageBtn.isSelected = true
         startActivity(Intent(this,UserActivity::class.java))
         overridePendingTransition(0,0)
         finish()
+    }
+
+    fun onHomePage(view:View){
+        binding.homePageBtn.isSelected = true
+        binding.myPageBtn.isSelected = false
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {

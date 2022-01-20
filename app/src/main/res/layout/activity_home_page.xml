@@ -35,13 +35,16 @@
         android:textColor="#ffffff"
         android:autoSizeMaxTextSize="30sp"
         android:autoSizeMinTextSize="10sp"
+        android:layout_marginVertical="20px"
+        android:onClick="onHomePage"
         android:gravity="center"
         android:background="@drawable/btn_selector_homepage"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/myPageBtn"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintEnd_toStartOf="@+id/myPageBtn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintWidth_percent="0.14" />
 
     <TextView
         android:id="@+id/myPageBtn"
@@ -49,14 +52,15 @@
         android:layout_height="0dp"
         android:autoSizeMaxTextSize="30sp"
         android:autoSizeMinTextSize="10sp"
-        android:background="#303030"
+        android:layout_marginVertical="20px"
         android:gravity="center"
+        android:background="@drawable/btn_selector_homepage"
         android:onClick="onUserPage"
         android:text="我的"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintStart_toStartOf="@+id/homePageBtn"
+        app:layout_constraintStart_toEndOf="@+id/homePageBtn"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintWidth_percent="0.14" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -48,6 +48,8 @@ class UserActivity : AppCompatActivity() {
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
         simulateData()
+        binding.homePageBtn.isSelected = false
+        binding.myPageBtn.isSelected = true
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
 
@@ -141,4 +143,6 @@ class UserActivity : AppCompatActivity() {
         drawable.draw(canvas)
         return bitmap
     }
+
+    fun onUserPage(view: android.view.View) {}
 }
