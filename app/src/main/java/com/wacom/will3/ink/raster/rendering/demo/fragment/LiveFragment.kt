@@ -1,4 +1,4 @@
-package com.example.uitest
+package com.wacom.will3.ink.raster.rendering.demo.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.wacom.will3.ink.raster.rendering.demo.databinding.FragmentLiveBinding
-import kotlin.coroutines.coroutineContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

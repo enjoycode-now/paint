@@ -44,19 +44,6 @@ class LoginActivity : AppCompatActivity() {
             if(isPhoneNumber(it.toString())) binding.submitButton.setColorFilter(Color.rgb(181,160,255))
             else binding.submitButton.setColorFilter(Color.rgb(228,220,252))
         }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            authenticationClient.token = sharedPref.getString("token","") ?: ""
-            user = authenticationClient.getCurrentUser().execute()
-            val response = authenticationClient.checkLoginStatus().execute()
-            toast(response.message ?: "")
-            if(response.code == 200) runOnUiThread {
-                val intent = Intent(this@LoginActivity, UserActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
     }
 
     fun onSubmit(view: View){
