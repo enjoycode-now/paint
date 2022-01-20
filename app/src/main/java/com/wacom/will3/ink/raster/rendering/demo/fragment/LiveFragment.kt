@@ -43,7 +43,7 @@ class LiveFragment(uri : String ) : Fragment() {
 
         activity?.runOnUiThread{
             Glide.with(this).load(photoUri).skipMemoryCache(true).diskCacheStrategy(
-                DiskCacheStrategy.NONE).into(fragmentBinding.image)
+                DiskCacheStrategy.NONE).centerCrop().into(fragmentBinding.image)
         }
 
 
