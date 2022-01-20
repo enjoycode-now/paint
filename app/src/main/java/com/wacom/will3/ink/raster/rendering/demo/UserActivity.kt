@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import cn.authing.core.types.User
 import com.bumptech.glide.Glide
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
@@ -76,6 +77,11 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
+    fun buyScallop(view:View){
+        val intent = Intent(this, VerificationCodeActivity::class.java)
+        startActivity(intent)
+    }
+
     fun copyAddress(view: View) {
         val address : String  = binding.blockchainAddress.text.replaceRange(0, 6, "").toString()
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -94,14 +100,13 @@ class UserActivity : AppCompatActivity() {
 
 
     fun simulateData(){
-        for (i in 1..10){
-            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link);
+        repeat(10){
+            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_copy_link)
             if(drawable !=null){
                 val bitmap = drawableToBitmap(drawable)
                 if (bitmap!=null)
                 supportWorksList.add(bitmap)
             }
-
         }
     }
 

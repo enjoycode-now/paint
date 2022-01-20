@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PayActivity">
+
+    <TextView
+        android:id="@+id/onBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_back_deep_gray"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:onClick="onFinish"
+        android:textSize="21sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="购买元贝"
+        android:textSize="21sp"
+        app:layout_constraintBottom_toBottomOf="@+id/onBackButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/onBackButton" />
+
+    <Button
+        android:id="@+id/scallop1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        app:layout_constraintBottom_toTopOf="@+id/scallop98"
+        app:layout_constraintEnd_toStartOf="@+id/scallop6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onBackButton"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/scallop6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="60"
+        app:layout_constraintBottom_toBottomOf="@+id/scallop1"
+        app:layout_constraintEnd_toStartOf="@+id/scallop30"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scallop1" />
+
+    <Button
+        android:id="@+id/scallop30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="300"
+        app:layout_constraintBottom_toBottomOf="@+id/scallop6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scallop6" />
+
+    <Button
+        android:id="@+id/scallop98"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="980"
+        app:layout_constraintBottom_toTopOf="@+id/lawNote"
+        app:layout_constraintEnd_toStartOf="@+id/scallop298"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scallop1" />
+
+    <Button
+        android:id="@+id/scallop298"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2980"
+        app:layout_constraintBottom_toBottomOf="@+id/scallop98"
+        app:layout_constraintEnd_toStartOf="@+id/scallopInput"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scallop98" />
+
+    <Button
+        android:id="@+id/scallopInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/scallop298"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scallop298" />
+
+    <TextView
+        android:id="@+id/lawNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="购买即代表已阅读并同意  《元贝购买协议》"
+        app:layout_constraintBottom_toTopOf="@+id/submitButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="立即购买"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
