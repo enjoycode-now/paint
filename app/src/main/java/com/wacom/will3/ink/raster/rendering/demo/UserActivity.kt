@@ -18,10 +18,13 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import cn.authing.core.graphql.GraphQLException
 import cn.authing.core.types.User
 import com.bumptech.glide.Glide
+import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.CoroutineScope
@@ -48,26 +51,25 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this,3)
         binding.supportWorksRecylerView.adapter = adapter
 
-        authorName.text = user.nickname
-        authorId.text = "ID:${user.id}"
-
         CoroutineScope(Dispatchers.IO).launch {
+            val sharedPref = ToastUtils.app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            authenticationClient.token = sharedPref.getString("token","") ?: ""
+            try {
+                user = authenticationClient.getCurrentUser().execute()
+            }catch (e: GraphQLException){
+                runOnUiThread { startActivity(Intent(ToastUtils.app, LoginActivity::class.java)) }
+                return@launch
+            }
             val bioString:String = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             val userAvatarUrl = user.photo
             runOnUiThread {
+                authorName.text = user.nickname
+                authorId.text = "ID:${user.id}"
                 biography.text = bioString
-                Log.i("TAG", userAvatarUrl.toString())
                 Glide.with(this@UserActivity).load(userAvatarUrl).error(R.drawable.avatar_sample).into(binding.userAvatar)
             }
         }
-
-        binding.userAvatar.setOnClickListener{
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "image/*"
-            startActivityForResult(intent,RESQUEST_CODE)
-        }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -75,6 +77,18 @@ class UserActivity : AppCompatActivity() {
         if(requestCode == RESQUEST_CODE && resultCode == RESULT_OK){
             Glide.with(this).load(data?.data).into(binding.userAvatar)
         }
+    }
+
+    fun onChangeAvatar(view:View){
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        startActivityForResult(intent,RESQUEST_CODE)
+    }
+
+    fun onHomePage(view:View){
+        startActivity(Intent(this,HomePageActivity::class.java))
+        overridePendingTransition(0,0)
+        finish()
     }
 
     fun buyScallop(view:View){

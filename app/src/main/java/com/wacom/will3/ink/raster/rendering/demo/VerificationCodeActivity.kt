@@ -21,6 +21,8 @@ import kotlinx.android.synthetic.main.activity_user.*
 
 
 class VerificationCodeActivity : AppCompatActivity() {
+
+    var phoneNumber = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
@@ -28,10 +30,9 @@ class VerificationCodeActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-        val phoneNumber = intent.getStringExtra("phoneNumber") ?: ""
+        phoneNumber = intent.getStringExtra("phoneNumber") ?: ""
 
         binding.vcivCode.setOnInputListener { code ->
-            val intent = Intent(app, UserActivity::class.java)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     user = authenticationClient.loginByPhoneCode(
@@ -39,9 +40,7 @@ class VerificationCodeActivity : AppCompatActivity() {
                     ).execute()
                     val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
                     sharedPref.edit().putString("token",user.token).commit()
-                    runOnUiThread {
-                        startActivity(intent)
-                    }
+                    finish()
                 } catch (e: GraphQLException) {
                     toast("验证码不正确或已过期")
                 } catch (e: Exception) {
@@ -50,6 +49,12 @@ class VerificationCodeActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    override fun onBackPressed() {
+        val intent = Intent(this,LoginActivity::class.java)
+        intent.putExtra("phoneNumber",phoneNumber)
+        startActivity(intent)
+        finish()
     }
 }

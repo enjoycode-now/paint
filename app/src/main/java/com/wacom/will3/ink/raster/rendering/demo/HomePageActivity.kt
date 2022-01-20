@@ -1,21 +1,16 @@
 package com.wacom.will3.ink.raster.rendering.demo
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import cn.authing.core.graphql.GraphQLException
-import com.wacom.will3.ink.raster.rendering.demo.fragment.LiveFragment
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityHomePageBinding
-import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils
+import com.wacom.will3.ink.raster.rendering.demo.fragment.LiveFragment
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import kotlinx.android.synthetic.main.activity_home_page.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class HomePageActivity : AppCompatActivity() {
     lateinit var binding : ActivityHomePageBinding
@@ -32,26 +27,12 @@ class HomePageActivity : AppCompatActivity() {
             offscreenPageLimit=2
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
         }
+    }
 
-        binding.homePageBtn.setOnClickListener{
-
-        }
-
-        binding.myPageBtn.setOnClickListener{
-            startActivity(Intent(this,UserActivity::class.java))
-            overridePendingTransition(0,0)
-            finish()
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            AuthingUtils.authenticationClient.token = sharedPref.getString("token","") ?: ""
-            try {
-                AuthingUtils.user = AuthingUtils.authenticationClient.getCurrentUser().execute()
-            }catch (e:GraphQLException){
-                runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
-            }
-        }
+    fun onUserPage(view: View){
+        startActivity(Intent(this,UserActivity::class.java))
+        overridePendingTransition(0,0)
+        finish()
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {

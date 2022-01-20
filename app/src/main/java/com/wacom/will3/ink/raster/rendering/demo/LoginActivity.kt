@@ -1,30 +1,28 @@
 package com.wacom.will3.ink.raster.rendering.demo
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import cn.authing.core.types.User
 import com.bugsnag.android.Bugsnag
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.UpdateFrom
+import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityLoginBinding
+import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
+import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.wacom.will3.ink.raster.rendering.demo.databinding.ActivityLoginBinding
-import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.authenticationClient
-import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
-import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
 import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var binding:ActivityLoginBinding
+    var phoneNumber = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
+        phoneNumber = intent.getStringExtra("phoneNumber") ?: ""
+
         supportActionBar?.hide()
         val appUpdate = AppUpdater(this)
         appUpdate.setUpdateFrom(UpdateFrom.JSON)
@@ -40,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
         appUpdate.start()
         appUpdate.setDisplay(Display.DIALOG)
 
+        binding.phoneText.setText(phoneNumber)
         binding.phoneText.doAfterTextChanged {
             if(isPhoneNumber(it.toString())) binding.submitButton.setColorFilter(Color.rgb(181,160,255))
             else binding.submitButton.setColorFilter(Color.rgb(228,220,252))
@@ -58,9 +59,16 @@ class LoginActivity : AppCompatActivity() {
                     runOnUiThread {
                         intent.putExtra("phoneNumber",phonetext)
                         startActivity(intent)
+                        finish()
                     }
                 }catch (e:IOException){
-                    toast(e.message ?: "发生错误")
+                    if(e.message?.contains("1分钟") == true){
+                        runOnUiThread {
+                            intent.putExtra("phoneNumber",phonetext)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }else toast(e.message ?: "发生错误")
                 }
             }
         }
