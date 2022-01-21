@@ -27,8 +27,6 @@ class SupportWorksAdapter(private val activity : UserActivity) : RecyclerView.Ad
         fun bind(url:String, position: Int, activity: UserActivity) {
             Glide.with(activity)
                 .load(url)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .centerCrop()
                 .into(binding.image)
 

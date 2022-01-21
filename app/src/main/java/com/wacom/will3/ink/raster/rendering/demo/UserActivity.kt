@@ -48,7 +48,7 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - 72.dp
+        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
     }
 
     override fun onResume() {
@@ -70,9 +70,9 @@ class UserActivity : AppCompatActivity() {
 
             // 应援记录数据
             CoroutineScope(Dispatchers.Default).launch {
-                for (i in 0..31) {
+                for (i in 0..16) {
                     sponsorList.add("https://api.ghser.com/random/pe.php")
-                    delay(250)
+                    delay(125)
                     runOnUiThread { adapter.notifyItemChanged(i) }
                 }
             }
