@@ -1,5 +1,7 @@
 package com.wacom.will3.ink.raster.rendering.demo
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -21,10 +23,7 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.biography
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.lang.Exception
 
@@ -34,6 +33,7 @@ class UserActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
+    lateinit var job: Job
 
     val Int.dp: Int
         get() = (this * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
@@ -48,14 +48,16 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
+        binding.supportWorksRecylerView.layoutParams.height =
+            Resources.getSystem().displayMetrics.heightPixels
     }
 
     override fun onResume() {
         super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
             updateInfo()
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            val sharedPref =
+                app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
@@ -65,18 +67,66 @@ class UserActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
-            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            biography =
+                (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
 
             // 应援记录数据
             CoroutineScope(Dispatchers.Default).launch {
-                for (i in 0..16) {
+                for (i in 0..31) {
                     sponsorList.add("https://api.ghser.com/random/pe.php")
                     delay(125)
                     runOnUiThread { adapter.notifyItemChanged(i) }
                 }
             }
         }
+
+        job = CoroutineScope(Dispatchers.Default).launch {
+            while (true) {
+                delay(250)
+                runOnUiThread {
+                    with(binding) {
+                        if (supportWorksRecylerView.canScrollVertically((-1).dp)) {
+                            if (sponsorNote.visibility == View.GONE) crossShow()
+                        } else {
+                            if (sponsorNote.visibility == View.VISIBLE) crossFade()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        job.cancel()
+    }
+
+    private fun crossShow() {
+        binding.sponsorNote.apply {
+            // Set the content view to 0% opacity but visible, so that it is visible
+            // (but fully transparent) during the animation.
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // Animate the content view to 100% opacity, and clear any animation
+            // listener set on the view.
+            animate()
+                .alpha(1f)
+                .setDuration(200)
+                .setListener(null)
+        }
+    }
+
+    private fun crossFade() {
+        binding.sponsorNote.animate()
+            .alpha(0f)
+            .setDuration(200)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.sponsorNote.visibility = View.GONE
+                }
+            })
     }
 
     fun updateInfo() {
@@ -87,6 +137,8 @@ class UserActivity : AppCompatActivity() {
             try {
                 Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
                     .into(binding.userAvatar)
+                Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
+                    .into(binding.smallAvatar)
             } catch (e: Exception) {
             }
         }
@@ -97,6 +149,8 @@ class UserActivity : AppCompatActivity() {
 
         if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) {
             Glide.with(this).load(data?.data).into(binding.userAvatar)
+            Glide.with(this@UserActivity).load(data?.data).error(R.drawable.avatar_sample)
+                .into(binding.smallAvatar)
         }
     }
 

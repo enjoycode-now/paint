@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:padding="6dp">
+    android:paddingBottom="2dp">
 
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingHorizontal="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="9:16"
         app:layout_constraintEnd_toEndOf="parent"
