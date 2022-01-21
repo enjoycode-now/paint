@@ -322,35 +322,34 @@
 
     <TextView
         android:id="@+id/homePageBtn"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="0dp"
-        android:background="@drawable/btn_selector_homepage"
         android:gravity="center"
-        android:onClick="onHomePage"
         android:text="首页"
-        android:textColor="#ffffff"
+        android:textColor="#FFFFFF"
         android:textSize="21dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/myPageBtn"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintTop_toTopOf="@+id/view" />
 
     <TextView
         android:id="@+id/myPageBtn"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="0dp"
-        android:background="@drawable/btn_selector_homepage"
         android:gravity="center"
         android:text="我的"
-        android:textColor="#ffffff"
+        android:textColor="#FFFFFF"
         android:textSize="21dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@+id/homePageBtn"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintWidth_percent="0.2" />
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
