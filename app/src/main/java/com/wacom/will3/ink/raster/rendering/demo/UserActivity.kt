@@ -135,9 +135,11 @@ class UserActivity : AppCompatActivity() {
             binding.authorId.text = "ID:${user.id}"
             binding.biography.text = biography
             try {
-                Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
+                Glide.with(this@UserActivity)
+                    .load(user.photo)
                     .into(binding.userAvatar)
-                Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
+                Glide.with(this@UserActivity)
+                    .load(user.photo)
                     .into(binding.smallAvatar)
             } catch (e: Exception) {
             }
@@ -148,8 +150,11 @@ class UserActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) {
-            Glide.with(this).load(data?.data).into(binding.userAvatar)
-            Glide.with(this@UserActivity).load(data?.data).error(R.drawable.avatar_sample)
+            Glide.with(this)
+                .load(data?.data)
+                .into(binding.userAvatar)
+            Glide.with(this@UserActivity)
+                .load(data?.data)
                 .into(binding.smallAvatar)
         }
     }
