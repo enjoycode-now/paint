@@ -107,7 +107,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
 
             override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
-                releaseResources();
+                releaseResources()
                 return true
             }
 

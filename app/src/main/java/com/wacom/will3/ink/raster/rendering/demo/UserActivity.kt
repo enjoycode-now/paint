@@ -23,6 +23,8 @@ import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.biography
 import com.wacom.will3.ink.raster.rendering.demo.utils.AuthingUtils.user
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.toast
+import com.wacom.will3.ink.raster.rendering.demo.utils.dp
+import com.wacom.will3.ink.raster.rendering.demo.utils.getDigest
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.lang.Exception
@@ -34,9 +36,6 @@ class UserActivity : AppCompatActivity() {
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
     lateinit var job: Job
-
-    val Int.dp: Int
-        get() = (this * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +131,10 @@ class UserActivity : AppCompatActivity() {
     fun updateInfo() {
         runOnUiThread {
             binding.authorName.text = user.nickname
-            binding.authorId.text = "ID:${user.id}"
+            binding.authorId.text = user.id.uppercase()
+            val blockChainAddress = user.id.getDigest("SHA-256")
+            val displayAddress = "0x"+blockChainAddress.replaceRange(8,blockChainAddress.length-8,"...").uppercase()
+            binding.blockchainAddress.text = displayAddress
             binding.biography.text = biography
             try {
                 Glide.with(this@UserActivity)
@@ -192,11 +194,10 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun copyAddress(view: View) {
-        val address: String = binding.blockchainAddress.text.replaceRange(0, 6, "").toString()
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("blockchainAddress", address)
+        val clipData = ClipData.newPlainText("blockchainAddress", user.id.getDigest("SHA-256"))
         clipboardManager.setPrimaryClip(clipData)
-        toast("地址复制成功")
+        toast("区块链地址复制成功")
     }
 
     fun copyId(view: View) {
@@ -204,6 +205,6 @@ class UserActivity : AppCompatActivity() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
-        toast("ID复制成功")
+        toast("用户ID复制成功")
     }
 }
