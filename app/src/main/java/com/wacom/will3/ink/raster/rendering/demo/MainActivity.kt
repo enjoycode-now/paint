@@ -40,6 +40,9 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import android.view.WindowManager
+import androidx.core.graphics.alpha
+import kotlinx.android.synthetic.main.activity_user.*
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
