@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -44,6 +45,7 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
+        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
     }
 
     override fun onResume() {
@@ -57,7 +59,7 @@ class UserActivity : AppCompatActivity() {
             } catch (e: GraphQLException) {
                 runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch
-            }catch (e : IOException){
+            } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
             biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
@@ -65,7 +67,7 @@ class UserActivity : AppCompatActivity() {
 
             // 应援记录数据
             CoroutineScope(Dispatchers.Default).launch {
-                for(i in 0..127){
+                for (i in 0..31) {
                     sponsorList.add("https://api.ghser.com/random/pe.php")
                     delay(250)
                     runOnUiThread { adapter.notifyItemChanged(i) }
@@ -82,7 +84,8 @@ class UserActivity : AppCompatActivity() {
             try {
                 Glide.with(this@UserActivity).load(user.photo).error(R.drawable.avatar_sample)
                     .into(binding.userAvatar)
-            } catch (e: Exception) {}
+            } catch (e: Exception) {
+            }
         }
     }
 
