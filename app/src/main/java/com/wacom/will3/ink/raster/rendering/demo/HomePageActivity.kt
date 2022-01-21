@@ -36,17 +36,17 @@ class HomePageActivity : AppCompatActivity() {
     fun highLightBtn(view: View){
         view as TextView
         binding.homePageBtn.isSelected = false
-        binding.myPageBtn.isSelected = false
+        binding.userPageBtn.isSelected = false
         binding.homePageBtn.setTextColor(Color.rgb(179,179,179))
-        binding.myPageBtn.setTextColor(Color.rgb(179,179,179))
+        binding.userPageBtn.setTextColor(Color.rgb(179,179,179))
         view.isSelected = true
         view.setTextColor(Color.rgb(255,255,255))
     }
 
     fun onUserPage(view: View){
-        highLightBtn(binding.myPageBtn)
+        highLightBtn(binding.userPageBtn)
         binding.homePageBtn.isSelected = false
-        binding.myPageBtn.isSelected = true
+        binding.userPageBtn.isSelected = true
         startActivity(Intent(this,UserActivity::class.java))
         overridePendingTransition(0,0)
         finish()

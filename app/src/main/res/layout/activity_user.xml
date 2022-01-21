@@ -317,7 +317,7 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#303030"
+        android:background="#EEEEEE"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
@@ -325,28 +325,29 @@
         android:layout_width="100dp"
         android:layout_height="0dp"
         android:gravity="center"
+        android:onClick="onHomePage"
         android:text="首页"
-        android:textColor="#FFFFFF"
+        android:textColor="#C1C1C1"
         android:textSize="21dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toStartOf="@+id/myPageBtn"
+        app:layout_constraintEnd_toStartOf="@+id/userPageBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
     <TextView
-        android:id="@+id/myPageBtn"
+        android:id="@+id/userPageBtn"
         android:layout_width="100dp"
         android:layout_height="0dp"
         android:gravity="center"
         android:text="我的"
-        android:textColor="#FFFFFF"
+        android:textColor="#C1C1C1"
         android:textSize="21dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toEndOf="@+id/homePageBtn"
         app:layout_constraintTop_toTopOf="@+id/view" />
 

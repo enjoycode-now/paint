@@ -45,7 +45,7 @@ class UserActivity : AppCompatActivity() {
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        hignLightBtn(binding.myPageBtn)
+        hignLightBtn(binding.userPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
         binding.supportWorksRecylerView.layoutParams.height =
@@ -162,11 +162,11 @@ class UserActivity : AppCompatActivity() {
     fun hignLightBtn(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
-        binding.myPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.rgb(179, 179, 179))
-        binding.myPageBtn.setTextColor(Color.rgb(179, 179, 179))
+        binding.userPageBtn.isSelected = false
+        binding.homePageBtn.setTextColor(Color.rgb(191, 191, 191))
+        binding.userPageBtn.setTextColor(Color.rgb(191, 191, 191))
         view.isSelected = true
-        view.setTextColor(Color.rgb(255, 255, 255))
+        view.setTextColor(Color.rgb(0, 0, 0))
     }
 
     fun onChangeAvatar(view: View) {
