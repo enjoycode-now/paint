@@ -35,6 +35,9 @@ class UserActivity : AppCompatActivity() {
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
 
+    val Int.dp: Int
+        get() = (this * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
@@ -45,7 +48,7 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.myPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
+        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - 72.dp
     }
 
     override fun onResume() {
