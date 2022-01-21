@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserActivity">
+    >
 
-    <com.wacom.will3.ink.raster.rendering.demo.views.ParentNestedScrollView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:isScrollContainer="true"
-        android:overScrollMode="never"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/white"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            >
 
             <ImageView
                 android:id="@+id/backgroundImage"
@@ -54,11 +61,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
+                android:layout_marginBottom="10dp"
                 android:padding="4dp"
                 app:cardCornerRadius="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/headerView"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintWidth_percent="0.9">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -237,13 +246,13 @@
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@+id/headerView"
                 app:layout_constraintWidth_percent="0.2" />
-
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
             <TextView
                 android:id="@+id/supportWorks"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="30dp"
                 android:background="#FAFBFF"
                 android:gravity="center"
                 android:text="应援作品"
@@ -254,21 +263,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardView" />
 
+    </com.google.android.material.appbar.AppBarLayout>
+
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/supportWorksRecylerView"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
                 android:layout_marginEnd="18dp"
                 android:nestedScrollingEnabled="true"
                 android:overScrollMode="never"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toTopOf="@id/bottombar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/supportWorks" />
+                app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.wacom.will3.ink.raster.rendering.demo.views.ParentNestedScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        >
 
     <View
         android:id="@+id/view"
@@ -296,6 +313,8 @@
         app:layout_constraintTop_toTopOf="@+id/view"
         app:layout_constraintWidth_percent="0.2" />
 
+
+
     <TextView
         android:id="@+id/myPageBtn"
         android:layout_width="90dp"
@@ -313,5 +332,6 @@
         app:layout_constraintTop_toTopOf="@+id/view"
         app:layout_constraintWidth_percent="0.2" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
