@@ -12,6 +12,7 @@ import com.wacom.ink.format.rendering.RasterBrush
 import com.wacom.ink.rendering.BlendMode
 import com.wacom.will3.ink.raster.rendering.demo.R
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 /**
  * Class collecting the all brushes which are used within the application.
@@ -22,13 +23,13 @@ class BrushPalette {
         fun getBrush(context: Context, uri: String) : RasterBrush? {
             var brush: RasterBrush? = null
             when {
-                uri.toLowerCase().contains("pencil") -> brush = pencil(context)
-                uri.toLowerCase().contains("waterbrush") -> brush = waterbrush(context)
-                uri.toLowerCase().contains("crayon") -> brush = crayonbrush(context)
-                uri.toLowerCase().contains("eraser") -> brush = eraser(context)
-                uri.toLowerCase().contains("pen") -> brush = pen(context)
-                uri.toLowerCase().contains("pen2") -> brush = pen2(context)
-                uri.toLowerCase().contains("pen3") -> brush = pen3(context)
+                uri.lowercase(Locale.getDefault()).contains("pencil") -> brush = pencil(context)
+                uri.lowercase(Locale.getDefault()).contains("waterbrush") -> brush = waterbrush(context)
+                uri.lowercase(Locale.getDefault()).contains("crayon") -> brush = crayonbrush(context)
+                uri.lowercase(Locale.getDefault()).contains("eraser") -> brush = eraser(context)
+                uri.lowercase(Locale.getDefault()).contains("pen") -> brush = pen(context)
+                uri.lowercase(Locale.getDefault()).contains("pen2") -> brush = pen2(context)
+                uri.lowercase(Locale.getDefault()).contains("pen3") -> brush = pen3(context)
             }
 
             return brush

@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package paint.v1;
+
+option java_multiple_files = true;
+option java_package = "com.wacom.will3.ink.raster.rendering.demo";
+option java_outer_classname = "PaintProto";
+
+enum PaintType {
+    // 默认无效操作
+    PAINT_TYPE_UNSPECIFIED = 0;
+
+    // 画笔操作
+    PAINT_TYPE_DRAW = 1;
+
+    // 图层操作
+    PAINT_TYPE_LAYER = 2;
+
+    // 回执成功
+    PAINT_TYPE_ACK_OK = 3;
+
+    // 回执错误
+    PAINT_TYPE_ACK_ERROR = 4;
+
+    // 用户登陆登出等请求
+    PAINT_TYPE_USER = 5;
+
+    // 撤回
+    PAINT_TYPE_UNDO = 6;
+
+    // 重做
+    PAINT_TYPE_REDO = 7;
+}
+
+enum UserAction {
+    // 默认无效操作
+    USER_ACTION_UNSPECIFIED = 0;
+
+    // 登入
+    USER_ACTION_ENTER = 1;
+
+    // 登出
+    USER_ACTION_LEAVE = 2;
+}
+
+enum LayerAction {
+    // 切换到图层
+    LAYER_ACTION_CHANGE = 0;
+
+    // 隐藏图层
+    LAYER_ACTION_HIDE = 1;
+
+    // 锁定图层
+    LAYER_ACTION_LOCK = 2;
+
+    // 改变透明度
+    LAYER_ACTION_ALPHA = 3;
+}
+
+message Point {
+    float x = 1;
+    float y = 2;
+    float pressure = 3;
+}
+
+message Line {
+    // 点数组
+    repeated Point points = 1;
+}
+
+message Draw {
+    // 工具
+    int32 tool = 1;
+
+    // 颜色 & 透明度
+    int32 color = 2;
+
+    // 粗细
+    float thickness = 6;
+
+    // 线
+    Line line = 7;
+}
+
+message Layer {
+    // 操作类型
+    LayerAction action = 1;
+
+    // 图层下标
+    int32 index = 2;
+
+    // 图层透明度
+    int32 alpha = 3;
+}
+
+message User {
+    // 操作类型
+    UserAction action = 1;
+
+    // 用户名
+    string user_id = 2;
+}
+
+message Payload {
+    Draw draw = 1;
+    User user = 2;
+    Layer layer = 3;
+}
+
+message PaintRequest {
+    // 操作类型
+    PaintType type = 1;
+
+    // 自增序列号
+    int32 sequence = 2;
+
+    // 时间确认号
+    int64 ack = 3;
+
+    // 实际数据
+    bytes payload = 4;
+}
+
+message PaintResponse {
+    // 响应类型
+    PaintType type = 1;
+
+    // 自增序列号
+    int32 sequence = 2;
+
+    // 时间确认号
+    int64 ack = 3;
+
+    // 实际数据
+    bytes payload = 4;
+}
+
+service PaintService {
+    rpc Paint(stream PaintRequest) returns (stream PaintResponse) {}
+}
