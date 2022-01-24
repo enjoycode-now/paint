@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="购买元贝"
+
         android:textSize="21sp"
         app:layout_constraintBottom_toBottomOf="@+id/onBackButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -123,6 +124,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="立即购买"
+        android:onClick="pay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
