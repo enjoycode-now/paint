@@ -128,9 +128,6 @@ message PaintResponse {
     // 自增序列号
     int32 sequence = 2;
 
-    // 时间确认号
-    int64 ack = 3;
-
     // 实际数据
     bytes payload = 4;
 }

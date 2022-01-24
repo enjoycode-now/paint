@@ -12,11 +12,12 @@
         android:layout_height="match_parent"
         />
 
-    <include android:id="@+id/toolbar"
-        android:layout_height="300dp"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/toolbar"
         layout="@layout/item_interactive_toolsidebar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
-         />
+        android:layout_marginEnd="16dp" />
 
 </FrameLayout>
