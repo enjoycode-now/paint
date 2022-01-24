@@ -20,19 +20,10 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class LiveFragment(uri : String ) : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
 
     private var photoUri = uri
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +41,18 @@ class LiveFragment(uri : String ) : Fragment() {
                 .into(fragmentBinding.image)
         }
 
-
+        fragmentBinding.toolbar.likeBtn.setOnClickListener{
+            // 未点赞
+            if(fragmentBinding.toolbar.likeBtn.progress-39<Math.pow(0.1, 4.0)){
+                fragmentBinding.toolbar.likeBtn.setMinAndMaxFrame(0,33)
+                fragmentBinding.toolbar.likeBtn.playAnimation()
+            }
+            // 已点赞
+            else{
+                fragmentBinding.toolbar.likeBtn.setMinAndMaxFrame(33,39)
+                fragmentBinding.toolbar.likeBtn.playAnimation()
+            }
+        }
         return view
     }
 

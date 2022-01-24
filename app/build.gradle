@@ -101,4 +101,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     api 'com.tencent.mm.opensdk:wechat-sdk-android:+'
+
+    implementation "com.airbnb.android:lottie:4.2.2"
 }
