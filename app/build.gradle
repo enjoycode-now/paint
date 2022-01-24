@@ -76,10 +76,6 @@ dependencies {
     implementation 'io.grpc:grpc-kotlin-stub:1.1.0'
     implementation 'io.grpc:protoc-gen-grpc-kotlin:1.1.0'
 
-    // Protocol Buffers
-    implementation 'com.google.protobuf:protobuf-java:3.17.3'
-    implementation 'com.google.protobuf:protobuf-java-util:3.17.3'
-
     // ColorPicker
     implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
     implementation 'com.github.g39088902:ColorPicker:1.1.6'

@@ -12,7 +12,6 @@ service RoomService {
     rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
     rpc BuyerListRoom(BuyerListRoomRequest) returns (ListRoomResponse) {}
     rpc DrawerListRoom(DrawerListRoomRequest) returns (ListRoomResponse) {}
-    rpc History(HistoryRequest) returns (HistoryResponse) {}
     rpc OnlineUsers(OnlineUsersRequest) returns (OnlineUsersResponse) {}
 }
 
@@ -24,12 +23,6 @@ message Room {
     int32 line_number = 6;
     google.protobuf.Timestamp created_at = 8;
     google.protobuf.Timestamp updated_at = 9;
-}
-
-message Line {
-    int32 type = 1;
-    int32 sequence = 2;
-    bytes payload = 3;
 }
 
 message CreateRoomRequest {
@@ -49,14 +42,6 @@ message DrawerListRoomRequest {
 
 message ListRoomResponse {
     repeated Room rooms = 1;
-}
-
-message HistoryRequest {
-    int64 room_id = 1 ;
-}
-
-message HistoryResponse {
-    repeated Line lines = 1;
 }
 
 message OnlineUsersRequest {
