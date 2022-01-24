@@ -33,7 +33,7 @@
             android:name=".LoginActivity"
             android:exported="true"></activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".DrawActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

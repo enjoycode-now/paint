@@ -260,7 +260,7 @@ class InkEnvironmentModel(val activity: Activity) {
 
     private fun getScreenDimensions(): PointF {
         val dm = DisplayMetrics()
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm)
+        activity.windowManager.defaultDisplay.getMetrics(dm)
         val width = dm.widthPixels
         val height = dm.heightPixels
         val dens = dm.densityDpi

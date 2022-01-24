@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package room.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.wacom.will3.ink.raster.rendering.demo";
+option java_outer_classname = "RoomProto";
+
+service RoomService {
+    rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
+    rpc BuyerListRoom(BuyerListRoomRequest) returns (ListRoomResponse) {}
+    rpc DrawerListRoom(DrawerListRoomRequest) returns (ListRoomResponse) {}
+    rpc History(HistoryRequest) returns (HistoryResponse) {}
+    rpc OnlineUsers(OnlineUsersRequest) returns (OnlineUsersResponse) {}
+}
+
+message Room {
+    int64 id = 1;
+    string creator = 2;
+    string name = 3;
+    int32 status = 5;
+    int32 line_number = 6;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+message Line {
+    int32 type = 1;
+    int32 sequence = 2;
+    bytes payload = 3;
+}
+
+message CreateRoomRequest {
+    string name = 1;
+    int32 capacity = 2;
+}
+
+message CreateRoomResponse {
+    Room room = 1;
+}
+
+message BuyerListRoomRequest {
+}
+
+message DrawerListRoomRequest {
+}
+
+message ListRoomResponse {
+    repeated Room rooms = 1;
+}
+
+message HistoryRequest {
+    int64 room_id = 1 ;
+}
+
+message HistoryResponse {
+    repeated Line lines = 1;
+}
+
+message OnlineUsersRequest {
+    string room_id = 1 ;
+}
+
+message OnlineUsersResponse {
+    repeated string user_ids = 1;
+}

@@ -4,10 +4,8 @@
  */
 package com.wacom.will3.ink.raster.rendering.demo
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -40,11 +38,11 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import android.view.WindowManager
-import androidx.core.graphics.alpha
+import com.wacom.will3.ink.raster.rendering.demo.utils.dp
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.*
 
-class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
+class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     //-- Variables For serialisation
     private lateinit var mainGroup: StrokeGroupNode // This is a list of StrokeNode.
@@ -76,59 +74,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var layerPos = -1
     val stepStack = StepStack()
 
-    //   加一个图层
-    fun add(view: View) {
-        if (smallLayerList.size >= 0xF) return
-        smallLayerList.add(RoomLayer())
-        rasterDrawingSurface.addLayer()
-        rasterDrawingSurface.refreshView()
-        rasterDrawingSurface.invalidate()
-        smallLayerList.last().bitmap = rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(rasterDrawingSurface.inkCanvas)
-        changeToLayer(smallLayerList.lastIndex)
-        layerAdapter.notifyDataSetChanged()
-    }
-
-    fun undo(view:View){
-        val stepModel = stepStack.undo()
-        if (stepModel == null) toast("无法继续撤回")
-        else {
-            rasterDrawingSurface.setStepModel(stepModel)
-            layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
-            layerAdapter.notifyDataSetChanged()
-        }
-    }
-
-    fun redo(view:View){
-        val stepModel = stepStack.redo()
-        if (stepModel == null) toast("无法继续重做")
-        else {
-            rasterDrawingSurface.setStepModel(stepModel)
-            layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
-            layerAdapter.notifyDataSetChanged()
-        }
-    }
-
-
-    @SuppressLint("ClickableViewAccessibility")
-    //   跳转到指定图层
-    fun changeToLayer(pos: Int) {
-        layerPos = pos
-        stepStack.addStep(rasterDrawingSurface.getStepModel())
-        layerAdapter.notifyDataSetChanged()
-    }
-
-
-    fun onTextureReady() {
-        add(addLayerButton)
-        changeToLayer(0)
-        smallLayerList[0].bitmap = rasterDrawingSurface.strokesLayer[0].toBitmap(rasterDrawingSurface.inkCanvas)
-        layerAdapter.notifyDataSetChanged()
-    }
-
-
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -183,6 +128,54 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         binding.layerRecycle.adapter = layerAdapter
     }
 
+    // 加一个图层
+    fun add(view: View) {
+        if (smallLayerList.size >= 0xF) return
+        smallLayerList.add(RoomLayer())
+        rasterDrawingSurface.addLayer()
+        rasterDrawingSurface.refreshView()
+        rasterDrawingSurface.invalidate()
+        smallLayerList.last().bitmap = rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(rasterDrawingSurface.inkCanvas)
+        changeToLayer(smallLayerList.lastIndex)
+        layerAdapter.notifyDataSetChanged()
+    }
+
+    fun undo(view:View){
+        val stepModel = stepStack.undo()
+        if (stepModel == null) toast("无法继续撤回")
+        else {
+            rasterDrawingSurface.setStepModel(stepModel)
+            layerPos = stepModel.index
+            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
+            layerAdapter.notifyDataSetChanged()
+        }
+    }
+
+    fun redo(view:View){
+        val stepModel = stepStack.redo()
+        if (stepModel == null) toast("无法继续重做")
+        else {
+            rasterDrawingSurface.setStepModel(stepModel)
+            layerPos = stepModel.index
+            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
+            layerAdapter.notifyDataSetChanged()
+        }
+    }
+
+    //   跳转到指定图层
+    fun changeToLayer(pos: Int) {
+        layerPos = pos
+        stepStack.addStep(rasterDrawingSurface.getStepModel())
+        layerAdapter.notifyDataSetChanged()
+    }
+
+    fun onTextureReady() {
+        add(addLayerButton)
+        changeToLayer(0)
+        smallLayerList[0].bitmap = rasterDrawingSurface.strokesLayer[0].toBitmap(rasterDrawingSurface.inkCanvas)
+        layerAdapter.notifyDataSetChanged()
+    }
+
     fun selectColor(view: View) {
         ColorPickerPopup.Builder(this)
             .initialColor(drawingColor) // Set initial color
@@ -195,7 +188,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             .build()
             .show(view, object : ColorPickerObserver() {
                 override fun onColorPicked(color: Int) {
-                    this@MainActivity.setColor(color)
+                    this@DrawActivity.setColor(color)
                 }
             })
     }
@@ -324,10 +317,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         }
     }
 
-    fun Int.dp(): Int {
-        return this * Resources.getSystem().displayMetrics.density.toInt()
-    }
-
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
@@ -336,7 +325,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         popBind.alphaNum.text = "${progress}%"
 
         // 弹出PopUpWindow
-        popupwindow = PopupWindow(popBind.root, 500.dp(), 450.dp(), true)
+        popupwindow = PopupWindow(popBind.root, 500.dp, 450.dp, true)
         popupwindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗
@@ -367,7 +356,7 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 .setPositiveButton(
                     "确定",
                     DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
-                        this@MainActivity.clear(popBind.eraser)
+                        this@DrawActivity.clear(popBind.eraser)
                         dialog.dismiss()
                         toast("图层清空")
                     })
@@ -408,7 +397,6 @@ class MainActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         }
 
     }
-
 
     // 删除当前图层
     fun deleteLayer() {

@@ -81,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 contains("格式") -> toast("请输入正确的手机号")
-                else -> toast(cause ?: "发生错误")
+                else -> toast(cause)
             }
         }
     }

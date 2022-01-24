@@ -1,22 +1,18 @@
 package com.wacom.will3.ink.raster.rendering.demo.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.recyclerview.widget.RecyclerView
-import com.wacom.will3.ink.raster.rendering.demo.MainActivity
+import com.wacom.will3.ink.raster.rendering.demo.DrawActivity
 import com.wacom.will3.ink.raster.rendering.demo.R
 import com.wacom.will3.ink.raster.rendering.demo.databinding.ItemLayerSmallBinding
 import com.wacom.will3.ink.raster.rendering.demo.model.RoomLayer
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class LayerAdapter(private val activity: MainActivity) :
+class LayerAdapter(private val activity: DrawActivity) :
     RecyclerView.Adapter<LayerAdapter.ViewHolder>() {
 
 
@@ -41,7 +37,7 @@ class LayerAdapter(private val activity: MainActivity) :
     class ViewHolder(val binding: ItemLayerSmallBinding) : RecyclerView.ViewHolder(binding.root) {
         var viewType: Int = 1
         @SuppressLint("SetTextI18n")
-        fun bind(roomLayer: RoomLayer, position: Int, activity: MainActivity) {
+        fun bind(roomLayer: RoomLayer, position: Int, activity: DrawActivity) {
             binding.layerImage.setImageBitmap(roomLayer.bitmap)
             binding.layerNameText.text = "图层${position + 1}"
             binding.textRight.text = "${String.format("%.0f",roomLayer.alpha*100/255f)}%"

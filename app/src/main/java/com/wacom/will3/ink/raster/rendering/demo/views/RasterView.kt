@@ -53,7 +53,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     lateinit var finalLayer: Layer                      // 第三层：合成层
 
     private lateinit var strokeRenderer: StrokeRenderer
-    lateinit var activity: MainActivity
+    lateinit var activity: DrawActivity
 
     private var rasterInkBuilder = RasterInkBuilder() //The ink builder
     var rasterTool: RasterTool = PencilTool(context)
