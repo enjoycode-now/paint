@@ -13,16 +13,21 @@ import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
+import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.ToastUtils.app
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_home_page.*
 import kotlinx.android.synthetic.main.item_support_works.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding : ActivityHomePageBinding
-    val photoUri = "https://api.ghser.com/random/pe.php"
-    val fragmentList = mutableListOf(FollowFragment(),LiveFragment(photoUri),RecommendFragment())
+
+    val fragmentList = mutableListOf(FollowFragment(),LiveFragment(),RecommendFragment())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +35,12 @@ class HomePageActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
             setCurrentItem(1,false)
         }
+
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when(position){
                 0->tab.text="关注"
@@ -43,6 +48,14 @@ class HomePageActivity : AppCompatActivity() {
                 2->tab.text="推荐"
             }
         }.attach()
+
+        CoroutineScope(Dispatchers.Default).launch {
+            if(picQueue.size==0)
+            repeat(32){
+                delay(125)
+                picQueue.add("https://api.ghser.com/random/pe.php")
+            }
+        }
     }
 
     fun highLightBtn(view: View){

@@ -8,12 +8,8 @@ import android.view.ViewGroup
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import cn.copaint.audience.databinding.FragmentLiveBinding
 
+class LiveFragment : Fragment() {
 
-class LiveFragment(uri : String) : Fragment() {
-
-
-    val photoUri = uri
-    val picList = mutableListOf(ItemLiveFragment(photoUri),ItemLiveFragment(photoUri),ItemLiveFragment(photoUri))
     lateinit var fragmentBinding : FragmentLiveBinding
 
     override fun onCreateView(
@@ -27,11 +23,6 @@ class LiveFragment(uri : String) : Fragment() {
             offscreenPageLimit=2
             adapter = ScreenSlidePagerAdapter(this@LiveFragment)
         }
-
-
-
-//        fragmentBinding.showImageViewPager.listen
-
         return view
     }
 
@@ -40,8 +31,7 @@ class LiveFragment(uri : String) : Fragment() {
         override fun getItemCount() = Int.MAX_VALUE
 
         override fun createFragment(position: Int): Fragment {
-            while (position>picList.lastIndex-3)picList.add(ItemLiveFragment(photoUri))
-            return picList[position]
+            return ItemLiveFragment()
         }
     }
 

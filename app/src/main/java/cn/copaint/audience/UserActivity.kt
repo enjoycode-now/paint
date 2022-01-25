@@ -1,7 +1,5 @@
 package cn.copaint.audience
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -35,7 +33,6 @@ class UserActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
     val RESQUEST_CODE = 1
-    lateinit var job: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +44,9 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.userPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
+        val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val statusBarHeight = if (statusBarId>0)resources.getDimensionPixelSize(statusBarId) else 24.dp
+        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - statusBarHeight - 96.dp
     }
 
     override fun onResume() {
@@ -78,53 +77,6 @@ class UserActivity : AppCompatActivity() {
                 }
             }
         }
-
-        job = CoroutineScope(Dispatchers.Default).launch {
-            while (true) {
-                delay(250)
-                runOnUiThread {
-                    with(binding) {
-                        if (supportWorksRecylerView.canScrollVertically((-1).dp)) {
-                            if (sponsorNote.visibility == View.GONE) crossShow()
-                        } else {
-                            if (sponsorNote.visibility == View.VISIBLE) crossFade()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        job.cancel()
-    }
-
-    private fun crossShow() {
-        binding.sponsorNote.apply {
-            // Set the content view to 0% opacity but visible, so that it is visible
-            // (but fully transparent) during the animation.
-            alpha = 0f
-            visibility = View.VISIBLE
-
-            // Animate the content view to 100% opacity, and clear any animation
-            // listener set on the view.
-            animate()
-                .alpha(1f)
-                .setDuration(200)
-                .setListener(null)
-        }
-    }
-
-    private fun crossFade() {
-        binding.sponsorNote.animate()
-            .alpha(0f)
-            .setDuration(200)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    binding.sponsorNote.visibility = View.GONE
-                }
-            })
     }
 
     fun updateInfo() {
@@ -139,9 +91,6 @@ class UserActivity : AppCompatActivity() {
                 Glide.with(this@UserActivity)
                     .load(user.photo)
                     .into(binding.userAvatar)
-                Glide.with(this@UserActivity)
-                    .load(user.photo)
-                    .into(binding.smallAvatar)
             } catch (e: Exception) {
             }
         }
@@ -154,9 +103,6 @@ class UserActivity : AppCompatActivity() {
             Glide.with(this)
                 .load(data?.data)
                 .into(binding.userAvatar)
-            Glide.with(this@UserActivity)
-                .load(data?.data)
-                .into(binding.smallAvatar)
         }
     }
 
