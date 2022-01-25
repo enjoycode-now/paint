@@ -24,13 +24,13 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             app:tabIndicatorColor="@color/white"
             app:tabIndicatorHeight="3dp"
-            app:tabTextColor="#B3B3B3"
+            android:fitsSystemWindows="true"
             app:tabSelectedTextColor="@color/white"
             app:tabTextAppearance="@style/TabLayoutTextStyle"
-            />
+            app:tabTextColor="#B3B3B3" />
     </RelativeLayout>
 
     <View
