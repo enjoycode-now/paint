@@ -40,6 +40,7 @@ class UserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        app = this
 
         hignLightBtn(binding.userPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)

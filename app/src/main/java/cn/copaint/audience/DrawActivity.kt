@@ -88,7 +88,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
-
             val distanceX = abs(event.x - (lastEvent?.x ?: event.x))
             val distanceY = abs(event.y - (lastEvent?.y ?: event.y))
             val distance = distanceX * distanceX + distanceY * distanceY

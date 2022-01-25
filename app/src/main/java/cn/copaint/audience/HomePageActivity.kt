@@ -50,10 +50,9 @@ class HomePageActivity : AppCompatActivity() {
         }.attach()
 
         CoroutineScope(Dispatchers.Default).launch {
-            if(picQueue.size==0)
             repeat(32){
-                delay(125)
                 picQueue.add("https://api.ghser.com/random/pe.php")
+                delay(125)
             }
         }
     }
