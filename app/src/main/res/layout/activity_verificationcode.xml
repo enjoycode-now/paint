@@ -8,7 +8,7 @@
     tools:context=".LoginActivity">
 
 
-    <com.wacom.will3.ink.raster.rendering.demo.views.VerificationCodeInputView
+    <cn.copaint.audience.views.VerificationCodeInputView
         android:id="@+id/vciv_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

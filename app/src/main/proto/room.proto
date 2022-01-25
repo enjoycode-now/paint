@@ -5,7 +5,7 @@ package room.v1;
 import "google/protobuf/timestamp.proto";
 
 option java_multiple_files = true;
-option java_package = "com.wacom.will3.ink.raster.rendering.demo";
+option java_package = "cn.copaint.audience";
 option java_outer_classname = "RoomProto";
 
 service RoomService {

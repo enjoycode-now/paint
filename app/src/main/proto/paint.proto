@@ -3,7 +3,7 @@ syntax = "proto3";
 package paint.v1;
 
 option java_multiple_files = true;
-option java_package = "com.wacom.will3.ink.raster.rendering.demo";
+option java_package = "cn.copaint.audience";
 option java_outer_classname = "PaintProto";
 
 enum PaintType {

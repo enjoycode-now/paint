@@ -134,7 +134,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/navbar_container">
 
-        <com.wacom.will3.ink.raster.rendering.demo.views.RasterView
+        <cn.copaint.audience.views.RasterView
             android:id="@+id/rasterDrawingSurface"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
