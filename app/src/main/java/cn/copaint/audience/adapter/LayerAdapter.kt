@@ -9,7 +9,6 @@ import cn.copaint.audience.DrawActivity
 import cn.copaint.audience.R
 import cn.copaint.audience.databinding.ItemLayerSmallBinding
 import cn.copaint.audience.model.RoomLayer
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class LayerAdapter(private val activity: DrawActivity) :

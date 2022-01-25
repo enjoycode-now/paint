@@ -21,7 +21,7 @@ import com.wacom.ink.format.input.*
 import com.wacom.ink.format.tree.groups.StrokeGroupNode
 import com.wacom.ink.model.Identifier
 import cn.copaint.audience.adapter.LayerAdapter
-import cn.copaint.audience.databinding.ActivityMainBinding
+import cn.copaint.audience.databinding.ActivityDrawBinding
 import cn.copaint.audience.databinding.ItemToolsmenuBinding
 import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
@@ -30,7 +30,6 @@ import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_layer_small.view.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
@@ -65,7 +64,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     private var currentBackground = 3
     val layerAdapter = LayerAdapter(this)
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityDrawBinding
 
     // 多图层
     var smallLayerList = mutableListOf<RoomLayer>()
@@ -76,7 +75,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityDrawBinding.inflate(layoutInflater)
         setContentView(binding.root)
         resetInkModel()
         app = this
@@ -85,8 +84,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         setColor(drawingColor) //set default color
 
-        rasterDrawingSurface.activity = this
-        rasterDrawingSurface.setOnTouchListener { _, event ->
+        binding.rasterDrawingSurface.activity = this
+        binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
 
@@ -96,7 +95,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             if (distance > 65536) {
                 lineProtect = true
                 lastEvent?.action = MotionEvent.ACTION_UP
-                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 lastEvent = null
             }
             if (lineProtect) return@setOnTouchListener true
@@ -107,9 +106,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 (event.action == MotionEvent.ACTION_UP)
             ) {
                 lastEvent = MotionEvent.obtain(event)
-                rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
-                    smallLayerList[layerPos].bitmap = rasterDrawingSurface.strokesLayer[layerPos].toBitmap(rasterDrawingSurface.inkCanvas)
+                    smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
                     layerAdapter.notifyDataSetChanged()
                     lastEvent = null
                 }
@@ -117,8 +116,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             true
         }
 
-        rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
-        rasterDrawingSurface.listener = this
+        binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
+        binding.rasterDrawingSurface.listener = this
 
         selectPaper(currentBackground)
 
@@ -132,10 +131,10 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun add(view: View) {
         if (smallLayerList.size >= 0xF) return
         smallLayerList.add(RoomLayer())
-        rasterDrawingSurface.addLayer()
-        rasterDrawingSurface.refreshView()
-        rasterDrawingSurface.invalidate()
-        smallLayerList.last().bitmap = rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(rasterDrawingSurface.inkCanvas)
+        binding.rasterDrawingSurface.addLayer()
+        binding.rasterDrawingSurface.refreshView()
+        binding.rasterDrawingSurface.invalidate()
+        smallLayerList.last().bitmap = binding.rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(binding.rasterDrawingSurface.inkCanvas)
         changeToLayer(smallLayerList.lastIndex)
         layerAdapter.notifyDataSetChanged()
     }
@@ -144,9 +143,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         val stepModel = stepStack.undo()
         if (stepModel == null) toast("无法继续撤回")
         else {
-            rasterDrawingSurface.setStepModel(stepModel)
+            binding.rasterDrawingSurface.setStepModel(stepModel)
             layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
+            smallLayerList[stepModel.index].bitmap = binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
             layerAdapter.notifyDataSetChanged()
         }
     }
@@ -155,9 +154,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         val stepModel = stepStack.redo()
         if (stepModel == null) toast("无法继续重做")
         else {
-            rasterDrawingSurface.setStepModel(stepModel)
+            binding.rasterDrawingSurface.setStepModel(stepModel)
             layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap = rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(rasterDrawingSurface.inkCanvas)
+            smallLayerList[stepModel.index].bitmap = binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
             layerAdapter.notifyDataSetChanged()
         }
     }
@@ -165,14 +164,14 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     //   跳转到指定图层
     fun changeToLayer(pos: Int) {
         layerPos = pos
-        stepStack.addStep(rasterDrawingSurface.getStepModel())
+        stepStack.addStep(binding.rasterDrawingSurface.getStepModel())
         layerAdapter.notifyDataSetChanged()
     }
 
     fun onTextureReady() {
-        add(addLayerButton)
+        add(binding.addLayerButton)
         changeToLayer(0)
-        smallLayerList[0].bitmap = rasterDrawingSurface.strokesLayer[0].toBitmap(rasterDrawingSurface.inkCanvas)
+        smallLayerList[0].bitmap = binding.rasterDrawingSurface.strokesLayer[0].toBitmap(binding.rasterDrawingSurface.inkCanvas)
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -195,18 +194,17 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     fun setColor(color: Int) {
         drawingColor = color
-        btnColor.setColorFilter(drawingColor, PorterDuff.Mode.SRC_ATOP)
-        rasterDrawingSurface.setColor(drawingColor)
+        binding.btnColor.setColorFilter(drawingColor, PorterDuff.Mode.SRC_ATOP)
+        binding.rasterDrawingSurface.setColor(drawingColor)
     }
 
     fun selectTool(uri: String) {
-        val view = when (uri) {
-            WaterbrushTool.uri -> btn_water_brush
-            CrayonTool.uri -> btn_crayon
-            EraserRasterTool.uri -> btn_eraser
-            else -> btn_pencil
-        }
-        selectTool(view)
+        selectTool(when (uri) {
+            WaterbrushTool.uri -> binding.btnWaterBrush
+            CrayonTool.uri -> binding.btnCrayon
+            EraserRasterTool.uri -> binding.btnEraser
+            else -> binding.btnPencil
+        })
     }
 
     fun selectTool(view: View) {
@@ -221,16 +219,15 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     fun setTool(view: View, tool: RasterTool) {
         drawingTool = tool
         val dt = drawingTool as RasterTool
-        rasterDrawingSurface.setTool(dt)
+        binding.rasterDrawingSurface.setTool(dt)
         highlightTool(view)
     }
 
     fun highlightTool(view: View) {
-        btn_pencil.isActivated = false
-        btn_water_brush.isActivated = false
-        btn_ink_brush.isActivated = false
-        btn_crayon.isActivated = false
-        btn_eraser.isActivated = false
+        binding.btnPencil.isActivated = false
+        binding.btnInkBrush.isActivated = false
+        binding.btnCrayon.isActivated = false
+        binding.btnEraser.isActivated = false
         view.isActivated = true
     }
 
@@ -246,23 +243,23 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     }
 
     override fun onSurfaceCreated() {
-        if (drawingTool != null) rasterDrawingSurface.setTool(drawingTool!!)
+        if (drawingTool != null) binding.rasterDrawingSurface.setTool(drawingTool!!)
         else selectTool(defaultDrawingTool) // set default tool
     }
 
     fun clear(view: View) {
         resetInkModel()
-        rasterDrawingSurface.clear()
-        rasterDrawingSurface.refreshView()
-        rasterDrawingSurface.invalidate()
-        stepStack.addStep(rasterDrawingSurface.getStepModel())
-        smallLayerList[layerPos].bitmap = rasterDrawingSurface.strokesLayer[layerPos].toBitmap(rasterDrawingSurface.inkCanvas)
+        binding.rasterDrawingSurface.clear()
+        binding.rasterDrawingSurface.refreshView()
+        binding.rasterDrawingSurface.invalidate()
+        stepStack.addStep(binding.rasterDrawingSurface.getStepModel())
+        smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
         layerAdapter.notifyDataSetChanged()
     }
 
     fun changeVisibilityOfSmallLayer() {
         resetInkModel()
-        rasterDrawingSurface.refreshView()
+        binding.rasterDrawingSurface.refreshView()
     }
 
     fun openPaperDialog(view: View) {
@@ -283,7 +280,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             view,
             Gravity.NO_GRAVITY,
             screenPos[0],
-            screenPos[1] + navbar_container.height
+            screenPos[1] + binding.navbarContainer.height
         )
     }
 
@@ -405,12 +402,12 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             return
         }
         smallLayerList.removeAt(layerPos)
-        rasterDrawingSurface.strokesLayer.removeAt(layerPos)
-        rasterDrawingSurface.currentFrameLayer.removeAt(layerPos)
+        binding.rasterDrawingSurface.strokesLayer.removeAt(layerPos)
+        binding.rasterDrawingSurface.currentFrameLayer.removeAt(layerPos)
         if (layerPos > 0) {
             layerPos--
         }
-        rasterDrawingSurface.refreshView()
+        binding.rasterDrawingSurface.refreshView()
         layerAdapter.notifyDataSetChanged()
     }
 
