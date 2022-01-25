@@ -1,9 +1,9 @@
-package cn.copaint.audience.utils;
+package cn.copaint.audience.utils
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 
 /**
  * Description : 键盘辅助类
@@ -11,18 +11,14 @@ import android.view.inputmethod.InputMethodManager;
  * @author WSoban
  * @date 2019/10/15
  */
-public class SoftInputUtils {
-
-    public static void showSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+object SoftInputUtils {
+    fun showSoftInput(context: Context, view: View?) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
     }
 
-    public static void hideSoftInput(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
-        }
-        
+    fun hideSoftInput(activity: Activity) {
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
     }
 }
