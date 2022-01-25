@@ -2,18 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="100dp"
-    android:layout_height="250dp"
-    >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/authorAvator"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:padding="8dp"
         android:src="@drawable/avatar_sample"
-        app:layout_constraintBottom_toTopOf="@+id/likeBtn"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,26 +18,25 @@
 
     <com.like.LikeButton
         android:id="@+id/likeBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="36dp"
         app:liked="false"
         app:icon_type="heart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorAvator"
         />
 
 
     <ImageView
         android:id="@+id/shareBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="72dp"
+        android:padding="16dp"
         android:src="@drawable/ic_share"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/likeBtn" />
 
