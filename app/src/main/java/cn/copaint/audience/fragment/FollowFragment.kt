@@ -1,4 +1,4 @@
-package com.example.uitest
+package cn.copaint.audience.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

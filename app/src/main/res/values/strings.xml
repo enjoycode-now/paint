@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name_demo">WILL 3 - Raster Ink</string>
+    <string name="app_name">元绘</string>
     <string name="filebrowser_provider">WILL3-Ink-Raster-Rendering-Demo</string>
     <string name="sdk_name">WILL SDK for ink (Android)</string>
     <string name="sdk_version">v3.0.0</string>
@@ -9,13 +9,6 @@
     <declare-styleable name="VerificationCodeInputView">
         <!--输入框的数量-->
         <attr name="vciv_et_number" format="integer" />
-        <!--输入类型-->
-        <attr name="vciv_et_inputType">
-            <enum name="number" value="0" />
-            <enum name="numberPassword" value="1" />
-            <enum name="text" value="2" />
-            <enum name="textPassword" value="3" />
-        </attr>
         <!--输入框的宽度-->
         <attr name="vciv_et_width" format="dimension" />
         <!--输入框的高度-->

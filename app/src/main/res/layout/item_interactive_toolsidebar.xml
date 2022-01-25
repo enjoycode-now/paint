@@ -15,19 +15,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <com.like.LikeButton
         android:id="@+id/likeBtn"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_marginTop="36dp"
-        app:liked="false"
         app:icon_type="heart"
         android:elevation="10dp"
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/authorAvator"
-        />
+        app:liked="false" />
 
 
 

@@ -7,7 +7,7 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "com.wacom.will3.ink.raster.rendering.demo"
+        applicationId "cn.copaint.audience"
         minSdkVersion 29
         targetSdkVersion 31
         versionCode 10

@@ -47,8 +47,7 @@ class UserActivity : AppCompatActivity() {
         hignLightBtn(binding.userPageBtn)
         binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecylerView.adapter = adapter
-        binding.supportWorksRecylerView.layoutParams.height =
-            Resources.getSystem().displayMetrics.heightPixels
+        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
     }
 
     override fun onResume() {

@@ -21,7 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import cn.copaint.audience.R
-import cn.copaint.audience.utils.AsteriskPasswordTransformationMethod
 import cn.copaint.audience.utils.SoftInputUtils
 import cn.copaint.audience.utils.dp
 import java.util.*
@@ -41,17 +40,16 @@ interface OnInputListener {
 }
 
 class VerificationCodeInputView : RelativeLayout {
-    private var mContext: Context? = null
     private var onInputListener: OnInputListener? = null
-    private var mLinearLayout: LinearLayout? = null
+    private lateinit var mLinearLayout: LinearLayout
     private var mRelativeLayouts = mutableListOf<RelativeLayout>()
     private var mTextViews = mutableListOf<TextView>()
     private var mUnderLineViews = mutableListOf<View>()
     private var mCursorViews = mutableListOf<View>()
-    private var mEditText: EditText? = null
-    private var mPopupWindow: PopupWindow? = null
+    private lateinit var mEditText: EditText
+    private lateinit var mPopupWindow: PopupWindow
     private lateinit var valueAnimator: ValueAnimator
-    private val mCodes: MutableList<String> = ArrayList()
+    private val mCodes = mutableListOf<String>()
 
     /**
      * 输入框数量
@@ -140,11 +138,6 @@ class VerificationCodeInputView : RelativeLayout {
          * 文字
          */
         TEXT,
-
-        /**
-         * 文字密码
-         */
-        TEXTPASSWORD
     }
 
     constructor(context: Context) : super(context) {
@@ -155,139 +148,70 @@ class VerificationCodeInputView : RelativeLayout {
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(context, attrs)
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        mContext = context
-        val typedArray =
-            context.obtainStyledAttributes(attrs, R.styleable.VerificationCodeInputView)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerificationCodeInputView)
         mEtNumber = typedArray.getInteger(R.styleable.VerificationCodeInputView_vciv_et_number, 4)
-        val inputType = typedArray.getInt(
-            R.styleable.VerificationCodeInputView_vciv_et_inputType,
-            VCInputType.NUMBER.ordinal
-        )
-        mEtInputType = VCInputType.values()[inputType]
-        mEtWidth = typedArray.getDimensionPixelSize(
-            R.styleable.VerificationCodeInputView_vciv_et_width,
-            40.dp
-        )
-        mEtHeight = typedArray.getDimensionPixelSize(
-            R.styleable.VerificationCodeInputView_vciv_et_height,
-            40.dp
-        )
-        mEtTextColor = typedArray.getColor(
-            R.styleable.VerificationCodeInputView_vciv_et_text_color,
-            Color.BLACK
-        )
-        mEtTextSize = typedArray.getDimensionPixelSize(
-            R.styleable.VerificationCodeInputView_vciv_et_text_size,
-            40.dp
-        ).toFloat()
-        mEtBackground =
-            typedArray.getResourceId(R.styleable.VerificationCodeInputView_vciv_et_background, -1)
-        if (mEtBackground < 0) {
-            mEtBackground = typedArray.getColor(
-                R.styleable.VerificationCodeInputView_vciv_et_background,
-                Color.WHITE
-            )
-        }
-        isFocusBackgroud =
-            typedArray.hasValue(R.styleable.VerificationCodeInputView_vciv_et_foucs_background)
-        mEtFocusBackground = typedArray.getResourceId(
-            R.styleable.VerificationCodeInputView_vciv_et_foucs_background,
-            -1
-        )
-        if (mEtFocusBackground < 0) {
-            mEtFocusBackground = typedArray.getColor(
-                R.styleable.VerificationCodeInputView_vciv_et_foucs_background,
-                Color.WHITE
-            )
-        }
+        mEtWidth = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputView_vciv_et_width, 48.dp)
+        mEtHeight = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputView_vciv_et_height, 48.dp)
+        mEtTextColor = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_text_color, Color.BLACK)
+        mEtTextSize = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputView_vciv_et_text_size, 48.dp).toFloat()
+        mEtBackground = typedArray.getResourceId(R.styleable.VerificationCodeInputView_vciv_et_background, -1)
+        if (mEtBackground < 0) mEtBackground = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_background, Color.WHITE)
+        isFocusBackgroud = typedArray.hasValue(R.styleable.VerificationCodeInputView_vciv_et_foucs_background)
+        mEtFocusBackground = typedArray.getResourceId(R.styleable.VerificationCodeInputView_vciv_et_foucs_background,-1)
+        if (mEtFocusBackground < 0) mEtFocusBackground = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_foucs_background, Color.WHITE)
         isBisect = typedArray.hasValue(R.styleable.VerificationCodeInputView_vciv_et_spacing)
-        if (isBisect) {
-            mEtSpacing = typedArray.getDimensionPixelSize(
-                R.styleable.VerificationCodeInputView_vciv_et_spacing,
-                0
-            )
-        }
-        mEtCursorWidth = typedArray.getDimensionPixelOffset(
-            R.styleable.VerificationCodeInputView_vciv_et_cursor_width,
-            2.dp
-        )
-        mEtCursorHeight = typedArray.getDimensionPixelOffset(
-            R.styleable.VerificationCodeInputView_vciv_et_cursor_height,
-            30.dp
-        )
-        mEtCursorColor = typedArray.getColor(
-            R.styleable.VerificationCodeInputView_vciv_et_cursor_color,
-            Color.parseColor("#C3C3C3")
-        )
-        mEtUnderLineHeight = typedArray.getDimensionPixelOffset(
-            R.styleable.VerificationCodeInputView_vciv_et_underline_height,
-            1.dp
-        )
-        mEtUnderLineDefaultColor = typedArray.getColor(
-            R.styleable.VerificationCodeInputView_vciv_et_underline_default_color,
-            Color.parseColor("#F0F0F0")
-        )
-        mEtUnderLineFocusColor = typedArray.getColor(
-            R.styleable.VerificationCodeInputView_vciv_et_underline_focus_color,
-            Color.parseColor("#C3C3C3")
-        )
-        mEtUnderLineShow = typedArray.getBoolean(
-            R.styleable.VerificationCodeInputView_vciv_et_underline_show,
-            false
-        )
+        if (isBisect) mEtSpacing = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputView_vciv_et_spacing, 0)
+        mEtCursorWidth = typedArray.getDimensionPixelOffset(R.styleable.VerificationCodeInputView_vciv_et_cursor_width, 2.dp)
+        mEtCursorHeight = typedArray.getDimensionPixelOffset(R.styleable.VerificationCodeInputView_vciv_et_cursor_height, 30.dp)
+        mEtCursorColor = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_cursor_color, Color.parseColor("#C3C3C3"))
+        mEtUnderLineHeight = typedArray.getDimensionPixelOffset(R.styleable.VerificationCodeInputView_vciv_et_underline_height, 1.dp)
+        mEtUnderLineDefaultColor = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_underline_default_color, Color.parseColor("#F0F0F0"))
+        mEtUnderLineFocusColor = typedArray.getColor(R.styleable.VerificationCodeInputView_vciv_et_underline_focus_color, Color.parseColor("#C3C3C3"))
+        mEtUnderLineShow = typedArray.getBoolean(R.styleable.VerificationCodeInputView_vciv_et_underline_show, false)
         initView()
         typedArray.recycle()
     }
 
     private fun initView() {
-        mLinearLayout = LinearLayout(mContext)
-        mLinearLayout!!.orientation = LinearLayout.HORIZONTAL
-        mLinearLayout!!.gravity = Gravity.CENTER_HORIZONTAL
-        mLinearLayout!!.layoutParams = LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        mLinearLayout = LinearLayout(context)
+        mLinearLayout.orientation = LinearLayout.HORIZONTAL
+        mLinearLayout.gravity = Gravity.CENTER_HORIZONTAL
+        mLinearLayout.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         for (i in 0 until mEtNumber) {
-            val relativeLayout = RelativeLayout(mContext)
+            val relativeLayout = RelativeLayout(context)
             relativeLayout.layoutParams = getEtLayoutParams(i)
             setEtBackground(relativeLayout, mEtBackground)
             mRelativeLayouts.add(relativeLayout)
-            val textView = TextView(mContext)
+            val textView = TextView(context)
             initTextView(textView)
             relativeLayout.addView(textView)
             mTextViews.add(textView)
-            val cursorView = View(mContext)
+            val cursorView = View(context)
             initCursorView(cursorView)
             relativeLayout.addView(cursorView)
             mCursorViews.add(cursorView)
             if (mEtUnderLineShow) {
-                val underLineView = View(mContext)
+                val underLineView = View(context)
                 initUnderLineView(underLineView)
                 relativeLayout.addView(underLineView)
                 mUnderLineViews.add(underLineView)
             }
-            mLinearLayout!!.addView(relativeLayout)
+            mLinearLayout.addView(relativeLayout)
         }
         addView(mLinearLayout)
-        mEditText = EditText(mContext)
-        initEdittext(mEditText!!)
+        mEditText = EditText(context)
+        initEdittext(mEditText)
         addView(mEditText)
         setCursorColor()
     }
 
     private fun initTextView(textView: TextView) {
-        val lp =
-            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        textView.layoutParams = lp
+        textView.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         textView.textAlignment = TEXT_ALIGNMENT_CENTER
         textView.gravity = Gravity.CENTER
         textView.setTextColor(mEtTextColor)
@@ -312,8 +236,8 @@ class VerificationCodeInputView : RelativeLayout {
     private fun initEdittext(editText: EditText) {
         val layoutParams =
             LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        layoutParams.addRule(ALIGN_TOP, mLinearLayout!!.id)
-        layoutParams.addRule(ALIGN_BOTTOM, mLinearLayout!!.id)
+        layoutParams.addRule(ALIGN_TOP, mLinearLayout.id)
+        layoutParams.addRule(ALIGN_BOTTOM, mLinearLayout.id)
         editText.layoutParams = layoutParams
         setInputType(editText)
         editText.setBackgroundColor(Color.TRANSPARENT)
@@ -324,13 +248,13 @@ class VerificationCodeInputView : RelativeLayout {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(editable: Editable) {
                 if (editable.isNotEmpty()) {
-                    mEditText!!.setText("")
+                    mEditText.setText("")
                     code = editable.toString()
                 }
             }
         })
         // 监听验证码删除按键
-        editText.setOnKeyListener { view: View?, keyCode: Int, keyEvent: KeyEvent ->
+        editText.setOnKeyListener { _: View, keyCode: Int, keyEvent: KeyEvent ->
             if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN && mCodes.size > 0) {
                 mCodes.removeAt(mCodes.size - 1)
                 showCode()
@@ -338,7 +262,7 @@ class VerificationCodeInputView : RelativeLayout {
             }
             false
         }
-        editText.setOnLongClickListener { v: View? ->
+        editText.setOnLongClickListener {
             showPaste()
             false
         }
@@ -348,25 +272,25 @@ class VerificationCodeInputView : RelativeLayout {
     private fun initPopupWindow() {
         mPopupWindow =
             PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val tv = TextView(mContext)
+        val tv = TextView(context)
         tv.text = "粘贴"
         tv.textSize = 14.0f
         tv.setTextColor(Color.BLACK)
         tv.setBackgroundResource(R.drawable.vciv_paste_bg)
         tv.setPadding(30, 10, 30, 10)
         tv.setOnClickListener { v: View? ->
-            code = clipboardString ?: ""
-            mPopupWindow!!.dismiss()
+            code = clipboardString
+            mPopupWindow.dismiss()
         }
-        mPopupWindow!!.contentView = tv
-        mPopupWindow!!.width = LinearLayout.LayoutParams.WRAP_CONTENT // 设置菜单的宽度
-        mPopupWindow!!.height = LinearLayout.LayoutParams.WRAP_CONTENT
-        mPopupWindow!!.isFocusable = true // 获取焦点
-        mPopupWindow!!.isTouchable = true // 设置PopupWindow可触摸
-        mPopupWindow!!.isOutsideTouchable = true // 设置非PopupWindow区域可触摸
-        //设置点击隐藏popwindow
+        mPopupWindow.contentView = tv
+        mPopupWindow.width = LinearLayout.LayoutParams.WRAP_CONTENT // 设置菜单的宽度
+        mPopupWindow.height = LinearLayout.LayoutParams.WRAP_CONTENT
+        mPopupWindow.isFocusable = true // 获取焦点
+        mPopupWindow.isTouchable = true // 设置PopupWindow可触摸
+        mPopupWindow.isOutsideTouchable = true // 设置非PopupWindow区域可触摸
+        //设置点击隐藏popWindow
         val dw = ColorDrawable(Color.TRANSPARENT)
-        mPopupWindow!!.setBackgroundDrawable(dw)
+        mPopupWindow.setBackgroundDrawable(dw)
     }
 
     private fun setEtBackground(rl: RelativeLayout, background: Int) {
@@ -378,15 +302,11 @@ class VerificationCodeInputView : RelativeLayout {
     private val clipboardString: String
         get() {
             val clipboardManager =
-                mContext!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             //获取剪贴板中第一条数据
-            if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription!!
-                    .hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
-            ) {
+            if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription!!.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)){
                 val itemAt = clipboardManager.primaryClip!!.getItemAt(0)
-                if (!(itemAt == null || TextUtils.isEmpty(itemAt.text))) {
-                    return itemAt.text.toString()
-                }
+                if (!(itemAt == null || TextUtils.isEmpty(itemAt.text)))return itemAt.text.toString()
             }
             return ""
         }
@@ -399,36 +319,28 @@ class VerificationCodeInputView : RelativeLayout {
         } else {
             spacing = mEtSpacing / 2
             //如果大于最大平分数，将设为最大值
-            if (mEtSpacing > mEtBisectSpacing) {
-                spacing = mEtBisectSpacing / 2
-            }
+            if (mEtSpacing > mEtBisectSpacing) spacing = mEtBisectSpacing / 2
         }
-        if (i == 0) {
-            layoutParams.leftMargin = 0
-            layoutParams.rightMargin = spacing
-        } else if (i == mEtNumber - 1) {
-            layoutParams.leftMargin = spacing
-            layoutParams.rightMargin = 0
-        } else {
-            layoutParams.leftMargin = spacing
-            layoutParams.rightMargin = spacing
+        when (i) {
+            0 -> {
+                layoutParams.leftMargin = 0
+                layoutParams.rightMargin = spacing
+            }
+            mEtNumber - 1 -> {
+                layoutParams.leftMargin = spacing
+                layoutParams.rightMargin = 0
+            }
+            else -> {
+                layoutParams.leftMargin = spacing
+                layoutParams.rightMargin = spacing
+            }
         }
         return layoutParams
     }
 
     private fun setInputType(textView: TextView) {
         when (mEtInputType) {
-            VCInputType.NUMBERPASSWORD -> {
-                textView.inputType =
-                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                textView.transformationMethod = AsteriskPasswordTransformationMethod()
-            }
             VCInputType.TEXT -> textView.inputType = InputType.TYPE_CLASS_TEXT
-            VCInputType.TEXTPASSWORD -> {
-                textView.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                textView.transformationMethod = AsteriskPasswordTransformationMethod()
-            }
             else -> textView.inputType = InputType.TYPE_CLASS_NUMBER
         }
     }
@@ -438,13 +350,10 @@ class VerificationCodeInputView : RelativeLayout {
      */
     private fun showPaste() {
         //去除输入框为数字模式，但粘贴板不是数字模式
-        if ((mEtInputType == VCInputType.NUMBER || mEtInputType == VCInputType.NUMBERPASSWORD) && !isNumeric(
-                clipboardString
-            )
-        ) return
+        if ((mEtInputType == VCInputType.NUMBER || mEtInputType == VCInputType.NUMBERPASSWORD) && !isNumeric(clipboardString)) return
         if (!TextUtils.isEmpty(clipboardString)) {
-            if (mPopupWindow == null) initPopupWindow()
-            mPopupWindow!!.showAsDropDown(mTextViews[0], 0, 20)
+            if (this::mPopupWindow.isInitialized) initPopupWindow()
+            mPopupWindow.showAsDropDown(mTextViews[0], 0, 20)
             SoftInputUtils.hideSoftInput(context as Activity)
         }
     }
@@ -476,9 +385,7 @@ class VerificationCodeInputView : RelativeLayout {
      * 设置焦点输入框底部线、光标颜色、背景色
      */
     private fun setCursorColor() {
-        if (this::valueAnimator.isInitialized) {
-            valueAnimator.cancel()
-        }
+        if (this::valueAnimator.isInitialized) valueAnimator.cancel()
         for (i in 0 until mEtNumber) {
             val cursorView = mCursorViews[i]
             cursorView.setBackgroundColor(Color.TRANSPARENT)
@@ -486,18 +393,12 @@ class VerificationCodeInputView : RelativeLayout {
                 val underLineView = mUnderLineViews[i]
                 underLineView.setBackgroundColor(mEtUnderLineDefaultColor)
             }
-            if (isFocusBackgroud) {
-                setEtBackground(mRelativeLayouts[i], mEtBackground)
-            }
+            if (isFocusBackgroud) setEtBackground(mRelativeLayouts[i], mEtBackground)
         }
         if (mCodes.size < mEtNumber) {
             setCursorView(mCursorViews[mCodes.size])
-            if (mEtUnderLineShow) {
-                mUnderLineViews[mCodes.size].setBackgroundColor(mEtUnderLineFocusColor)
-            }
-            if (isFocusBackgroud) {
-                setEtBackground(mRelativeLayouts[mCodes.size], mEtFocusBackground)
-            }
+            if (mEtUnderLineShow) mUnderLineViews[mCodes.size].setBackgroundColor(mEtUnderLineFocusColor)
+            if (isFocusBackgroud) setEtBackground(mRelativeLayouts[mCodes.size], mEtFocusBackground)
         }
     }
 
@@ -507,16 +408,11 @@ class VerificationCodeInputView : RelativeLayout {
      * @param view
      */
     private fun setCursorView(view: View?) {
-        valueAnimator = ObjectAnimator.ofInt(
-            view,
-            "backgroundColor",
-            mEtCursorColor,
-            android.R.color.transparent
-        )
+        valueAnimator = ObjectAnimator.ofInt(view, "backgroundColor", mEtCursorColor, android.R.color.transparent)
         valueAnimator.duration = 1500
         valueAnimator.repeatCount = -1
         valueAnimator.repeatMode = ValueAnimator.RESTART
-        valueAnimator.setEvaluator(TypeEvaluator { fraction: Float, startValue: Any?, endValue: Any? -> if (fraction <= 0.5f) startValue else endValue })
+        valueAnimator.setEvaluator { fraction: Float, startValue: Any?, endValue: Any? -> if (fraction <= 0.5f) startValue else endValue }
         valueAnimator.start()
     }
 
@@ -533,9 +429,7 @@ class VerificationCodeInputView : RelativeLayout {
     private var code: String
         get() {
             val sb = StringBuilder()
-            for (code in mCodes) {
-                sb.append(code)
-            }
+            for (code in mCodes) sb.append(code)
             return sb.toString()
         }
         private set(code) {
@@ -553,9 +447,7 @@ class VerificationCodeInputView : RelativeLayout {
     private fun updateETMargin() {
         //平分Margin，把第一个TextView跟最后一个TextView的间距同设为平分
         mEtBisectSpacing = (mViewWidth - mEtNumber * mEtWidth) / (mEtNumber - 1)
-        for (i in 0 until mEtNumber) {
-            mLinearLayout!!.getChildAt(i).layoutParams = getEtLayoutParams(i)
-        }
+        for (i in 0 until mEtNumber) mLinearLayout.getChildAt(i).layoutParams = getEtLayoutParams(i)
     }
 
     private fun getEtFocus(editText: EditText) {
