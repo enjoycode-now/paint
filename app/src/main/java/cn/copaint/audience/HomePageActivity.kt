@@ -34,7 +34,7 @@ class HomePageActivity : AppCompatActivity() {
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
-            setCurrentItem(1)
+            setCurrentItem(1,false)
         }
     }
 
