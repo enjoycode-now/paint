@@ -45,4 +45,6 @@
         <!--输入框下划线是否展示-->
         <attr name="vciv_et_underline_show" format="boolean" />
     </declare-styleable>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
