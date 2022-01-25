@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
-    android:layout_height="250dp">
+    android:layout_height="250dp"
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/authorAvator"
@@ -16,20 +17,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.airbnb.lottie.LottieAnimationView
+
+
+    <com.like.LikeButton
         android:id="@+id/likeBtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/ic_like"
-        app:lottie_autoPlay="false"
-        app:lottie_loop="false"
-        app:lottie_progress="39"
-        app:lottie_rawRes="@raw/like"
+        app:liked="false"
+        app:icon_type="heart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 
     <ImageView
         android:id="@+id/shareBtn"

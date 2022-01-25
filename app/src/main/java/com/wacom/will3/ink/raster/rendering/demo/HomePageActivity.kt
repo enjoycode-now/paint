@@ -14,6 +14,7 @@ import com.wacom.will3.ink.raster.rendering.demo.fragment.LiveFragment
 import com.wacom.will3.ink.raster.rendering.demo.utils.ToastUtils.app
 import kotlinx.android.synthetic.main.activity_home_page.*
 import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.item_support_works.*
 
 class HomePageActivity : AppCompatActivity() {
     lateinit var binding : ActivityHomePageBinding

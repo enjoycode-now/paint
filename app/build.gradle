@@ -107,5 +107,5 @@ dependencies {
 
     api 'com.tencent.mm.opensdk:wechat-sdk-android:+'
 
-    implementation "com.airbnb.android:lottie:4.2.2"
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 }
