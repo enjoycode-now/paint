@@ -5,4 +5,9 @@
         <item name="buttonTint">#B5A0FF</item>
     </style>
 
+    <style name="TabLayoutTextStyle">
+        <item name="android:textSize">@dimen/tablayout_textsize</item>
+    </style>
+
+
 </resources>

@@ -14,6 +14,7 @@ import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
 import cn.copaint.audience.utils.ToastUtils.app
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_home_page.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_support_works.*
@@ -36,6 +37,13 @@ class HomePageActivity : AppCompatActivity() {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
             setCurrentItem(1,false)
         }
+        TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
+            when(position){
+                0->tab.text="关注"
+                1->tab.text="直播"
+                2->tab.text="推荐"
+            }
+        }.attach()
     }
 
     fun highLightBtn(view: View){
