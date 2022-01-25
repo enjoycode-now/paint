@@ -12,13 +12,10 @@ import java.lang.Exception
 import android.content.Intent
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-
-
-
+import cn.copaint.audience.utils.APP_ID
 import com.tencent.mm.opensdk.constants.ConstantsAPI
 import com.tencent.mm.opensdk.modelpay.PayReq
 import cn.copaint.audience.wxapi.WXPayEntryActivity
-import cn.copaint.audience.wxapi.util.WXConstants
 
 
 class PayActivity : AppCompatActivity() , IWXAPIEventHandler {
@@ -32,7 +29,7 @@ class PayActivity : AppCompatActivity() , IWXAPIEventHandler {
         api = WXAPIFactory.createWXAPI(this, null)
 
         // 将应用的appId注册到微信
-        api.registerApp(WXConstants.APP_ID)
+        api.registerApp(APP_ID)
 
         try {
             api.handleIntent(intent, this)
@@ -76,7 +73,7 @@ class PayActivity : AppCompatActivity() , IWXAPIEventHandler {
 
         //调起支付
         val request = PayReq()
-        request.appId = WXConstants.APP_ID
+        request.appId = APP_ID
         request.partnerId = ""
         request.prepayId = ""
         request.packageValue = ""

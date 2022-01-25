@@ -1,21 +1,18 @@
-package cn.copaint.audience.wxapi;
+package cn.copaint.audience.wxapi
 
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-
-import com.tencent.mm.opensdk.constants.ConstantsAPI;
-import com.tencent.mm.opensdk.modelbase.BaseReq;
-import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import cn.copaint.audience.wxapi.util.WXConstants;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler
+import com.tencent.mm.opensdk.openapi.IWXAPI
+import android.os.Bundle
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import com.tencent.mm.opensdk.modelbase.BaseReq
+import com.tencent.mm.opensdk.modelbase.BaseResp
+import com.tencent.mm.opensdk.constants.ConstantsAPI
+import android.content.Intent
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import cn.copaint.audience.utils.APP_ID
+import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 
 /**
  * 描述 : 微信支付回调
@@ -27,57 +24,32 @@ import cn.copaint.audience.wxapi.util.WXConstants;
  * 2、需要用签名文件打包成为apk文件，安装后，打开微信提供的获取签名的app，输入项目的包名
  * 微信开放平台：https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=8_5
  */
-
-public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
-    private IWXAPI api;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        api = WXAPIFactory.createWXAPI(this, WXConstants.Companion.getAPP_ID());
-        api.handleIntent(getIntent(), this);
+class WXPayEntryActivity : AppCompatActivity(), IWXAPIEventHandler {
+    private lateinit var api: IWXAPI
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        app = this
+        api = WXAPIFactory.createWXAPI(this, APP_ID)
+        api.handleIntent(intent, this)
     }
 
+    override fun onReq(baseReq: BaseReq) {}
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        api = WXAPIFactory.createWXAPI(this, WXConstants.Companion.getAPP_ID());
-        api.handleIntent(getIntent(), this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        api = WXAPIFactory.createWXAPI(this, WXConstants.Companion.getAPP_ID());
-        api.handleIntent(getIntent(), this);
-    }
-
-    @Override
-    public void onReq(BaseReq baseReq) {
-    }
-
-    @Override
-    public void onResp(BaseResp baseResp) {
-        if (baseResp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-            Log.e("info", "onPayFinish,errCode=" + baseResp.errCode);
-            if (baseResp.errCode == 0) {
-                Toast.makeText(this, "支付成功", Toast.LENGTH_SHORT).show();
-            } else if (baseResp.errCode == -1) {
-                Toast.makeText(this, "配置错误", Toast.LENGTH_SHORT).show();
-            } else if (baseResp.errCode == -2) {
-                Toast.makeText(this, "取消支付", Toast.LENGTH_SHORT).show();
+    override fun onResp(baseResp: BaseResp) {
+        if (baseResp.type == ConstantsAPI.COMMAND_PAY_BY_WX) {
+            Log.e("info", "onPayFinish,errCode=" + baseResp.errCode)
+            when (baseResp.errCode) {
+                0 -> toast("支付成功")
+                -1 -> toast("配置错误")
+                -2 -> toast("取消支付")
             }
-            this.finish();
-        } else {
-            Toast.makeText(this, baseResp.errStr, Toast.LENGTH_SHORT).show();
-        }
+            finish()
+        } else toast(baseResp.errStr)
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        api.handleIntent(intent, this);
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        api.handleIntent(intent, this)
     }
 }

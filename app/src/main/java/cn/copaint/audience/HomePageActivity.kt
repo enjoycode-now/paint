@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.uitest.FollowFragment
+import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
@@ -22,7 +22,7 @@ class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding : ActivityHomePageBinding
     val photoUri = "https://api.ghser.com/random/pe.php"
-    val fragmentList = mutableListOf<Fragment>(FollowFragment(),LiveFragment(photoUri),RecommendFragment())
+    val fragmentList = mutableListOf(FollowFragment(),LiveFragment(photoUri),RecommendFragment())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
