@@ -119,7 +119,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // This function is going to be call when we touch the surface
-    fun surfaceTouch(event: MotionEvent) {
+    fun surfaceTouch(event: Draw) {
         if (event.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
@@ -134,19 +134,19 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        for (i in 0 until event.historySize) {
-            val pointerData = event.historicalToPointerData(i,defaults.alpha)
-            rasterInkBuilder.add(pointerData.phase, pointerData, null)
+        for (point in event.pointsList) {
+            val pointerData = point.toPointerData(defaults.alpha)
+            rasterInkBuilder.add(pointerData, null)
         }
 
-        val pointerData = event.toPointerData()
-        rasterInkBuilder.add(pointerData.phase, pointerData, null)
+        val pointerData = event.toPointerData(defaults.alpha)
+        rasterInkBuilder.add(pointerData, null)
 
         val (added, predicted) = rasterInkBuilder.build()
 
         if (pointerData.phase == Phase.BEGIN) {
             // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(event.getToolType(0))
+            val pair = inkEnvironmentModel.createSensorData(event.tool)
             sensorData = pair.first
             channelList = pair.second
         }
@@ -167,60 +167,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             sensorDataList.add(sensorData)
         }
 
-        if (added != null) drawStroke(event.action, added, predicted)
-        renderView()
-    }
-
-    // This function is going to be call when we touch the surface
-    fun surfaceIO(draw: Draw) {
-        if (draw.resolveToolType() == InkInputType.PEN) {
-            if ((newTool) || (!isStylus)) {
-                newTool = false
-                isStylus = true
-                rasterInkBuilder.updateInputMethod(isStylus)
-            }
-        } else {
-            if ((newTool) || (isStylus)) {
-                newTool = false
-                isStylus = false
-                rasterInkBuilder.updateInputMethod(isStylus)
-            }
-        }
-
-        for (point in draw.line.pointsList) {
-            val pointerData = point.historicalToPointerData(defaults.alpha)
-            rasterInkBuilder.add(pointerData.phase, pointerData, null)
-        }
-
-        val pointerData = draw.toPointerData()
-        rasterInkBuilder.add(pointerData.phase, pointerData, null)
-
-        val (added, predicted) = rasterInkBuilder.build()
-
-        if (draw.phase == 0) {
-            // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(draw.tool)
-            sensorData = pair.first
-            channelList = pair.second
-        }
-
-        for (channel in channelList) {
-            when (channel.typeURI) {
-                InkSensorType.X -> sensorData.add(channel, pointerData.x)
-                InkSensorType.Y -> sensorData.add(channel, pointerData.y)
-                InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel,pointerData.timestamp)
-                InkSensorType.PRESSURE -> sensorData.add(channel, pointerData.force!!)
-                InkSensorType.ALTITUDE -> sensorData.add(channel, pointerData.altitudeAngle!!)
-                InkSensorType.AZIMUTH -> sensorData.add(channel, pointerData.azimuthAngle!!)
-            }
-        }
-
-        if ((draw.phase == 2) && (rasterInkBuilder.splineProducer.allData != null)) {
-            addStroke()
-            sensorDataList.add(sensorData)
-        }
-
-        if (added != null) drawStroke(draw.phase, added, predicted)
+        if (added != null) drawStroke(event.phase, added, predicted)
         renderView()
     }
 

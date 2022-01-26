@@ -98,7 +98,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             if (distance > 65536) {
                 lineProtect = true
                 lastEvent?.action = MotionEvent.ACTION_UP
-                binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                val draw = lastEvent!!.createDraw()
+                binding.rasterDrawingSurface.surfaceTouch(draw)
                 lastEvent = null
             }
             if (lineProtect) return@setOnTouchListener true
@@ -110,8 +111,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             ) {
                 //到达此处说明该点有效
                 lastEvent = MotionEvent.obtain(event)
-                drawQueue.add(createDraw(event))
-                binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
+                drawQueue.add(event.createDraw())
+                val draw = lastEvent!!.createDraw()
+                binding.rasterDrawingSurface.surfaceTouch(draw)
                 if (event.action == MotionEvent.ACTION_UP) {
                     smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
                     layerAdapter.notifyDataSetChanged()
@@ -119,14 +121,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 }
             }
             true
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            while (isActive){
-                val draw = drawQueue.lastOrNull()
-                if (draw!=null)rasterDrawingSurface.surfaceIO(draw)
-                delay(200)
-            }
         }
 
         binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
@@ -145,29 +139,28 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         else selectTool(defaultDrawingTool) // set default tool
     }
 
-    fun createDraw(event: MotionEvent):Draw{
-        val lineBuilder = Line.newBuilder()
-        for(i in 0 until event.historySize) {
-            lineBuilder.addPoints(
+    fun MotionEvent.createDraw():Draw{
+        val drawBuilder = Draw.newBuilder()
+            .setTool(getToolType(0))
+            .setColor(drawingColor)
+            .setPhase(action)
+            .setThickness(1f)
+
+        for(i in 0 until historySize) {
+            drawBuilder.addPoints(
                 Point.newBuilder()
-                    .setX(event.getHistoricalX(i))
-                    .setY(event.getHistoricalY(i)+100)
-                    .setPressure(event.getHistoricalPressure(i))
+                    .setX(getHistoricalX(i))
+                    .setY(getHistoricalY(i)+100)
+                    .setPressure(getHistoricalPressure(i))
             )
         }
-        lineBuilder.addPoints(
+        drawBuilder.addPoints(
             Point.newBuilder()
-                .setX(event.x)
-                .setY(event.y+100)
-                .setPressure(event.pressure)
+                .setX(x)
+                .setY(y+100)
+                .setPressure(pressure)
         )
-        return Draw.newBuilder()
-            .setTool(event.getToolType(0))
-            .setColor(drawingColor)
-            .setPhase(event.action)
-            .setThickness(1f)
-            .setLine(lineBuilder.build())
-            .build()
+        return drawBuilder.build()
     }
 
     // 加一个图层
