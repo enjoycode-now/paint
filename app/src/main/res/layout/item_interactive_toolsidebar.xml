@@ -14,6 +14,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/followBtn"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@mipmap/ic_follow"
+        android:layout_marginTop="56dp"
+        app:layout_constraintStart_toStartOf="@+id/authorAvator"
+        app:layout_constraintEnd_toEndOf="@id/authorAvator"
+        app:layout_constraintTop_toTopOf="@+id/authorAvator" />
+
 
     <com.like.LikeButton
         android:id="@+id/likeBtn"
