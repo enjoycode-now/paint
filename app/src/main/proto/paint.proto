@@ -78,11 +78,14 @@ message Draw {
     // 颜色 & 透明度
     int32 color = 2;
 
+    // 阶段
+    int32 phase = 3;
+
     // 粗细
-    float thickness = 6;
+    float thickness = 4;
 
     // 线
-    Line line = 7;
+    Line line = 5;
 }
 
 message Layer {

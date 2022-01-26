@@ -9,6 +9,7 @@ import android.graphics.PointF
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.MotionEvent
+import cn.copaint.audience.Draw
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.enums.InkInputType
 import com.wacom.ink.format.enums.InkSensorMetricType
@@ -70,8 +71,8 @@ class InkEnvironmentModel(val activity: Activity) {
         inputDevice.putProperty("dev.host", Build.HOST)
     }
 
-    fun createSensorData(event: MotionEvent): Pair<SensorData, List<SensorChannel>> {
-        val toolType = when (event.getToolType(0)) {
+    fun createSensorData(toolTypeInt:Int): Pair<SensorData, List<SensorChannel>> {
+        val toolType = when (toolTypeInt) {
             MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
             MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
             MotionEvent.TOOL_TYPE_MOUSE -> InkInputType.MOUSE

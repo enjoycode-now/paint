@@ -7,6 +7,7 @@ package cn.copaint.audience
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.hardware.SensorManager.getOrientation
 import android.view.MotionEvent
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
@@ -57,6 +58,26 @@ fun MotionEvent.toPointerData(): PointerData {
 }
 
 /**
+ * Converts a motion event to PointerData.
+ *
+ * @return the PointerData for the event.
+ */
+fun Draw.toPointerData(): PointerData {
+
+    return PointerData(
+        line.pointsList[0].x,
+        line.pointsList[0].y,
+        phase = when(phase) {
+            0->Phase.BEGIN
+            1->Phase.UPDATE
+            else->Phase.END
+        },
+        timestamp = 0L,
+        force = line.pointsList[0].pressure,
+    )
+}
+
+/**
  * Converts a historical point in the event to PointerData.
  *
  * @param index the index of the historical point
@@ -80,9 +101,26 @@ fun MotionEvent.historicalToPointerData(index: Int, forceBias:Float): PointerDat
     )
 }
 
+fun Point.historicalToPointerData(forceBias:Float): PointerData {
+    val phase = Phase.UPDATE
+    return PointerData(
+        x, y,
+        phase,
+        force = pressure*forceBias,
+        timestamp = 0L
+    )
+}
 
 fun MotionEvent.resolveToolType(): InkInputType {
     return when (this.getToolType(0)) {
+        MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
+        MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
+        else -> InkInputType.PEN
+    }
+}
+
+fun Draw.resolveToolType(): InkInputType {
+    return when (this.tool) {
         MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
         MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
         else -> InkInputType.PEN
