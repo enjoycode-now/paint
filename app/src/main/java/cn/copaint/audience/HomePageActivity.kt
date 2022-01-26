@@ -41,6 +41,7 @@ class HomePageActivity : AppCompatActivity() {
             setCurrentItem(1,false)
         }
 
+
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when(position){
                 0->tab.text="关注"
