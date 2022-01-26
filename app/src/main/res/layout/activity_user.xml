@@ -271,8 +271,8 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#EEEEEE"
+        android:layout_height="42dp"
+        android:background="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
@@ -282,8 +282,8 @@
         android:gravity="center"
         android:onClick="onHomePage"
         android:text="首页"
-        android:textColor="#C1C1C1"
-        android:textSize="21dp"
+        android:textColor="#80ffffff"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/userPageBtn"
         app:layout_constraintHorizontal_bias="0.5"
@@ -297,8 +297,8 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="我的"
-        android:textColor="#C1C1C1"
-        android:textSize="21dp"
+        android:textColor="#80ffffff"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
