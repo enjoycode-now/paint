@@ -73,10 +73,10 @@ class RasterInkBuilder {
      * @param addition - the addition
      * @param prediction - the prediction (if available)
      */
-    fun add(phase: Phase, addition: PointerData?, prediction: PointerData?) {
+    fun add(addition: PointerData, prediction: PointerData?) {
         try {
-            val (addedGeometry, predictedGeometry) = pathProducer.add(phase, addition, prediction)
-            pathSegment.add(phase, addedGeometry, predictedGeometry)
+            val (addedGeometry, predictedGeometry) = pathProducer.add(addition.phase, addition, prediction)
+            pathSegment.add(addition.phase, addedGeometry, predictedGeometry)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

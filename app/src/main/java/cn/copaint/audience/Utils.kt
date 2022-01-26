@@ -62,52 +62,31 @@ fun MotionEvent.toPointerData(): PointerData {
  *
  * @return the PointerData for the event.
  */
-fun Draw.toPointerData(): PointerData {
-
+fun Draw.toPointerData(alphaBias:Float): PointerData {
     return PointerData(
-        line.pointsList[0].x,
-        line.pointsList[0].y,
+        pointsList[0].x,
+        pointsList[0].y,
         phase = when(phase) {
-            0->Phase.BEGIN
-            1->Phase.UPDATE
+            MotionEvent.ACTION_DOWN->Phase.BEGIN
+            MotionEvent.ACTION_MOVE->Phase.UPDATE
             else->Phase.END
         },
         timestamp = 0L,
-        force = line.pointsList[0].pressure,
+        force = pointsList[0].pressure*alphaBias,
+        altitudeAngle = 0f,
+        azimuthAngle = 0f
     )
 }
 
-/**
- * Converts a historical point in the event to PointerData.
- *
- * @param index the index of the historical point
- * @return the PointerData for the historical point
- */
-fun MotionEvent.historicalToPointerData(index: Int, forceBias:Float): PointerData {
-    val phase = Phase.UPDATE
-    val orientationAngle = getHistoricalOrientation(0, index) + PI /2
-    val azimuthAngle = if (orientationAngle > PI) {
-        (orientationAngle - 2 * PI).toFloat()
-    } else {
-        orientationAngle.toFloat()
-    }
-    val altitudeAngle = (PI / 2 - this.getHistoricalAxisValue(MotionEvent.AXIS_TILT, index)).toFloat()
+fun Point.toPointerData(alphaBias:Float): PointerData {
     return PointerData(
-        getHistoricalX(index), getHistoricalY(index),
-        phase, timestamp = getHistoricalEventTime(index),
-        force = getHistoricalPressure(index)*forceBias,
-        altitudeAngle = altitudeAngle,
-        azimuthAngle = azimuthAngle
-    )
-}
-
-fun Point.historicalToPointerData(forceBias:Float): PointerData {
-    val phase = Phase.UPDATE
-    return PointerData(
-        x, y,
-        phase,
-        force = pressure*forceBias,
-        timestamp = 0L
+        x,
+        y,
+        phase = Phase.UPDATE,
+        timestamp = 0L,
+        force = pressure*alphaBias,
+        altitudeAngle = 0f,
+        azimuthAngle = 0f
     )
 }
 
