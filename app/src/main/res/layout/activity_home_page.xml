@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,7 +18,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/mainViewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
 
         <com.google.android.material.tabs.TabLayout
@@ -38,8 +38,8 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#303030"
+        android:layout_height="42dp"
+        android:background="#1a303030"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
@@ -48,8 +48,8 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="首页"
-        android:textColor="#3E3E3E"
-        android:textSize="21dp"
+        android:textColor="#80000000"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/userPageBtn"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -63,8 +63,8 @@
         android:gravity="center"
         android:onClick="onUserPage"
         android:text="我的"
-        android:textColor="#3E3E3E"
-        android:textSize="21dp"
+        android:textColor="#80000000"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread"

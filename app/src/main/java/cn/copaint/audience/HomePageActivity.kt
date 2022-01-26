@@ -62,10 +62,10 @@ class HomePageActivity : AppCompatActivity() {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.rgb(179,179,179))
-        binding.userPageBtn.setTextColor(Color.rgb(179,179,179))
+        binding.homePageBtn.setTextColor(Color.argb(80,255,255,255))
+        binding.userPageBtn.setTextColor(Color.argb(80,255,255,255))
         view.isSelected = true
-        view.setTextColor(Color.rgb(255,255,255))
+        view.setTextColor(Color.argb(255,255,255,255))
     }
 
     fun onUserPage(view: View){

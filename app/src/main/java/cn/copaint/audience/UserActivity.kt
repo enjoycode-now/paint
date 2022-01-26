@@ -115,10 +115,10 @@ class UserActivity : AppCompatActivity() {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.rgb(191, 191, 191))
-        binding.userPageBtn.setTextColor(Color.rgb(191, 191, 191))
+        binding.homePageBtn.setTextColor(Color.argb(0xcc,179, 179, 179))
+        binding.userPageBtn.setTextColor(Color.argb(0xcc,179, 179, 179))
         view.isSelected = true
-        view.setTextColor(Color.rgb(0, 0, 0))
+        view.setTextColor(Color.argb(255,0, 0, 0))
     }
 
     fun onChangeAvatar(view: View) {
