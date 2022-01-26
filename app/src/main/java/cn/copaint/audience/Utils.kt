@@ -90,14 +90,6 @@ fun Point.toPointerData(alphaBias:Float): PointerData {
     )
 }
 
-fun MotionEvent.resolveToolType(): InkInputType {
-    return when (this.getToolType(0)) {
-        MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
-        MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
-        else -> InkInputType.PEN
-    }
-}
-
 fun Draw.resolveToolType(): InkInputType {
     return when (this.tool) {
         MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN

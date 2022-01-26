@@ -119,8 +119,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // This function is going to be call when we touch the surface
-    fun surfaceTouch(event: Draw) {
-        if (event.resolveToolType() == InkInputType.PEN) {
+    fun surfaceTouch(draw: Draw) {
+        if (draw.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
                 isStylus = true
@@ -134,19 +134,19 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        for (point in event.pointsList) {
+        for (point in draw.pointsList) {
             val pointerData = point.toPointerData(defaults.alpha)
             rasterInkBuilder.add(pointerData, null)
         }
 
-        val pointerData = event.toPointerData(defaults.alpha)
+        val pointerData = draw.toPointerData(defaults.alpha)
         rasterInkBuilder.add(pointerData, null)
 
         val (added, predicted) = rasterInkBuilder.build()
 
         if (pointerData.phase == Phase.BEGIN) {
             // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(event.tool)
+            val pair = inkEnvironmentModel.createSensorData(draw.tool)
             sensorData = pair.first
             channelList = pair.second
         }
@@ -167,7 +167,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             sensorDataList.add(sensorData)
         }
 
-        if (added != null) drawStroke(event.phase, added, predicted)
+        if (added != null) drawStroke(draw.phase, added, predicted)
         renderView()
     }
 
