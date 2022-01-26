@@ -4,10 +4,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,7 +48,11 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecylerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val statusBarHeight = if (statusBarId>0)resources.getDimensionPixelSize(statusBarId) else 24.dp
-        binding.supportWorksRecylerView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels - statusBarHeight - 96.dp
+        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        binding.supportWorksRecylerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
     }
 
     override fun onResume() {
@@ -65,8 +70,7 @@ class UserActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
-            biography =
-                (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
 
             // 应援记录数据
