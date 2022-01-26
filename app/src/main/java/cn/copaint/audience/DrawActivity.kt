@@ -79,8 +79,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         setContentView(binding.root)
         resetInkModel()
         app = this
-        inkEnvironmentModel =
-            InkEnvironmentModel(this) // Initializes the environment data for serialization
+        inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
 
         setColor(drawingColor) //set default color
 
@@ -104,6 +103,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 (event.action == MotionEvent.ACTION_MOVE) ||
                 (event.action == MotionEvent.ACTION_UP)
             ) {
+                //到达此处说明该点有效
                 lastEvent = MotionEvent.obtain(event)
                 binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
