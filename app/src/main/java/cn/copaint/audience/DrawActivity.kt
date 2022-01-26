@@ -4,6 +4,7 @@
  */
 package cn.copaint.audience
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
@@ -38,6 +39,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import android.view.WindowManager
 import cn.copaint.audience.utils.dp
+import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.*
 
@@ -72,7 +74,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     lateinit var popupwindow: PopupWindow
     var layerPos = -1
     val stepStack = StepStack()
+    val drawQueue = ArrayDeque<Draw>()
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDrawBinding.inflate(layoutInflater)
@@ -84,6 +88,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         setColor(drawingColor) //set default color
 
         binding.rasterDrawingSurface.activity = this
+
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
@@ -105,6 +110,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             ) {
                 //到达此处说明该点有效
                 lastEvent = MotionEvent.obtain(event)
+                drawQueue.add(createDraw(event))
                 binding.rasterDrawingSurface.surfaceTouch(lastEvent!!)
                 if (event.action == MotionEvent.ACTION_UP) {
                     smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
@@ -113,6 +119,14 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 }
             }
             true
+        }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            while (isActive){
+                val draw = drawQueue.lastOrNull()
+                if (draw!=null)rasterDrawingSurface.surfaceIO(draw)
+                delay(200)
+            }
         }
 
         binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
@@ -124,6 +138,36 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         layoutManager.reverseLayout = true
         binding.layerRecycle.layoutManager = layoutManager
         binding.layerRecycle.adapter = layerAdapter
+    }
+
+    override fun onSurfaceCreated() {
+        if (drawingTool != null) binding.rasterDrawingSurface.setTool(drawingTool!!)
+        else selectTool(defaultDrawingTool) // set default tool
+    }
+
+    fun createDraw(event: MotionEvent):Draw{
+        val lineBuilder = Line.newBuilder()
+        for(i in 0 until event.historySize) {
+            lineBuilder.addPoints(
+                Point.newBuilder()
+                    .setX(event.getHistoricalX(i))
+                    .setY(event.getHistoricalY(i)+100)
+                    .setPressure(event.getHistoricalPressure(i))
+            )
+        }
+        lineBuilder.addPoints(
+            Point.newBuilder()
+                .setX(event.x)
+                .setY(event.y+100)
+                .setPressure(event.pressure)
+        )
+        return Draw.newBuilder()
+            .setTool(event.getToolType(0))
+            .setColor(drawingColor)
+            .setPhase(event.action)
+            .setThickness(1f)
+            .setLine(lineBuilder.build())
+            .build()
     }
 
     // 加一个图层
@@ -241,11 +285,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         //TODO paths.clear()
     }
 
-    override fun onSurfaceCreated() {
-        if (drawingTool != null) binding.rasterDrawingSurface.setTool(drawingTool!!)
-        else selectTool(defaultDrawingTool) // set default tool
-    }
-
     fun clear(view: View) {
         resetInkModel()
         binding.rasterDrawingSurface.clear()
@@ -316,7 +355,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     // 弹出工具框
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
-        var progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
+        val progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
         popBind.alphaSeekbar.progress = progress
         popBind.alphaNum.text = "${progress}%"
 

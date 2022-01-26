@@ -146,7 +146,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         if (pointerData.phase == Phase.BEGIN) {
             // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(event)
+            val pair = inkEnvironmentModel.createSensorData(event.getToolType(0))
             sensorData = pair.first
             channelList = pair.second
         }
@@ -167,7 +167,60 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             sensorDataList.add(sensorData)
         }
 
-        if (added != null) drawStroke(event, added, predicted)
+        if (added != null) drawStroke(event.action, added, predicted)
+        renderView()
+    }
+
+    // This function is going to be call when we touch the surface
+    fun surfaceIO(draw: Draw) {
+        if (draw.resolveToolType() == InkInputType.PEN) {
+            if ((newTool) || (!isStylus)) {
+                newTool = false
+                isStylus = true
+                rasterInkBuilder.updateInputMethod(isStylus)
+            }
+        } else {
+            if ((newTool) || (isStylus)) {
+                newTool = false
+                isStylus = false
+                rasterInkBuilder.updateInputMethod(isStylus)
+            }
+        }
+
+        for (point in draw.line.pointsList) {
+            val pointerData = point.historicalToPointerData(defaults.alpha)
+            rasterInkBuilder.add(pointerData.phase, pointerData, null)
+        }
+
+        val pointerData = draw.toPointerData()
+        rasterInkBuilder.add(pointerData.phase, pointerData, null)
+
+        val (added, predicted) = rasterInkBuilder.build()
+
+        if (draw.phase == 0) {
+            // initialize the sensor data each time a new stroke begin
+            val pair = inkEnvironmentModel.createSensorData(draw.tool)
+            sensorData = pair.first
+            channelList = pair.second
+        }
+
+        for (channel in channelList) {
+            when (channel.typeURI) {
+                InkSensorType.X -> sensorData.add(channel, pointerData.x)
+                InkSensorType.Y -> sensorData.add(channel, pointerData.y)
+                InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel,pointerData.timestamp)
+                InkSensorType.PRESSURE -> sensorData.add(channel, pointerData.force!!)
+                InkSensorType.ALTITUDE -> sensorData.add(channel, pointerData.altitudeAngle!!)
+                InkSensorType.AZIMUTH -> sensorData.add(channel, pointerData.azimuthAngle!!)
+            }
+        }
+
+        if ((draw.phase == 2) && (rasterInkBuilder.splineProducer.allData != null)) {
+            addStroke()
+            sensorDataList.add(sensorData)
+        }
+
+        if (added != null) drawStroke(draw.phase, added, predicted)
         renderView()
     }
 
@@ -252,12 +305,12 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // Draw stroke
-    private fun drawStroke(event: MotionEvent, added: InterpolatedSpline, predicted: InterpolatedSpline?) {
-        strokeRenderer.drawPoints(added, defaults, event.action == MotionEvent.ACTION_UP)
+    private fun drawStroke(phase: Int, added: InterpolatedSpline, predicted: InterpolatedSpline?) {
+        strokeRenderer.drawPoints(added, defaults, phase == MotionEvent.ACTION_UP)
 
         if (predicted != null) strokeRenderer.drawPrelimPoints(predicted, defaults)
 
-        if (event.action != MotionEvent.ACTION_UP) {
+        if (phase != MotionEvent.ACTION_UP) {
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos], strokeRenderer.strokeUpdatedArea)
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
