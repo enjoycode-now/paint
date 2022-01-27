@@ -38,7 +38,7 @@
         app:tabIndicatorFullWidth="false"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
-        app:tabTextColor="#B3B3B3" />
+        app:tabTextColor="#80FFFFFF" />
 
     <ImageView
         android:layout_width="64dp"
