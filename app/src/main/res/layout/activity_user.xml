@@ -36,7 +36,7 @@
                 android:layout_height="72px"
                 android:background="@drawable/ic_she"
                 android:onClick="onSetting"
-                app:layout_constraintBottom_toBottomOf="@+id/headerView"
+                app:layout_constraintBottom_toTopOf="@+id/cardView"
                 app:layout_constraintEnd_toEndOf="@+id/cardView"
                 app:layout_constraintTop_toTopOf="parent" />
 
