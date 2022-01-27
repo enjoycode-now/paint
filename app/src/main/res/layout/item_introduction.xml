@@ -11,6 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:text="\@Esther老师"
         android:textColor="#f3f3f3"
         android:textSize="18sp"
@@ -25,12 +28,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:drawableLeft="@drawable/ic_pen"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:text="63019"
         android:textColor="#f3f3f3"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/textView8"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/authorName"
         app:layout_constraintTop_toBottomOf="@+id/authorName" />
 
@@ -39,7 +43,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:text="剩余10%"
         android:textColor="#f3f3f3"
         android:textSize="14sp"
@@ -53,6 +59,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:text="梵高油画系列风格创作，给人物写生增加色彩🎨
 同名画册： vintagemuse
 Esther｜每日速写｜潮流插画｜复古油画风

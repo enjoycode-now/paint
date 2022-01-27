@@ -22,37 +22,31 @@
             android:layout_height="match_parent" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="68dp">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:tabGravity="center"
-            app:tabIndicator="@drawable/tab_indicator"
-            app:tabIndicatorColor="@color/white"
-            app:tabIndicatorFullWidth="false"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextAppearance="@style/TabLayoutTextStyle"
-            app:tabTextColor="#B3B3B3" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:layout_margin="6dp"
-                app:layout_constraintBottom_toBottomOf="@id/tabLayout"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/tabLayout"
-                app:layout_constraintTop_toTopOf="@id/tabLayout"
-                app:srcCompat="@mipmap/ic_search" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
     </RelativeLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:fitsSystemWindows="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabGravity="center"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorFullWidth="false"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        app:tabTextColor="#B3B3B3" />
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:fitsSystemWindows="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_search" />
 
     <View
         android:id="@+id/view"
