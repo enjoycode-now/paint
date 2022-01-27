@@ -2,13 +2,14 @@
  * Copyright (C) 2020 Wacom.
  * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
  */
-package cn.copaint.audience
+package cn.copaint.audience.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.hardware.SensorManager.getOrientation
 import android.view.MotionEvent
+import cn.copaint.audience.Draw
+import cn.copaint.audience.Point
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
 import com.wacom.ink.format.enums.InkInputType
@@ -62,41 +63,35 @@ fun MotionEvent.toPointerData(): PointerData {
  *
  * @return the PointerData for the event.
  */
-fun Draw.toPointerData(alphaBias:Float): PointerData {
-    return PointerData(
-        pointsList[0].x,
-        pointsList[0].y,
-        phase = when(phase) {
-            MotionEvent.ACTION_DOWN->Phase.BEGIN
-            MotionEvent.ACTION_MOVE->Phase.UPDATE
-            else->Phase.END
-        },
-        timestamp = 0L,
-        force = pointsList[0].pressure*alphaBias,
-        altitudeAngle = 0f,
-        azimuthAngle = 0f
-    )
-}
-
-fun Point.toPointerData(alphaBias:Float): PointerData {
-    return PointerData(
-        x,
-        y,
-        phase = Phase.UPDATE,
-        timestamp = 0L,
-        force = pressure*alphaBias,
-        altitudeAngle = 0f,
-        azimuthAngle = 0f
-    )
-}
-
-fun MotionEvent.resolveToolType(): InkInputType {
-    return when (this.getToolType(0)) {
-        MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
-        MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
-        else -> InkInputType.PEN
+fun Draw.toPointerDataList(alphaBias:Float): MutableList<PointerData> {
+    val pointDataList = mutableListOf<PointerData>()
+    for(point in pointsList){
+        pointDataList.add(PointerData(
+            pointsList[0].x,
+            pointsList[0].y,
+            phase = Phase.UPDATE,
+            timestamp = 0L,
+            force = pointsList[0].pressure*alphaBias,
+            altitudeAngle = 0f,
+            azimuthAngle = 0f
+        ))
     }
+    if (phase == MotionEvent.ACTION_DOWN)pointDataList.first().phase=Phase.BEGIN
+    if (phase == MotionEvent.ACTION_UP)pointDataList.last().phase=Phase.END
+    return pointDataList
 }
+
+//fun Point.toPointerData(alphaBias:Float): PointerData {
+//    return PointerData(
+//        x,
+//        y,
+//        phase = Phase.UPDATE,
+//        timestamp = 0L,
+//        force = pressure*alphaBias,
+//        altitudeAngle = 0f,
+//        azimuthAngle = 0f
+//    )
+//}
 
 fun Draw.resolveToolType(): InkInputType {
     return when (this.tool) {

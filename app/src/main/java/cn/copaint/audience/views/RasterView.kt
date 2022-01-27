@@ -36,6 +36,7 @@ import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.EraserRasterTool
 import cn.copaint.audience.tools.raster.PencilTool
 import cn.copaint.audience.tools.raster.RasterTool
+import cn.copaint.audience.utils.*
 import kotlin.math.min
 
 /**
@@ -119,8 +120,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // This function is going to be call when we touch the surface
-    fun surfaceTouch(event: Draw) {
-        if (event.resolveToolType() == InkInputType.PEN) {
+    fun surfaceTouch(draw: Draw) {
+        if (draw.resolveToolType() == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
                 isStylus = true
@@ -134,40 +135,38 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        for (point in event.pointsList) {
-            val pointerData = point.toPointerData(defaults.alpha)
-            rasterInkBuilder.add(pointerData, null)
-        }
-
-        val pointerData = event.toPointerData(defaults.alpha)
-        rasterInkBuilder.add(pointerData, null)
+        val pointerDataList = draw.toPointerDataList(defaults.alpha)
+        for(data in pointerDataList) rasterInkBuilder.add(data, null)
 
         val (added, predicted) = rasterInkBuilder.build()
 
-        if (pointerData.phase == Phase.BEGIN) {
+        if (draw.phase == MotionEvent.ACTION_DOWN) {
             // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(event.tool)
+            val pair = inkEnvironmentModel.createSensorData(draw.tool)
             sensorData = pair.first
             channelList = pair.second
         }
 
-        for (channel in channelList) {
-            when (channel.typeURI) {
-                InkSensorType.X -> sensorData.add(channel, pointerData.x)
-                InkSensorType.Y -> sensorData.add(channel, pointerData.y)
-                InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel,pointerData.timestamp)
-                InkSensorType.PRESSURE -> sensorData.add(channel, pointerData.force!!)
-                InkSensorType.ALTITUDE -> sensorData.add(channel, pointerData.altitudeAngle!!)
-                InkSensorType.AZIMUTH -> sensorData.add(channel, pointerData.azimuthAngle!!)
+        for(data in pointerDataList) {
+            for (channel in channelList) {
+                when (channel.typeURI) {
+                    InkSensorType.X -> sensorData.add(channel, data.x)
+                    InkSensorType.Y -> sensorData.add(channel, data.y)
+                    InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel, data.timestamp)
+                    InkSensorType.PRESSURE -> sensorData.add(channel, data.force!!)
+                    InkSensorType.ALTITUDE -> sensorData.add(channel, data.altitudeAngle!!)
+                    InkSensorType.AZIMUTH -> sensorData.add(channel, data.azimuthAngle!!)
+                }
             }
         }
 
-        if ((pointerData.phase == Phase.END) && (rasterInkBuilder.splineProducer.allData != null)) {
+        if (draw.phase == MotionEvent.ACTION_UP && rasterInkBuilder.splineProducer.allData != null) {
             addStroke()
             sensorDataList.add(sensorData)
         }
 
-        if (added != null) drawStroke(event.phase, added, predicted)
+        if (added != null) drawStroke(draw.phase, added, predicted)
+
         renderView()
     }
 

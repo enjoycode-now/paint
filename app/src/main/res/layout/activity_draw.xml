@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/navbar_bg_color"
+        android:fitsSystemWindows="true"
         android:scrollbars="none">
 
         <LinearLayout
@@ -99,7 +100,6 @@
                 android:tint="@color/select_toolbar_button_stateful" />
 
 
-
             <ImageView
                 android:id="@+id/btn_eraser"
                 android:layout_width="@dimen/btn_width"
@@ -111,18 +111,16 @@
                 android:tooltipText="@string/raster_eraser" />
 
 
-
             <ImageView
                 android:id="@+id/btn_smallLayer"
                 android:layout_width="@dimen/btn_width"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/btn_separator"
                 android:layout_marginVertical="6dp"
+                android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="smallLayer"
-                android:visibility="visible"
-                app:srcCompat="@drawable/ic_close_layer_card"
                 android:tint="@color/select_toolbar_button_stateful"
-                />
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_close_layer_card" />
 
         </LinearLayout>
 
