@@ -119,7 +119,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     // This function is going to be call when we touch the surface
     fun surfaceTouch(draw: Draw) {
-        if (draw.resolveToolType() == InkInputType.PEN) {
+        if (draw.ToolType == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
                 isStylus = true
@@ -190,7 +190,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 blue = defaults.blue,
                 alpha = defaults.alpha
             ),
-            renderModeUri = rasterTool.getBlendMode().uri()
+            renderModeUri = rasterTool.getBlendMode().uri
         )
         // Adding stroke to the Stroke Repository
         val path = Stroke(
@@ -297,7 +297,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun drawStroke(stroke: StrokeNode, brush: RasterBrush, sensorChannelList: List<SensorChannel>?) {
         val style = stroke.data.style
         val renderModeUri = style?.renderModeUri ?: ""
-        val renderMode = BlendMode.values().find { it.uri() == renderModeUri } ?: BlendMode.SOURCE_OVER
+        val renderMode = BlendMode.values().find { it.uri == renderModeUri } ?: BlendMode.SOURCE_OVER
 
         defaults.red = style?.props?.red ?: 0f
         defaults.green = style?.props?.green ?: 0f
