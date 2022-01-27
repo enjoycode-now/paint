@@ -14,6 +14,7 @@ import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
 import cn.copaint.audience.utils.BitmapUtils.picQueue
+import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_home_page.*
@@ -34,6 +35,7 @@ class HomePageActivity : AppCompatActivity() {
         binding = ActivityHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
+        buildStub()
 
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {

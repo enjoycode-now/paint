@@ -1,20 +1,18 @@
 package cn.copaint.audience.utils
 
-import com.google.protobuf.StringValue
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
-import paint.v1.PaintingServiceGrpc
-import paint.v1.PaintingServiceGrpc.PaintingServiceBlockingStub
+import paint.v1.PaintingServiceGrpcKt
 import java.util.concurrent.TimeUnit
 
 object GrpcUtils {
-    val grpcServer="dev.unicorn.org.cn"
-    val grpcPort=8880
+    val grpcServer="120.78.173.15"
+    val grpcPort=19999
 
     lateinit var paintChannel: ManagedChannel
-    lateinit var paintStub:PaintingServiceBlockingStub
+    lateinit var paintStub: PaintingServiceGrpcKt.PaintingServiceCoroutineStub
 
     fun buildStub(){
         paintChannel = ManagedChannelBuilder
@@ -26,14 +24,14 @@ object GrpcUtils {
             .keepAliveTime(5, TimeUnit.SECONDS)
             .keepAliveTimeout(1, TimeUnit.SECONDS)
             .build()
-        paintStub = PaintingServiceGrpc.newBlockingStub(paintChannel)
+        paintStub = PaintingServiceGrpcKt.PaintingServiceCoroutineStub(paintChannel)
     }
 
-    fun setToken(token: StringValue){
+    fun setToken(token: String){
         // 发送请求时加上 Token
         val HEADER_KEY = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER)
         val headers = Metadata()
-        headers.put(HEADER_KEY, "Bearer "+token.value)
+        headers.put(HEADER_KEY, "Bearer $token")
         paintStub = MetadataUtils.attachHeaders(paintStub,headers)
     }
 

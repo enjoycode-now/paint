@@ -20,6 +20,7 @@ import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
@@ -64,6 +65,7 @@ class UserActivity : AppCompatActivity() {
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
+                setToken(user.token ?: "")
             } catch (e: GraphQLException) {
                 runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch

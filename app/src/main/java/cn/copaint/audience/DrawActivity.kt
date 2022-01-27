@@ -37,13 +37,19 @@ import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.*
 import kotlin.math.ceil
 import android.view.WindowManager
+import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.distance
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.toBitmap
-import com.wacom.ink.protobuf.UIM_3_1_0
+import com.bugsnag.android.Bugsnag
 import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collect
+import paint.v1.Paint.PaintMessage
 import paint.v1.Paint.Draw
 import paint.v1.Paint.Point
 
@@ -75,6 +81,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     var layerPos = -1
     val stepStack = StepStack()
     lateinit var bufferDraw:Draw.Builder
+    val sharedFlow = MutableSharedFlow<PaintMessage>(3, 12, BufferOverflow.DROP_OLDEST)
+
+    lateinit var job:Job
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,6 +96,17 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
         binding.rasterDrawingSurface.activity = this
 
+        job = CoroutineScope(Dispatchers.IO).launch {
+            try {
+                paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
+                    if (!isActive) return@collect
+                    // TODO：在此处写双向流逻辑
+                }
+            } catch (e: CancellationException) {
+            } catch (e: Exception) { Bugsnag.notify(e)
+            }
+        }
+
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
@@ -94,8 +114,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lineProtect = true
                 lastEvent!!.action = MotionEvent.ACTION_UP
                 val draw = lastEvent!!.createDrawBuilder()
-                binding.rasterDrawingSurface.surfaceTouch(draw.build())
                 lastEvent = null
+                binding.rasterDrawingSurface.surfaceTouch(draw.build())
             }
             if (lineProtect) return@setOnTouchListener true
 
@@ -108,11 +128,13 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lastEvent = MotionEvent.obtain(event)
                 val drawBuilder = lastEvent!!.createDrawBuilder()
                 binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
+                CoroutineScope(Dispatchers.IO).launch {
+                    sharedFlow.emit(PaintMessage.getDefaultInstance())
+                }
                 when(event.action){
                     MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
                     MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
                     MotionEvent.ACTION_UP -> {
-                        // TODO:上传bufferDraw
                         lastEvent = null
                         smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
                         layerAdapter.notifyItemChanged(layerPos)
