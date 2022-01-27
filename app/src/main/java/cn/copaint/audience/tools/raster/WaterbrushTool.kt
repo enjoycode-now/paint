@@ -10,7 +10,7 @@ import com.wacom.ink.PathPoint
 import com.wacom.ink.PathPointLayout
 import cn.copaint.audience.brush.BrushPalette
 import cn.copaint.audience.brush.URIBuilder
-import cn.copaint.audience.computeValueBasedOnPressure
+import cn.copaint.audience.utils.computeValueBasedOnPressure
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin

@@ -2,9 +2,44 @@ syntax = "proto3";
 
 package paint.v1;
 
-option java_multiple_files = true;
-option java_package = "cn.copaint.audience";
-option java_outer_classname = "PaintProto";
+import "google/protobuf/timestamp.proto";
+
+enum PaintType {
+    // 默认无效操作
+    PAINT_TYPE_UNSPECIFIED = 0;
+
+    // 画笔操作
+    PAINT_TYPE_DRAW = 1;
+
+    // 图层操作
+    PAINT_TYPE_LAYER = 2;
+
+    // 回执成功
+    PAINT_TYPE_ACK_OK = 3;
+
+    // 回执错误
+    PAINT_TYPE_ACK_ERROR = 4;
+
+    // 用户类型
+    PAINT_TYPE_USER = 5;
+
+    // 撤回
+    PAINT_TYPE_UNDO = 6;
+
+    // 重做
+    PAINT_TYPE_REDO = 7;
+}
+
+enum UserAction {
+    // 默认无效操作
+    USER_ACTION_UNSPECIFIED = 0;
+
+    // 用户进入
+    USER_ACTION_ENTER = 1;
+
+    // 用户退出
+    USER_ACTION_LEAVE = 2;
+}
 
 enum LayerAction {
     // 默认无效操作
@@ -37,13 +72,13 @@ message Draw {
     int32 color = 2;
 
     // 粗细
-    float thickness = 4;
+    float thickness = 3;
 
     // 阶段
-    int32 phase = 5;
+    int32 phase = 4;
 
     // 点数组
-    repeated Point points = 6;
+    repeated Point points = 5;
 }
 
 message Layer {
@@ -55,4 +90,80 @@ message Layer {
 
     // 图层透明度
     int32 alpha = 3;
+}
+
+message User {
+    // 操作类型
+    UserAction action = 1;
+
+    // 用户名
+    string user_id = 2;
+}
+
+message Payload {
+    Draw draw = 1;
+    User user = 2;
+    Layer layer = 3;
+}
+
+message PaintMessage {
+    // 响应类型
+    PaintType type = 1;
+
+    // 自增序列号
+    int32 sequence = 2;
+
+    // 时间确认号
+    int64 ack = 3;
+
+    // 实际数据
+    bytes payload = 4;
+}
+
+message Painting {
+    int64 id = 1;
+    string creator = 2;
+    string name = 3;
+    string description = 4;
+    string state = 5;
+    int32 history_size = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
+}
+
+message History {
+    int32 sequence = 1;
+    int32 type = 2;
+    bytes payload = 3;
+}
+
+message CreateRequest {
+    string name = 1;
+    string description = 2;
+}
+
+message CreateResponse {
+    Painting painting = 1;
+}
+
+message ListRequest {
+}
+
+message ListResponse {
+    repeated Painting paintings = 1;
+}
+
+message HistoryRequest {
+    int64 painting_id = 1;
+}
+
+message HistoryResponse {
+    repeated History histories = 1;
+}
+
+service PaintingService {
+    rpc Paint(stream PaintMessage) returns (stream PaintMessage) {}
+    rpc Create(CreateRequest) returns (CreateResponse) {}
+    rpc List(ListRequest) returns (ListResponse) {}
+    rpc History(HistoryRequest) returns (stream HistoryResponse) {}
 }
