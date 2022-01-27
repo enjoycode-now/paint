@@ -34,11 +34,11 @@
                 android:id="@+id/configButton"
                 android:layout_width="72px"
                 android:layout_height="72px"
-                android:layout_marginBottom="24dp"
                 android:background="@drawable/ic_she"
                 android:onClick="onSetting"
                 app:layout_constraintBottom_toBottomOf="@+id/headerView"
-                app:layout_constraintEnd_toEndOf="@+id/cardView" />
+                app:layout_constraintEnd_toEndOf="@+id/cardView"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/headerView"

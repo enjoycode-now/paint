@@ -8,8 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.MotionEvent
-import cn.copaint.audience.Draw
-import cn.copaint.audience.Point
+import paint.v1.Paint.Draw
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
 import com.wacom.ink.format.enums.InkInputType
