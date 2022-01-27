@@ -110,6 +110,5 @@ dependencies {
 
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
-    implementation (name: 'alipaysdk-15.8.06.211122170115', ext: 'aar')
 
 }

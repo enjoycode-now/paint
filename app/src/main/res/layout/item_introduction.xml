@@ -10,10 +10,10 @@
         android:id="@+id/authorName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="\@Esther老师"
         android:textColor="#f3f3f3"
         android:textSize="18sp"
-        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/paintSum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.02"
@@ -24,11 +24,11 @@
         android:id="@+id/paintSum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:drawableLeft="@drawable/ic_pen"
         android:text="63019"
         android:textColor="#f3f3f3"
-        android:textSize="16sp"
-        android:layout_marginBottom="10dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/textView8"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/authorName"
@@ -38,29 +38,29 @@
         android:id="@+id/remainShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
         android:text="剩余10%"
         android:textColor="#f3f3f3"
-        android:textSize="12sp"
-        android:layout_marginBottom="10dp"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/paintSum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/paintSum"
-        app:layout_constraintBaseline_toBaselineOf="@+id/paintSum" />
+        app:layout_constraintStart_toEndOf="@+id/paintSum" />
 
     <TextView
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:textColor="#f3f3f3"
-        android:textSize="14sp"
         android:text="梵高油画系列风格创作，给人物写生增加色彩🎨
 同名画册： vintagemuse
 Esther｜每日速写｜潮流插画｜复古油画风
 #大触红人#Ootd #笔刷达人"
+        android:textColor="#f3f3f3"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/paintSum"
-        app:layout_constraintTop_toBottomOf="@+id/paintSum"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/paintSum" />
 </androidx.constraintlayout.widget.ConstraintLayout>
