@@ -12,7 +12,6 @@ import android.view.MotionEvent
 import android.view.TextureView
 import cn.copaint.audience.DrawActivity
 import com.wacom.ink.InterpolatedSpline
-import com.wacom.ink.Phase
 import com.wacom.ink.StrokeConstants
 import com.wacom.ink.egl.EGLRenderingContext
 import com.wacom.ink.format.enums.InkInputType
@@ -29,7 +28,6 @@ import com.wacom.ink.rasterization.InkCanvas
 import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
-import cn.copaint.audience.*
 import cn.copaint.audience.model.StepModel
 import cn.copaint.audience.raster.RasterInkBuilder
 import cn.copaint.audience.serialization.InkEnvironmentModel
@@ -38,6 +36,7 @@ import cn.copaint.audience.tools.raster.PencilTool
 import cn.copaint.audience.tools.raster.RasterTool
 import cn.copaint.audience.utils.*
 import kotlin.math.min
+import paint.v1.Paint.Draw
 
 /**
  * This is a surface for drawing raster inking.

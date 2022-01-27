@@ -9,7 +9,6 @@ import android.graphics.PointF
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.MotionEvent
-import cn.copaint.audience.Draw
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.enums.InkInputType
 import com.wacom.ink.format.enums.InkSensorMetricType

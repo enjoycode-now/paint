@@ -43,6 +43,8 @@ import cn.copaint.audience.utils.toBitmap
 import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.*
+import paint.v1.Paint.Draw
+import paint.v1.Paint.Point
 
 class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
@@ -147,7 +149,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             .setThickness(1f)
 
         for(i in 0 until historySize) {
-            if(i%8!=0)continue
+            if(i%3 != 0)continue
             drawBuilder.addPoints(
                 Point.newBuilder()
                     .setX(getHistoricalX(i))
