@@ -35,7 +35,6 @@ import cn.copaint.audience.tools.raster.EraserRasterTool
 import cn.copaint.audience.tools.raster.PencilTool
 import cn.copaint.audience.tools.raster.RasterTool
 import cn.copaint.audience.utils.*
-import kotlin.math.min
 import paint.v1.Paint.Draw
 
 /**
@@ -212,9 +211,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         rasterTool = tool
         strokeRenderer.strokeBrush = rasterTool.brush.toParticleBrush()
         rasterInkBuilder.updatePipeline(rasterTool)
-
-        if (tool is EraserRasterTool) defaults.alpha = 0f
-
     }
 
     fun setColor(color: Int) {
@@ -333,21 +329,5 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun addLayer(){
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
-    }
-
-    fun scaleValues(stroke: StrokeNode, channelList: List<SensorChannel>, resolution: Double) {
-        var resX = 0.0
-        var resY = 0.0
-        for (channel in channelList) {
-            when (channel.typeURI) {
-                InkSensorType.X -> resX = channel.resolution
-                InkSensorType.Y -> resY = channel.resolution
-            }
-        }
-
-        if ((resX > 0) && (resY > 0)) {
-            val scaleFactor = min(resolution / resX, resolution / resY).toFloat()
-            if (scaleFactor != 1f) stroke.data.spline.transform(scaleFactor, scaleFactor, scaleFactor, 0f, 0f, 0f, 0f, 0f)
-        }
     }
 }

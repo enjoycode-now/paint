@@ -11,6 +11,8 @@ import com.wacom.ink.PathPointLayout
 import com.wacom.ink.rendering.BlendMode
 import cn.copaint.audience.brush.BrushPalette
 import cn.copaint.audience.brush.URIBuilder
+import cn.copaint.audience.utils.computeValueBasedOnPressure
+import kotlin.math.pow
 
 class EraserRasterTool(context: Context) : RasterTool(context) {
 
@@ -37,27 +39,25 @@ class EraserRasterTool(context: Context) : RasterTool(context) {
         var size = current.computeValueBasedOnSpeed(
             previous,
             next,
-            minValue = 8f,
-            maxValue = 112f,
+            minValue = 32f,
+            maxValue = 128f,
             minSpeed = 720f,
             maxSpeed = 3900f
         )
-        if (size == null) size = 8f
+        if (size == null) size = 32f
 
         PathPoint(current.x, current.y, size = size, red = 1f, green = 1f, blue = 1f, alpha = 1f)
     }
 
     override val stylusCalculator: Calculator = { previous, current, next ->
         // Use the following to compute size based on speed:
-        var size = current.computeValueBasedOnSpeed(
-            previous,
-            next,
-            minValue = 8f,
-            maxValue = 112f,
-            minSpeed = 720f,
-            maxSpeed = 3900f
+        val size = current.computeValueBasedOnPressure(
+            minValue = 30f,
+            maxValue = 80f,
+            minPressure = 0.0f,
+            maxPressure = 1.0f,
+            remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
         )
-        if (size == null) size = 8f
 
         PathPoint(current.x, current.y, size = size, red = 1f, green = 1f, blue = 1f, alpha = 1f)
     }

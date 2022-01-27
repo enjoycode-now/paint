@@ -4,40 +4,37 @@
  */
 package cn.copaint.audience.tools
 
-class MathUtils {
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.pow
 
-    companion object {
-        fun power(v: Float, p: Float): Float {
-            return Math.pow(v.toDouble(), p.toDouble()).toFloat()
-        }
+object MathUtils{
+    fun power(v: Float, p: Float): Float {
+        return v.toDouble().pow(p.toDouble()).toFloat()
+    }
 
-        fun periodic(v: Float, p: Float): Float {
-            return (0.5 - 0.5 * Math.cos(p * Math.PI * v)).toFloat()
-        }
+    fun periodic(v: Float, p: Float): Float {
+        return (0.5 - 0.5 * cos(p * Math.PI * v)).toFloat()
+    }
 
-        fun sigmoid(t: Float, k: Float): Float {
-            return (1 + k) * t / (Math.abs(t) + k)
-        }
+    fun sigmoid(t: Float, k: Float): Float {
+        return (1 + k) * t / (abs(t) + k)
+    }
 
-        fun sigmoid1(v: Float, p: Float, minValue: Float = 0.0f, maxValue: Float = 1.0f): Float {
-            val middle: Float = (maxValue + minValue) * 0.5f
-            val halInterval = (maxValue - minValue) * 0.5f
-            val t = (v - middle) / halInterval
-            val s = sigmoid(t, p)
-            return middle + s * halInterval
-        }
+    fun sigmoid1(v: Float, p: Float, minValue: Float = 0.0f, maxValue: Float = 1.0f): Float {
+        val middle: Float = (maxValue + minValue) * 0.5f
+        val halInterval = (maxValue - minValue) * 0.5f
+        val t = (v - middle) / halInterval
+        val s = sigmoid(t, p)
+        return middle + s * halInterval
+    }
 
-        fun mapTo(value: Float, src: Range, dest: Range): Float {
-            return (value - src.min) / (src.max - src.min) * (dest.max - dest.min) + dest.min
-        }
+    fun mapTo(value: Float, src: Range, dest: Range): Float {
+        return (value - src.min) / (src.max - src.min) * (dest.max - dest.min) + dest.min
+    }
 
-        fun mapTo(value: Float, src: Range, dest: Range, remapFunction: (Float) -> Float): Float {
-            if (remapFunction != null) {
-                var newSrc = Range(remapFunction(src.min), remapFunction(src.max))
-                return mapTo(remapFunction(value), newSrc, dest)
-            } else {
-                return mapTo(value, src, dest)
-            }
-        }
+    fun mapTo(value: Float, src: Range, dest: Range, remapFunction: (Float) -> Float): Float {
+        val newSrc = Range(remapFunction(src.min), remapFunction(src.max))
+        return mapTo(remapFunction(value), newSrc, dest)
     }
 }

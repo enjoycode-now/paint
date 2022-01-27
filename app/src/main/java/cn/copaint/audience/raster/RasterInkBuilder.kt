@@ -8,6 +8,7 @@ import com.wacom.ink.*
 import com.wacom.ink.pipeline.*
 import com.wacom.ink.pipeline.base.ProcessorResult
 import cn.copaint.audience.tools.raster.RasterTool
+import com.bugsnag.android.Bugsnag
 
 /**
  * RasterInkBuilder is a class that handles the Path building for the Raster Ink, using the geometry
@@ -77,8 +78,8 @@ class RasterInkBuilder {
         try {
             val (addedGeometry, predictedGeometry) = pathProducer.add(addition.phase, addition, prediction)
             pathSegment.add(addition.phase, addedGeometry, predictedGeometry)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (e: Exception) {
+            Bugsnag.notify(e)
         }
     }
 

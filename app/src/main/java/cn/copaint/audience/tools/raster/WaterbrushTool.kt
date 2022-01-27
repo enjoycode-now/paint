@@ -111,55 +111,47 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
     override val stylusCalculator: Calculator = { previous, current, next ->
         var size = if (current.force == -1f) {
             current.computeValueBasedOnSpeed(
-                    previous,
-                    next,
-                    minValue = 30f,
-                    maxValue = 80f,
-                    minSpeed = 0f,
-                    maxSpeed = 3500f,
-                    remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+                previous,
+                next,
+                minValue = 30f,
+                maxValue = 80f,
+                minSpeed = 0f,
+                maxSpeed = 3500f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
 
         } else {
             current.computeValueBasedOnPressure(
-                    minValue = 30f,
-                    maxValue = 80f,
-                    minPressure = 0.0f,
-                    maxPressure = 1.0f,
-                    remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+                minValue = 30f,
+                maxValue = 80f,
+                minPressure = 0.0f,
+                maxPressure = 1.0f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
         }
-        if (size == null) {
-            size = previousSize
-        } else {
-            previousSize = size
-        }
+        if (size == null) size = previousSize else previousSize = size
 
         // Change the intensity of alpha value by pressure of speed
         var alpha = if (current.force == -1f) {
             current.computeValueBasedOnSpeed(
-                    previous,
-                    next,
-                    minValue = MIN_ALPHA,
-                    maxValue = MAX_ALPHA,
-                    minSpeed = 0f,
-                    maxSpeed = 3500f,
-                    remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+                previous,
+                next,
+                minValue = MIN_ALPHA,
+                maxValue = MAX_ALPHA,
+                minSpeed = 0f,
+                maxSpeed = 3500f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
         } else {
             current.computeValueBasedOnPressure(
-                    minValue = MIN_ALPHA,
-                    maxValue = MAX_ALPHA,
-                    minPressure = 0.0f,
-                    maxPressure = 1.0f,
-                    remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
+                minValue = MIN_ALPHA,
+                maxValue = MAX_ALPHA,
+                minPressure = 0.0f,
+                maxPressure = 1.0f,
+                remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
         }
-        if (alpha == null) {
-            alpha = previousAlpha
-        } else {
-            previousAlpha = alpha
-        }
+        if (alpha == null) alpha = previousAlpha else previousAlpha = alpha
         val cosAltitudeAngle = cos(current.altitudeAngle!!)
         val sinAzimuthAngle = sin(current.azimuthAngle!!)
         val cosAzimuthAngle = cos(current.azimuthAngle!!)
@@ -171,11 +163,12 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
 
         val rotation = current.computeNearestAzimuthAngle(previous)
         PathPoint(
-                current.x, current.y,
-                alpha = alpha,
-                size = size,
-                rotation = rotation,
-                offsetX = offsetX,
-                offsetY = offsetY)
+            current.x, current.y,
+            alpha = alpha,
+            size = size,
+            rotation = rotation,
+            offsetX = offsetX,
+            offsetY = offsetY
+        )
     }
 }

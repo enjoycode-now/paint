@@ -40,6 +40,7 @@ import android.view.WindowManager
 import cn.copaint.audience.utils.distance
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.toBitmap
+import com.wacom.ink.protobuf.UIM_3_1_0
 import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.coroutines.*
@@ -56,10 +57,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
 
     // Environment information to save in the ink model
     private lateinit var inkEnvironmentModel: InkEnvironmentModel
-
-    //-- End serialisation
-    private var defaultDrawingTool = PencilTool.uri
-    private var drawingTool: RasterTool? = null
 
     private lateinit var popupWindow: PopupWindow
 
@@ -137,8 +134,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     }
 
     override fun onSurfaceCreated() {
-        if (drawingTool != null) binding.rasterDrawingSurface.setTool(drawingTool!!)
-        else selectTool(defaultDrawingTool) // set default tool
+        setTool(btn_pencil, PencilTool(this))
     }
 
     fun MotionEvent.createDrawBuilder():Draw.Builder{
@@ -241,33 +237,24 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         binding.rasterDrawingSurface.setColor(drawingColor)
     }
 
-    fun selectTool(uri: String) {
-        selectTool(when (uri) {
-            WaterbrushTool.uri -> binding.btnWaterBrush
-            CrayonTool.uri -> binding.btnCrayon
-            EraserRasterTool.uri -> binding.btnEraser
-            else -> binding.btnPencil
-        })
-    }
-
     fun selectTool(view: View) {
         when (view.id) {
             R.id.btn_pencil -> setTool(view, PencilTool(this))
             R.id.btn_water_brush -> setTool(view, WaterbrushTool(this))
+            R.id.btn_ink_brush -> setTool(view,InkBrushTool(this))
             R.id.btn_crayon -> setTool(view, CrayonTool(this))
             R.id.btn_eraser -> setTool(view, EraserRasterTool(this))
         }
     }
 
     fun setTool(view: View, tool: RasterTool) {
-        drawingTool = tool
-        val dt = drawingTool as RasterTool
-        binding.rasterDrawingSurface.setTool(dt)
+        binding.rasterDrawingSurface.setTool(tool)
         highlightTool(view)
     }
 
     fun highlightTool(view: View) {
         binding.btnPencil.isActivated = false
+        binding.btnWaterBrush.isActivated = false
         binding.btnInkBrush.isActivated = false
         binding.btnCrayon.isActivated = false
         binding.btnEraser.isActivated = false
@@ -280,9 +267,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         inkModel.inkTree.root = root
         mainGroup = StrokeGroupNode(Identifier())
         root.add(mainGroup)
-        //TODO inkModel.brushRepository.addVectorBrush(brush)
-        //TODO splines.clear()
-        //TODO paths.clear()
     }
 
     fun clear(view: View) {

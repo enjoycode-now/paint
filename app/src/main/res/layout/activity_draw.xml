@@ -87,8 +87,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_feather"
-                android:tint="@color/select_toolbar_button_stateful"
-                android:visibility="gone" />
+                android:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btn_crayon"
