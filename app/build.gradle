@@ -106,8 +106,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    api 'com.tencent.mm.opensdk:wechat-sdk-android:+'
-
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
 
