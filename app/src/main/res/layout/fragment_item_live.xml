@@ -19,7 +19,7 @@
         layout="@layout/item_introduction"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|start"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toBottomOf="parent"

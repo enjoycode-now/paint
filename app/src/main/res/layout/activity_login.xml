@@ -62,6 +62,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/submitButton"
                 app:layout_constraintStart_toEndOf="@+id/im_login_left"
                 app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="phone"
                 android:importantForAutofill="no" />
 
             <ImageView
