@@ -25,7 +25,7 @@
                 android:id="@+id/layer_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="图层设置"
+                android:text="@string/layer_setting"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginTop="5dp"
@@ -45,7 +45,8 @@
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layer_note"
-                app:srcCompat="@drawable/ic_icon_delete" />
+                app:srcCompat="@drawable/ic_icon_delete"
+                tools:ignore="ContentDescription"/>
 
             <ImageView
                 android:id="@+id/eraser"
@@ -57,7 +58,8 @@
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/delete"
                 app:layout_constraintTop_toTopOf="@+id/layer_note"
-                app:srcCompat="@drawable/ic_icon_eraser" />
+                app:srcCompat="@drawable/ic_icon_eraser"
+                tools:ignore="ContentDescription"/>
 
             <ImageView
                 android:id="@+id/flower"
@@ -69,7 +71,8 @@
                 app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toEndOf="@+id/eraser"
                 app:layout_constraintTop_toTopOf="@+id/layer_note"
-                app:srcCompat="@drawable/ic_icon_flower" />
+                app:srcCompat="@drawable/ic_icon_flower"
+                tools:ignore="ContentDescription"/>
 
 
             <TextView
@@ -98,7 +101,7 @@
                 app:layout_constraintVertical_bias="0.38"
                 app:layout_constraintStart_toEndOf="@+id/delete"
                 app:layout_constraintTop_toTopOf="@id/layer_note"
-                android:text="清空图层"
+                android:text="@string/layer_clear"
                 tools:ignore="SmallSp" />
 
             <TextView
@@ -150,7 +153,8 @@
                 android:src="@drawable/ic_minus"
                 app:layout_constraintTop_toBottomOf="@id/alpha_num_note"
                 app:layout_constraintEnd_toStartOf="@id/alpha_seekbar"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription"/>
 
 
             <SeekBar
@@ -176,7 +180,8 @@
                 android:src="@drawable/ic_add"
                 app:layout_constraintTop_toBottomOf="@id/alpha_num_note"
                 app:layout_constraintStart_toEndOf="@id/alpha_seekbar"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="ContentDescription"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

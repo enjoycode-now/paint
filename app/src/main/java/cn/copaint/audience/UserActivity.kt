@@ -13,8 +13,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.authing.core.graphql.GraphQLException
-import com.bugsnag.android.Bugsnag
-import com.bumptech.glide.Glide
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
@@ -25,7 +23,9 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.getDigest
-import kotlinx.coroutines.*
+import com.bugsnag.android.Bugsnag
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.* // ktlint-disable no-wildcard-imports
 import java.io.IOException
 import java.lang.Exception
 
@@ -34,7 +34,7 @@ class UserActivity : AppCompatActivity() {
     val sponsorList = mutableListOf<String>()
     private lateinit var binding: ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
-    val RESQUEST_CODE = 1
+    private val RESQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        val statusBarHeight = if (statusBarId>0)resources.getDimensionPixelSize(statusBarId) else 24.dp
+        val statusBarHeight = if (statusBarId> 0)resources.getDimensionPixelSize(statusBarId) else 24.dp
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
@@ -86,12 +86,12 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    fun updateInfo() {
+    private fun updateInfo() {
         runOnUiThread {
             binding.authorName.text = user.nickname
             binding.authorId.text = user.id.uppercase()
             val blockChainAddress = user.id.getDigest("SHA-256")
-            val displayAddress = "0x"+blockChainAddress.replaceRange(8,blockChainAddress.length-8,"...").uppercase()
+            val displayAddress = "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...").uppercase()
             binding.blockchainAddress.text = displayAddress
             binding.biography.text = biography
             try {
@@ -113,14 +113,14 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    fun hignLightBtn(view: View) {
+    private fun hignLightBtn(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.argb(0xcc,179, 179, 179))
-        binding.userPageBtn.setTextColor(Color.argb(0xcc,179, 179, 179))
+        binding.homePageBtn.setTextColor(Color.argb(0xcc, 179, 179, 179))
+        binding.userPageBtn.setTextColor(Color.argb(0xcc, 179, 179, 179))
         view.isSelected = true
-        view.setTextColor(Color.argb(255,0, 0, 0))
+        view.setTextColor(Color.argb(255, 0, 0, 0))
     }
 
     fun onChangeAvatar(view: View) {

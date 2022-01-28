@@ -10,7 +10,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.view.*
+import android.view.* // ktlint-disable no-wildcard-imports
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.SeekBar
@@ -23,7 +23,7 @@ import cn.copaint.audience.databinding.ItemToolsmenuBinding
 import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.serialization.InkEnvironmentModel
-import cn.copaint.audience.tools.raster.*
+import cn.copaint.audience.tools.raster.* // ktlint-disable no-wildcard-imports
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
 import cn.copaint.audience.utils.ToastUtils.app
@@ -34,21 +34,21 @@ import cn.copaint.audience.utils.toBitmap
 import cn.copaint.audience.views.RasterView
 import com.bugsnag.android.Bugsnag
 import com.wacom.ink.format.InkModel
-import com.wacom.ink.format.input.*
+import com.wacom.ink.format.input.* // ktlint-disable no-wildcard-imports
 import com.wacom.ink.format.tree.groups.StrokeGroupNode
 import com.wacom.ink.model.Identifier
 import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.item_layer_small.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.* // ktlint-disable no-wildcard-imports
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
-import paint.v1.Paint.*
+import paint.v1.Paint.* // ktlint-disable no-wildcard-imports
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
-import java.util.*
+import java.util.* // ktlint-disable no-wildcard-imports
 import kotlin.math.ceil
 
 class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
@@ -219,8 +219,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         binding.rasterDrawingSurface.invalidate()
         smallLayerList.last().bitmap =
             binding.rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+        layerAdapter.notifyItemChanged(smallLayerList.lastIndex)
         changeToLayer(smallLayerList.lastIndex)
-        layerAdapter.notifyDataSetChanged()
+//        layerAdapter.notifyDataSetChanged()
     }
 
     fun undo(view: View) {
@@ -231,7 +232,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             layerPos = stepModel.index
             smallLayerList[stepModel.index].bitmap =
                 binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
-            layerAdapter.notifyDataSetChanged()
+//            layerAdapter.notifyDataSetChanged()
+            layerAdapter.notifyItemChanged(stepModel.index)
         }
     }
 
@@ -243,7 +245,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             layerPos = stepModel.index
             smallLayerList[stepModel.index].bitmap =
                 binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
-            layerAdapter.notifyDataSetChanged()
+            layerAdapter.notifyItemChanged(stepModel.index)
+//            layerAdapter.notifyDataSetChanged()
         }
     }
 

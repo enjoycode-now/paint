@@ -6,5 +6,5 @@ object BitmapUtils {
 
     val picQueue = ArrayDeque<String>()
 
-    fun newBitmap(width:Int=1200,height:Int=1800) = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888)
+    fun newBitmap(width: Int = 1200, height: Int = 1800) = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 }

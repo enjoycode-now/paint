@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_login"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    tools:ignore="Overdraw">
 
 
     <cn.copaint.audience.views.VerificationCodeInputView
@@ -19,21 +20,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.36"
-        app:vciv_et_background="@drawable/vciv_et_bg"
-        app:vciv_et_cursor_color="#F3E5F5"
+        app:vive_et_background="@drawable/vciv_et_bg"
+        app:vive_et_cursor_color="#F3E5F5"
         android:elevation="10dp"
-        app:vciv_et_cursor_height="96px"
-        app:vciv_et_foucs_background="@drawable/vciv_et_focus_bg"
-        app:vciv_et_height="144px"
-        app:vciv_et_number="4"
-        app:vciv_et_spacing="48px"
-        app:vciv_et_text_color="#CE93D8"
-        app:vciv_et_text_size="64px"
-        app:vciv_et_underline_default_color="@android:color/holo_green_dark"
-        app:vciv_et_underline_focus_color="@android:color/holo_blue_bright"
-        app:vciv_et_underline_height="2dp"
-        app:vciv_et_underline_show="false"
-        app:vciv_et_width="144px" />
+        app:vive_et_cursor_height="96px"
+        app:vive_et_focus_background="@drawable/vciv_et_focus_bg"
+        app:vive_et_height="144px"
+        app:vive_et_number="4"
+        app:vive_et_spacing="48px"
+        app:vive_et_text_color="#CE93D8"
+        app:vive_et_text_size="64px"
+        app:vive_et_underline_default_color="@android:color/holo_green_dark"
+        app:vive_et_underline_focus_color="@android:color/holo_blue_bright"
+        app:vive_et_underline_height="2dp"
+        app:vive_et_underline_show="false"
+        app:vive_et_width="144px" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

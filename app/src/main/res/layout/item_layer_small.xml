@@ -5,7 +5,8 @@
     android:id="@+id/layerItem"
     android:layout_width="144dp"
     android:layout_height="144dp"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    tools:ignore="Overdraw">
 
     <ImageView
         android:id="@+id/imageLeft"
@@ -15,7 +16,8 @@
         app:layout_constraintEnd_toStartOf="@+id/layerImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/layerImage"
-        app:srcCompat="@drawable/ic_icon_xs" />
+        app:srcCompat="@drawable/ic_icon_xs"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/layerImage"
@@ -24,14 +26,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"/>
 
     <TextView
         android:id="@+id/textRight"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:gravity="center"
-        android:text="100%"
+        android:text="@string/initial_layer_alpha"
         android:textColor="@color/textGrey"
         android:textSize="9dp"
         app:layout_constraintBottom_toBottomOf="@+id/layerImage"
@@ -45,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:gravity="center"
-        android:text="图层名"
+        android:text="@string/layer_name"
         android:textColor="#AAAAAA"
         app:layout_constraintBottom_toBottomOf="@+id/layerImage"
         app:layout_constraintEnd_toEndOf="@+id/layerImage"

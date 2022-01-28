@@ -110,7 +110,7 @@
         android:id="@+id/lawNote2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Yuanbei_Purchase_Agreement"
+        android:text="@string/YuanBei_Purchase_Agreement"
         android:textColor="#17A1EC"
         app:layout_constraintBottom_toTopOf="@+id/submitButton"
         app:layout_constraintEnd_toEndOf="parent"

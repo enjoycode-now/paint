@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_login"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    tools:ignore="Overdraw">
 
 
     <ImageView
@@ -16,7 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_round_white" />
+        app:srcCompat="@drawable/ic_round_white"
+        tools:ignore="ContentDescription,PxUsage" />
 
 
     <androidx.cardview.widget.CardView
@@ -77,7 +79,8 @@
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="#E4DCFC" />
+                app:tint="#E4DCFC"
+                android:contentDescription="@string/submit" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

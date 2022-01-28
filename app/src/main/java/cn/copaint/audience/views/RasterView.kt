@@ -11,6 +11,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.TextureView
 import cn.copaint.audience.DrawActivity
+import cn.copaint.audience.model.StepModel
+import cn.copaint.audience.raster.RasterInkBuilder
+import cn.copaint.audience.serialization.InkEnvironmentModel
+import cn.copaint.audience.tools.raster.PencilTool
+import cn.copaint.audience.tools.raster.RasterTool
+import cn.copaint.audience.utils.* // ktlint-disable no-wildcard-imports
 import com.wacom.ink.InterpolatedSpline
 import com.wacom.ink.StrokeConstants
 import com.wacom.ink.egl.EGLRenderingContext
@@ -28,13 +34,6 @@ import com.wacom.ink.rasterization.InkCanvas
 import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
 import com.wacom.ink.rendering.BlendMode
-import cn.copaint.audience.model.StepModel
-import cn.copaint.audience.raster.RasterInkBuilder
-import cn.copaint.audience.serialization.InkEnvironmentModel
-import cn.copaint.audience.tools.raster.EraserRasterTool
-import cn.copaint.audience.tools.raster.PencilTool
-import cn.copaint.audience.tools.raster.RasterTool
-import cn.copaint.audience.utils.*
 import paint.v1.Paint.Draw
 
 /**
@@ -48,16 +47,16 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     lateinit var inkCanvas: InkCanvas
-    lateinit var currentFrameLayer: MutableList<Layer>  // 第一层：直接笔画层
-    lateinit var strokesLayer: MutableList<Layer>       // 第二层：平滑笔画层
-    lateinit var finalLayer: Layer                      // 第三层：合成层
+    lateinit var currentFrameLayer: MutableList<Layer> // 第一层：直接笔画层
+    lateinit var strokesLayer: MutableList<Layer> // 第二层：平滑笔画层
+    lateinit var finalLayer: Layer // 第三层：合成层
 
     private lateinit var strokeRenderer: StrokeRenderer
     lateinit var activity: DrawActivity
 
-    private var rasterInkBuilder = RasterInkBuilder() //The ink builder
+    private var rasterInkBuilder = RasterInkBuilder() // The ink builder
     var rasterTool: RasterTool = PencilTool(context)
-    private var defaults: StrokeConstants = StrokeConstants() //The stroke defaults
+    private var defaults: StrokeConstants = StrokeConstants() // The stroke defaults
 
     // for serialisation
     lateinit var inkEnvironmentModel: InkEnvironmentModel // information about the environment
@@ -72,8 +71,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var isStylus: Boolean = false
     var newTool = false
 
-    var textureWidth=0
-    var textureHeight=0
+    var textureWidth = 0
+    var textureHeight = 0
 
     init {
         rasterInkBuilder.updatePipeline(PencilTool(context))
@@ -81,16 +80,16 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         // the drawing is going to be performer on background
         // on a surface, so we initialize the surface
-        surfaceTextureListener = object: SurfaceTextureListener {
+        surfaceTextureListener = object : SurfaceTextureListener {
 
             override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, w: Int, h: Int) {
                 // here, once the surface is crated, we are going to initialize ink canvas
 
                 // first we check that there is no other inkCanvas, in case there is we dispose it
-                //if (!inkCanvas.isDisposed) releaseResources()
-                textureWidth=w
-                textureHeight=h
-                inkCanvas = InkCanvas(surfaceTexture,EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
+                // if (!inkCanvas.isDisposed) releaseResources()
+                textureWidth = w
+                textureHeight = h
+                inkCanvas = InkCanvas(surfaceTexture, EGLRenderingContext.EGLConfiguration(8, 8, 8, 8, 8, 8))
 
                 strokesLayer = mutableListOf()
                 currentFrameLayer = mutableListOf()
@@ -134,7 +133,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         val pointerDataList = draw.toPointerDataList(defaults.alpha)
-        for(data in pointerDataList) rasterInkBuilder.add(data, null)
+        for (data in pointerDataList) rasterInkBuilder.add(data, null)
 
         val (added, predicted) = rasterInkBuilder.build()
 
@@ -145,7 +144,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             channelList = pair.second
         }
 
-        for(data in pointerDataList) {
+        for (data in pointerDataList) {
             for (channel in channelList) {
                 when (channel.typeURI) {
                     InkSensorType.X -> sensorData.add(channel, data.x)
@@ -168,12 +167,12 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         renderView()
     }
 
-    fun setStepModel(stepModel:StepModel){
-        with(stepModel){
+    fun setStepModel(stepModel: StepModel) {
+        with(stepModel) {
             inkCanvas.setTarget(currentFrameLayer[index])
-            inkCanvas.drawLayer(layer,BlendMode.COPY)
+            inkCanvas.drawLayer(layer, BlendMode.COPY)
             inkCanvas.setTarget(strokesLayer[index])
-            inkCanvas.drawLayer(layer,BlendMode.COPY)
+            inkCanvas.drawLayer(layer, BlendMode.COPY)
         }
         refreshView()
         invalidate()
@@ -182,9 +181,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun addStroke() {
         // Adding the style
         val style = Style(
-            rasterTool.brush.name,          // Brush URI
-            particlesRandomSeed = 1,        // Particle random seed
-            props = PathPointProperties(    // Coloring path properties
+            rasterTool.brush.name, // Brush URI
+            particlesRandomSeed = 1, // Particle random seed
+            props = PathPointProperties( // Coloring path properties
                 red = defaults.red,
                 green = defaults.green,
                 blue = defaults.blue,
@@ -194,9 +193,9 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         )
         // Adding stroke to the Stroke Repository
         val path = Stroke(
-            Identifier(),                    // Generated UUID
-            rasterInkBuilder.splineProducer.allData!!.copy(),   // Spline
-            style                                               // Style
+            Identifier(), // Generated UUID
+            rasterInkBuilder.splineProducer.allData!!.copy(), // Spline
+            style // Style
         )
 
         // Adding a node to the Ink tree
@@ -220,15 +219,14 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         defaults.alpha = Color.alpha(color) / 255f
     }
 
-
     // Renders the canvas content on the screen.
     fun renderView() {
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
-        for ((i,layer) in strokesLayer.withIndex()){
+        for ((i, layer) in strokesLayer.withIndex()) {
             if (!activity.smallLayerList[i].isShow)continue
-            if (i==activity.layerPos) inkCanvas.drawLayer(currentFrameLayer[activity.layerPos], BlendMode.SOURCE_OVER)
+            if (i == activity.layerPos) inkCanvas.drawLayer(currentFrameLayer[activity.layerPos], BlendMode.SOURCE_OVER)
             else inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -238,7 +236,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.setTarget(finalLayer)
         inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
-        for ((i,layer) in strokesLayer.withIndex()){
+        for ((i, layer) in strokesLayer.withIndex()) {
             if (!activity.smallLayerList[i].isShow)continue
             inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
@@ -262,7 +260,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
             val stepModel = StepModel(
-                inkCanvas.createLayer(textureWidth,textureHeight),
+                inkCanvas.createLayer(textureWidth, textureHeight),
                 activity.layerPos
             )
             inkCanvas.setTarget(stepModel.layer)
@@ -271,7 +269,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-    fun getStepModel():StepModel {
+    fun getStepModel(): StepModel {
         val stepModel = StepModel(
             inkCanvas.createLayer(textureWidth, textureHeight),
             activity.layerPos
@@ -326,7 +324,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         refreshView()
     }
 
-    fun addLayer(){
+    fun addLayer() {
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
     }

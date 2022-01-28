@@ -13,7 +13,7 @@
         android:padding="2dp"
         android:shadowColor="#000000"
         android:shadowRadius="2"
-        android:text="\@Esther老师"
+        android:text="@string/author_name"
         android:textColor="#f3f3f3"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/paintSum"
@@ -30,7 +30,7 @@
         android:padding="2dp"
         android:shadowColor="#000000"
         android:shadowRadius="2"
-        android:text="63019笔"
+        android:text="@string/paint_num"
         android:textColor="#f3f3f3"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/textView8"
@@ -45,7 +45,7 @@
         android:padding="2dp"
         android:shadowColor="#000000"
         android:shadowRadius="2"
-        android:text="10%份额在售"
+        android:text="@string/remain_percent"
         android:textColor="#f3f3f3"
         android:textSize="14sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/paintSum"
@@ -61,10 +61,7 @@
         android:padding="2dp"
         android:shadowColor="#000000"
         android:shadowRadius="2"
-        android:text="梵高油画系列风格创作，给人物写生增加色彩🎨
-同名画册： vintagemuse
-Esther｜每日速写｜潮流插画｜复古油画风
-#大触红人#Ootd #笔刷达人"
+        android:text="@string/author_introduction"
         android:textColor="#f3f3f3"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

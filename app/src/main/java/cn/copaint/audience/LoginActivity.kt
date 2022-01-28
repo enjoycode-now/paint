@@ -6,14 +6,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import com.bugsnag.android.Bugsnag
-import com.github.javiersantos.appupdater.AppUpdater
-import com.github.javiersantos.appupdater.enums.Display
-import com.github.javiersantos.appupdater.enums.UpdateFrom
 import cn.copaint.audience.databinding.ActivityLoginBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.bugsnag.android.Bugsnag
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.Display
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,8 +21,8 @@ import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var binding:ActivityLoginBinding
-    var phoneNumber = ""
+    lateinit var binding: ActivityLoginBinding
+    private var phoneNumber = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,33 +44,33 @@ class LoginActivity : AppCompatActivity() {
         binding.phoneText.doAfterTextChanged {
             phoneNumber = binding.phoneText.text.toString()
             binding.submitButton.setColorFilter(
-                if(isPhoneNumber(it.toString()))Color.rgb(181,160,255)
-                else Color.rgb(228,220,252)
+                if (isPhoneNumber(it.toString()))Color.rgb(181, 160, 255)
+                else Color.rgb(228, 220, 252)
             )
         }
     }
 
-    fun onSubmit(view: View){
+    fun onSubmit(view: View) {
         if (!isPhoneNumber(phoneNumber))toast("请输入正确的手机号")
         else if (!binding.checkbox.isChecked) toast("请同意《用户协议》《隐私政策》")
         else {
             val intent = Intent(this, VerificationCodeActivity::class.java)
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
                     authenticationClient.sendSmsCode(phoneNumber).execute()
                     runOnUiThread {
-                        intent.putExtra("phoneNumber",phoneNumber)
+                        intent.putExtra("phoneNumber", phoneNumber)
                         startActivity(intent)
                         finish()
                     }
-                }catch (e:IOException){
+                } catch (e: IOException) {
                     handleSmsError(e.message ?: "")
                 }
             }
         }
     }
 
-    fun handleSmsError(cause:String){
+    private fun handleSmsError(cause: String) {
         with(cause) {
             when {
                 contains("1分钟") -> {
@@ -86,10 +86,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun isPhoneNumber(str:String):Boolean{
-        if (str.length!=11) return false
+    private fun isPhoneNumber(str: String): Boolean {
+        if (str.length != 11) return false
         for (i in str) if (i !in '0'..'9') return false
         return true
     }
-
 }
