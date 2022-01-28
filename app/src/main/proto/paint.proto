@@ -140,6 +140,7 @@ message History {
 message CreateRequest {
     string name = 1;
     string description = 2;
+    repeated string tags = 3;
 }
 
 message CreateResponse {
@@ -161,9 +162,17 @@ message HistoryResponse {
     repeated History histories = 1;
 }
 
+message AddTagRequest {
+    int64 id = 1;
+    string tag_name = 2;
+}
+
+message AddTagResponse {}
+
 service PaintingService {
     rpc Paint(stream PaintMessage) returns (stream PaintMessage) {}
     rpc Create(CreateRequest) returns (CreateResponse) {}
     rpc List(ListRequest) returns (ListResponse) {}
     rpc History(HistoryRequest) returns (stream HistoryResponse) {}
+    rpc AddTag(AddTagRequest) returns (AddTagResponse) {}
 }

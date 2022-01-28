@@ -25,6 +25,7 @@ import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.GrpcUtils.paintStub
+import cn.copaint.audience.utils.GrpcUtils.setPaintId
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.distance
@@ -89,6 +90,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         setContentView(binding.root)
         resetInkModel()
         app = this
+
+        setPaintId("10248444048323190")
         inkEnvironmentModel =
             InkEnvironmentModel(this) // Initializes the environment data for serialization
 
@@ -98,7 +101,13 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             try {
                 paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
                     if (!isActive) return@collect
-                    // TODO：在此处写双向流逻辑
+                    when (it.type) {
+                        PaintType.PAINT_TYPE_DRAW -> {
+                            val draw = Payload.parseFrom(it.payload).draw
+                            binding.rasterDrawingSurface.surfaceTouch(draw)
+                        }
+                        else -> {}
+                    }
                 }
             } catch (e: CancellationException) {
             } catch (e: Exception) {
@@ -160,6 +169,11 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         layoutManager.reverseLayout = true
         binding.layerRecycle.layoutManager = layoutManager
         binding.layerRecycle.adapter = layerAdapter
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun onSurfaceCreated() {

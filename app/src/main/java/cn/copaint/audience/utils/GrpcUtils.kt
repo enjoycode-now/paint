@@ -35,6 +35,14 @@ object GrpcUtils {
         paintStub = MetadataUtils.attachHeaders(paintStub, headers)
     }
 
+    fun setPaintId(id: String) {
+        // 发送请求时加上 Token
+        val HEADER_KEY = Metadata.Key.of("x-painting-id", Metadata.ASCII_STRING_MARSHALLER)
+        val headers = Metadata()
+        headers.put(HEADER_KEY, id)
+        paintStub = MetadataUtils.attachHeaders(paintStub, headers)
+    }
+
     fun shutDownChannel() {
         if (!paintChannel.isShutdown) paintChannel.shutdown()
     }
