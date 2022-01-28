@@ -6,11 +6,8 @@ package cn.copaint.audience.raster
 
 import cn.copaint.audience.tools.raster.RasterTool
 import com.bugsnag.android.Bugsnag
-import com.wacom.ink.InterpolatedSpline
-import com.wacom.ink.PathSegment
-import com.wacom.ink.PointerData
-import com.wacom.ink.Spline
-import com.wacom.ink.pipeline.* // ktlint-disable no-wildcard-imports
+import com.wacom.ink.*
+import com.wacom.ink.pipeline.*
 import com.wacom.ink.pipeline.base.ProcessorResult
 
 /**
@@ -73,12 +70,17 @@ class RasterInkBuilder {
     /**
      * Add data to the VectorInkBuilder.
      *
+     * @param phase - the phase of the input
      * @param addition - the addition
      * @param prediction - the prediction (if available)
      */
     fun add(addition: PointerData, prediction: PointerData?) {
         try {
-            val (addedGeometry, predictedGeometry) = pathProducer.add(addition.phase, addition, prediction)
+            val (addedGeometry, predictedGeometry) = pathProducer.add(
+                addition.phase,
+                addition,
+                prediction
+            )
             pathSegment.add(addition.phase, addedGeometry, predictedGeometry)
         } catch (e: Exception) {
             Bugsnag.notify(e)

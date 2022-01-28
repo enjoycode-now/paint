@@ -54,14 +54,10 @@ class UserActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
-    }
 
-    override fun onResume() {
-        super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
             updateInfo()
-            val sharedPref =
-                app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
@@ -74,14 +70,17 @@ class UserActivity : AppCompatActivity() {
             }
             biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             updateInfo()
+        }
+    }
 
-            // 应援记录数据
-            CoroutineScope(Dispatchers.Default).launch {
-                for (i in 0..31) {
-                    sponsorList.add("https://api.ghser.com/random/pe.php")
-                    delay(125)
-                    runOnUiThread { adapter.notifyItemChanged(i) }
-                }
+    override fun onResume() {
+        super.onResume()
+        // 应援记录数据
+        CoroutineScope(Dispatchers.Default).launch {
+            for (i in 0..31) {
+                sponsorList.add("https://api.ghser.com/random/pe.php")
+                delay(125)
+                runOnUiThread { adapter.notifyItemChanged(i) }
             }
         }
     }

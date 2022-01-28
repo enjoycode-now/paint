@@ -7,6 +7,7 @@ package cn.copaint.audience
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.authing.core.graphql.GraphQLException
 import cn.copaint.audience.adapter.LayerAdapter
 import cn.copaint.audience.databinding.ActivityDrawBinding
 import cn.copaint.audience.databinding.ItemToolsmenuBinding
@@ -24,8 +26,11 @@ import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.* // ktlint-disable no-wildcard-imports
+import cn.copaint.audience.utils.AuthingUtils.authenticationClient
+import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
+import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.distance
@@ -49,6 +54,7 @@ import paint.v1.Paint.* // ktlint-disable no-wildcard-imports
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.util.* // ktlint-disable no-wildcard-imports
+import java.io.IOException
 import kotlin.math.ceil
 
 class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
@@ -91,27 +97,41 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         resetInkModel()
         app = this
 
-        setPaintId("10248444048323190")
-        inkEnvironmentModel =
-            InkEnvironmentModel(this) // Initializes the environment data for serialization
-
+        inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
         binding.rasterDrawingSurface.activity = this
+        binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
+        binding.rasterDrawingSurface.listener = this
 
-        job = CoroutineScope(Dispatchers.IO).launch {
+        changeBackground(R.drawable.btn_paper_04, R.drawable.background4)
+
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.reverseLayout = true
+        binding.layerRecycle.layoutManager = layoutManager
+        binding.layerRecycle.adapter = layerAdapter
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
+            authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
-                paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
-                    if (!isActive) return@collect
-                    when (it.type) {
-                        PaintType.PAINT_TYPE_DRAW -> {
-                            val draw = Payload.parseFrom(it.payload).draw
+                user = authenticationClient.getCurrentUser().execute()
+                setToken(user.token ?: "")
+                setPaintId("10254097819120246")
+            } catch (e: GraphQLException) {
+                runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
+                return@launch
+            } catch (e: IOException) {
+                toast("用户信息获取失败")
+            }
+            paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
+                when (it.type) {
+                    PaintType.PAINT_TYPE_DRAW -> {
+                        val draw = Payload.parseFrom(it.payload).draw
+                        runOnUiThread {
                             binding.rasterDrawingSurface.surfaceTouch(draw)
                         }
-                        else -> {}
                     }
+                    else -> {}
                 }
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                Bugsnag.notify(e)
             }
         }
 
@@ -136,39 +156,30 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 lastEvent = MotionEvent.obtain(event)
                 val drawBuilder = lastEvent!!.createDrawBuilder()
                 binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
+                CoroutineScope(Dispatchers.IO).launch {
+                    val payload = Payload.newBuilder()
+                        .setDraw(drawBuilder.build())
+                        .build()
+                    val paintMessage = PaintMessage
+                        .newBuilder()
+                        .setType(PaintType.PAINT_TYPE_DRAW)
+                        .setSequence(seq++)
+                        .setPayload(payload.toByteString())
+                        .build()
+                    sharedFlow.tryEmit(paintMessage)
+                }
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
                     MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
                     MotionEvent.ACTION_UP -> {
                         lastEvent = null
-                        smallLayerList[layerPos].bitmap =
-                            binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+                        smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
                         layerAdapter.notifyItemChanged(layerPos)
-                        val draw = bufferDraw.build()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val paintMessage = PaintMessage
-                                .newBuilder()
-                                .setType(PaintType.PAINT_TYPE_DRAW)
-                                .setSequence(seq++)
-                                .setPayload(draw.toByteString())
-                                .build()
-                            sharedFlow.emit(paintMessage)
-                        }
                     }
                 }
             }
             true
         }
-
-        binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
-        binding.rasterDrawingSurface.listener = this
-
-        changeBackground(R.drawable.btn_paper_03, R.drawable.btn_paper_03)
-
-        val layoutManager = LinearLayoutManager(this)
-        layoutManager.reverseLayout = true
-        binding.layerRecycle.layoutManager = layoutManager
-        binding.layerRecycle.adapter = layerAdapter
     }
 
     override fun onDestroy() {

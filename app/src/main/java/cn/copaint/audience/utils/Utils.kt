@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.MotionEvent
 import cn.copaint.audience.tools.Tool
-import cn.copaint.audience.tools.raster.* // ktlint-disable no-wildcard-imports
+import cn.copaint.audience.tools.raster.*
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
 import com.wacom.ink.format.enums.InkInputType

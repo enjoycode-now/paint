@@ -16,7 +16,7 @@ import cn.copaint.audience.raster.RasterInkBuilder
 import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.PencilTool
 import cn.copaint.audience.tools.raster.RasterTool
-import cn.copaint.audience.utils.* // ktlint-disable no-wildcard-imports
+import cn.copaint.audience.utils.*
 import com.wacom.ink.InterpolatedSpline
 import com.wacom.ink.StrokeConstants
 import com.wacom.ink.egl.EGLRenderingContext
