@@ -8,15 +8,15 @@ import paint.v1.PaintingServiceGrpcKt
 import java.util.concurrent.TimeUnit
 
 object GrpcUtils {
-    val grpcServer="120.78.173.15"
-    val grpcPort=19999
+    val grpcServer = "120.78.173.15"
+    val grpcPort = 19999
 
     lateinit var paintChannel: ManagedChannel
     lateinit var paintStub: PaintingServiceGrpcKt.PaintingServiceCoroutineStub
 
-    fun buildStub(){
+    fun buildStub() {
         paintChannel = ManagedChannelBuilder
-            .forAddress(grpcServer,grpcPort)
+            .forAddress(grpcServer, grpcPort)
             .usePlaintext()
             .enableRetry()
             .maxRetryAttempts(3)
@@ -27,15 +27,15 @@ object GrpcUtils {
         paintStub = PaintingServiceGrpcKt.PaintingServiceCoroutineStub(paintChannel)
     }
 
-    fun setToken(token: String){
+    fun setToken(token: String) {
         // 发送请求时加上 Token
         val HEADER_KEY = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER)
         val headers = Metadata()
         headers.put(HEADER_KEY, "Bearer $token")
-        paintStub = MetadataUtils.attachHeaders(paintStub,headers)
+        paintStub = MetadataUtils.attachHeaders(paintStub, headers)
     }
 
-    fun shutDownChannel(){
-        if(!paintChannel.isShutdown) paintChannel.shutdown()
+    fun shutDownChannel() {
+        if (!paintChannel.isShutdown) paintChannel.shutdown()
     }
 }

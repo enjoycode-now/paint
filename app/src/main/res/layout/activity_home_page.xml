@@ -41,9 +41,11 @@
         app:tabTextColor="#80FFFFFF" />
 
     <ImageView
+        android:id="@+id/searchButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:fitsSystemWindows="true"
+        android:onClick="onDrawActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_search" />

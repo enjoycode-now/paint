@@ -9,6 +9,7 @@ import android.graphics.PointF
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.MotionEvent
+import cn.copaint.audience.R
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.enums.InkInputType
 import com.wacom.ink.format.enums.InkSensorMetricType
@@ -18,9 +19,7 @@ import com.wacom.ink.format.input.*
 import com.wacom.ink.format.tree.data.SensorData
 import com.wacom.ink.format.util.ScalarUnit
 import com.wacom.ink.model.Identifier
-import cn.copaint.audience.R
 import java.util.*
-
 
 /**
  * This class contains information about the environment, in order to be saved
@@ -70,7 +69,7 @@ class InkEnvironmentModel(val activity: Activity) {
         inputDevice.putProperty("dev.host", Build.HOST)
     }
 
-    fun createSensorData(toolTypeInt:Int): Pair<SensorData, List<SensorChannel>> {
+    fun createSensorData(toolTypeInt: Int): Pair<SensorData, List<SensorChannel>> {
         val toolType = when (toolTypeInt) {
             MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
             MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
@@ -121,7 +120,7 @@ class InkEnvironmentModel(val activity: Activity) {
         }
 
         var channelList: List<SensorChannel>? = null
-        for ((id, channels) in channelsForInput) if(provider.id == id) channelList = channels
+        for ((id, channels) in channelsForInput) if (provider.id == id) channelList = channels
 
         if (channelList == null) {
             channelList = listOf() // empty list to avoid null pointer exceptions
@@ -129,7 +128,6 @@ class InkEnvironmentModel(val activity: Activity) {
 
         return Pair(SensorData(Identifier(UUID.randomUUID().toString()), inputContextId, InkState.PLANE), channelList)
     }
-
 
     fun registerInModel(inkModel: InkModel) {
         if (inkModel.inputConfiguration.getEnvironment(environment.id) == null) {
@@ -139,7 +137,6 @@ class InkEnvironmentModel(val activity: Activity) {
         if (inkModel.inputConfiguration.getInputDevice(inputDevice.id) == null) {
             inkModel.inputConfiguration.add(inputDevice)
         }
-
 
         for (sensorContext in sensorContexts.values) {
             if (inkModel.inputConfiguration.getSensorContext(sensorContext.id) == null) {
@@ -230,7 +227,7 @@ class InkEnvironmentModel(val activity: Activity) {
                     InkSensorMetricType.ANGLE,
                     ScalarUnit.RADIAN,
                     0.0f,
-                    (Math.PI/2).toFloat(),
+                    (Math.PI / 2).toFloat(),
                     precision
                 )
                 InkSensorType.AZIMUTH -> SensorChannel(
@@ -238,7 +235,7 @@ class InkEnvironmentModel(val activity: Activity) {
                     InkSensorMetricType.ANGLE,
                     ScalarUnit.RADIAN,
                     -(Math.PI/2).toFloat(),
-                    (Math.PI/2).toFloat(),
+                    (Math.PI / 2).toFloat(),
                     precision
                 )
                 InkSensorType.ROTATION -> SensorChannel(

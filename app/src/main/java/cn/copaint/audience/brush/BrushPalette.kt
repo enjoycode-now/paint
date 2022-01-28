@@ -1,16 +1,12 @@
-/*
- * Copyright (C) 2020 Wacom.
- * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
- */
 package cn.copaint.audience.brush
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import cn.copaint.audience.R
 import com.wacom.ink.format.enums.RotationMode
 import com.wacom.ink.format.rendering.RasterBrush
 import com.wacom.ink.rendering.BlendMode
-import cn.copaint.audience.R
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -20,7 +16,7 @@ import java.util.*
 class BrushPalette {
 
     companion object {
-        fun getBrush(context: Context, uri: String) : RasterBrush? {
+        fun getBrush(context: Context, uri: String): RasterBrush? {
             var brush: RasterBrush? = null
             when {
                 uri.lowercase(Locale.getDefault()).contains("pencil") -> brush = pencil(context)
@@ -57,16 +53,16 @@ class BrushPalette {
             // Create the raster brush
             var brush = RasterBrush(
                 URIBuilder.getBrushURI("raster", "Pen"), // name of the brush
-                0.15f,                                          // spacing
-                0.15f,                                         // scattering
-                RotationMode.RANDOM,                                    // rotation mode
-                listOf(shapeTextureByteArray),                          // shape texture
-                listOf(), fillTextureByteArray,                         // fill texture
-                "",                                         // fill texture URI
-                fillTexture.width.toFloat(),                            // width of texture
-                fillTexture.height.toFloat(),                           // height of texture
-                false,                                       // randomized fill
-                BlendMode.MAX                                            // mode of blending
+                0.15f, // spacing
+                0.15f, // scattering
+                RotationMode.RANDOM, // rotation mode
+                listOf(shapeTextureByteArray), // shape texture
+                listOf(), fillTextureByteArray, // fill texture
+                "", // fill texture URI
+                fillTexture.width.toFloat(), // width of texture
+                fillTexture.height.toFloat(), // height of texture
+                false, // randomized fill
+                BlendMode.MAX // mode of blending
             )
 
             shapeTexture.recycle()
@@ -97,16 +93,16 @@ class BrushPalette {
             // Create the raster brush
             var brush = RasterBrush(
                 URIBuilder.getBrushURI("raster", "Pen2"), // name of the brush
-                0.15f,                                          // spacing
-                0.15f,                                         // scattering
-                RotationMode.RANDOM,                                    // rotation mode
-                listOf(shapeTextureByteArray),                          // shape texture
-                listOf(), fillTextureByteArray,                         // fill texture
-                "",                                         // fill texture URI
-                fillTexture.width.toFloat(),                            // width of texture
-                fillTexture.height.toFloat(),                           // height of texture
-                false,                                       // randomized fill
-                BlendMode.MAX                                            // mode of blending
+                0.15f, // spacing
+                0.15f, // scattering
+                RotationMode.RANDOM, // rotation mode
+                listOf(shapeTextureByteArray), // shape texture
+                listOf(), fillTextureByteArray, // fill texture
+                "", // fill texture URI
+                fillTexture.width.toFloat(), // width of texture
+                fillTexture.height.toFloat(), // height of texture
+                false, // randomized fill
+                BlendMode.MAX // mode of blending
             )
 
             shapeTexture.recycle()
@@ -137,16 +133,16 @@ class BrushPalette {
             // Create the raster brush
             var brush = RasterBrush(
                 URIBuilder.getBrushURI("raster", "Pen3"), // name of the brush
-                0.15f,                                          // spacing
-                0.15f,                                         // scattering
-                RotationMode.RANDOM,                                    // rotation mode
-                listOf(shapeTextureByteArray),                          // shape texture
-                listOf(), fillTextureByteArray,                         // fill texture
-                "",                                         // fill texture URI
-                fillTexture.width.toFloat(),                            // width of texture
-                fillTexture.height.toFloat(),                           // height of texture
-                false,                                       // randomized fill
-                BlendMode.MAX                                            // mode of blending
+                0.15f, // spacing
+                0.15f, // scattering
+                RotationMode.RANDOM, // rotation mode
+                listOf(shapeTextureByteArray), // shape texture
+                listOf(), fillTextureByteArray, // fill texture
+                "", // fill texture URI
+                fillTexture.width.toFloat(), // width of texture
+                fillTexture.height.toFloat(), // height of texture
+                false, // randomized fill
+                BlendMode.MAX // mode of blending
             )
 
             shapeTexture.recycle()
@@ -177,16 +173,16 @@ class BrushPalette {
             // Create the raster brush
             var brush = RasterBrush(
                 URIBuilder.getBrushURI("raster", "Pencil"), // name of the brush
-                0.15f,                                          // spacing
-                0.15f,                                         // scattering
-                RotationMode.RANDOM,                                    // rotation mode
-                listOf(shapeTextureByteArray),                          // shape texture
-                listOf(), fillTextureByteArray,                         // fill texture
-                "",                                         // fill texture URI
-                fillTexture.width.toFloat(),                            // width of texture
-                fillTexture.height.toFloat(),                           // height of texture
-                false,                                       // randomized fill
-                BlendMode.MAX                                            // mode of blending
+                0.15f, // spacing
+                0.15f, // scattering
+                RotationMode.RANDOM, // rotation mode
+                listOf(shapeTextureByteArray), // shape texture
+                listOf(), fillTextureByteArray, // fill texture
+                "", // fill texture URI
+                fillTexture.width.toFloat(), // width of texture
+                fillTexture.height.toFloat(), // height of texture
+                false, // randomized fill
+                BlendMode.MAX // mode of blending
             )
 
             shapeTexture.recycle()
@@ -278,7 +274,6 @@ class BrushPalette {
             val stream = ByteArrayOutputStream()
             shapeTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
             val shapeTextureButeArray = stream.toByteArray()
-
 
             val stream2 = ByteArrayOutputStream()
             fillTexture!!.compress(Bitmap.CompressFormat.PNG, 100, stream2)
