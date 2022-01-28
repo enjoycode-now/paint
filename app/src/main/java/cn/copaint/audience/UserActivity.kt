@@ -45,15 +45,15 @@ class UserActivity : AppCompatActivity() {
         app = this
 
         hignLightBtn(binding.userPageBtn)
-        binding.supportWorksRecylerView.layoutManager = GridLayoutManager(this, 3)
-        binding.supportWorksRecylerView.adapter = adapter
+        binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
+        binding.supportWorksRecyclerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val statusBarHeight = if (statusBarId>0)resources.getDimensionPixelSize(statusBarId) else 24.dp
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
-        binding.supportWorksRecylerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
+        binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
     }
 
     override fun onResume() {

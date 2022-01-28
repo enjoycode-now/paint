@@ -1,7 +1,6 @@
 package cn.copaint.audience.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,6 @@ class LiveFragment : Fragment() {
         val view = fragmentBinding.root
 
         fragmentBinding.showImageViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            var current_fragment: View? = null
-            var last_fragment: View? = null
             val myFragment = childFragmentManager.findFragmentByTag("f" + fragmentBinding.showImageViewPager.currentItem)
             override fun onPageScrollStateChanged(state: Int) {
                 super.onPageScrollStateChanged(state)
@@ -29,11 +26,6 @@ class LiveFragment : Fragment() {
                     1 -> myFragment?.view?.findViewById<View>(R.id.toolbar)?.alpha = 0.5f
                     else -> myFragment?.view?.findViewById<View>(R.id.toolbar)?.alpha = 1f
                 }
-            }
-
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                Log.i("chenlin", "position= " + position)
             }
         })
 
