@@ -65,7 +65,7 @@ class HomePageActivity : AppCompatActivity() {
         startActivity(Intent(this, DrawActivity::class.java))
     }
 
-    fun highLightBtn(view: View) {
+    private fun highLightBtn(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false

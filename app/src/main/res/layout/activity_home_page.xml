@@ -38,6 +38,7 @@
         app:tabIndicatorFullWidth="false"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
+        app:tabRippleColor = "@android:color/transparent"
         app:tabTextColor="#80FFFFFF" />
 
     <ImageView

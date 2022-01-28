@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="openPaperDialog"
                 android:src="@drawable/btn_paper_01"
-                android:contentDescription="@string/selectBackgroud"/>
+                android:contentDescription="@string/select_background"/>
 
             <ImageView
                 android:id="@+id/btnColor"
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_water_brush"
-                android:contentDescription="@string/waterbrush"
+                android:contentDescription="@string/water_brush"
                 app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_feather"
-                android:contentDescription="@string/inkbrush"
+                android:contentDescription="@string/ink_brush"
                 app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
@@ -174,7 +174,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="图层列表"
+                    android:text="@string/layer_list"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
