@@ -4,11 +4,14 @@
  */
 package cn.copaint.audience.raster
 
-import com.wacom.ink.*
-import com.wacom.ink.pipeline.*
-import com.wacom.ink.pipeline.base.ProcessorResult
 import cn.copaint.audience.tools.raster.RasterTool
 import com.bugsnag.android.Bugsnag
+import com.wacom.ink.InterpolatedSpline
+import com.wacom.ink.PathSegment
+import com.wacom.ink.PointerData
+import com.wacom.ink.Spline
+import com.wacom.ink.pipeline.* // ktlint-disable no-wildcard-imports
+import com.wacom.ink.pipeline.base.ProcessorResult
 
 /**
  * RasterInkBuilder is a class that handles the Path building for the Raster Ink, using the geometry
@@ -41,9 +44,9 @@ class RasterInkBuilder {
         splineProducer = SplineProducer(layout) // Layout
         splineInterpolator = DistanceBasedInterpolator(
             spacing = tool.brush.spacing, // Spacing between two successive sample.
-            splitCount = 1,               // Determines the number of iterations for the discretization.
-            calculateDerivatives = true,  // Calculate derivatives
-            interpolateByLength = true    // Interpolate by length
+            splitCount = 1, // Determines the number of iterations for the discretization.
+            calculateDerivatives = true, // Calculate derivatives
+            interpolateByLength = true // Interpolate by length
         )
         pathSegment = PathSegment()
 
@@ -70,7 +73,6 @@ class RasterInkBuilder {
     /**
      * Add data to the VectorInkBuilder.
      *
-     * @param phase - the phase of the input
      * @param addition - the addition
      * @param prediction - the prediction (if available)
      */
@@ -104,9 +106,11 @@ class RasterInkBuilder {
     }
 
     fun processSpline(
-        added: Spline, predicted: Spline?, isFirst: Boolean = true, isLast: Boolean = true
+        added: Spline,
+        predicted: Spline?,
+        isFirst: Boolean = true,
+        isLast: Boolean = true
     ): ProcessorResult<InterpolatedSpline?> {
         return splineInterpolator.add(isFirst, isLast, added, predicted)
     }
-
 }

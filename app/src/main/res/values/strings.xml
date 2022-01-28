@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">元绘</string>
-    <string name="filebrowser_provider">WILL3-Ink-Raster-Rendering-Demo</string>
     <string name="sdk_name">WILL SDK for ink (Android)</string>
     <string name="sdk_version">v3.0.0</string>
     <string name="raster_eraser">Raster eraser</string>
-    <string name="loading">Loading...</string>
 
     <declare-styleable name="VerificationCodeInputView">
         <!--输入框的数量-->
@@ -39,7 +37,6 @@
         <attr name="vciv_et_underline_show" format="boolean" />
     </declare-styleable>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="selectBackgroud">选择背景</string>
     <string name="selectColorAndAlpha">选择颜色和透明度</string>
     <string name="clearLayer">清空图层</string>

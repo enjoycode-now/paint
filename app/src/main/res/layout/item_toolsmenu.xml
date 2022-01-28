@@ -83,7 +83,8 @@
                 app:layout_constraintVertical_bias="0.38"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layer_note"
-                android:text="删除图层"/>
+                android:text="删除图层"
+                tools:ignore="SmallSp" />
 
 
             <TextView
@@ -97,7 +98,8 @@
                 app:layout_constraintVertical_bias="0.38"
                 app:layout_constraintStart_toEndOf="@+id/delete"
                 app:layout_constraintTop_toTopOf="@id/layer_note"
-                android:text="清空图层"/>
+                android:text="清空图层"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/unsure_note"
@@ -110,7 +112,8 @@
                 app:layout_constraintVertical_bias="0.38"
                 app:layout_constraintStart_toEndOf="@+id/eraser"
                 app:layout_constraintTop_toTopOf="@id/layer_note"
-                android:text="待定"/>
+                android:text="待定"
+                tools:ignore="SmallSp" />
 
 
 
@@ -169,7 +172,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginVertical="15dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:src="@drawable/ic_add"
                 app:layout_constraintTop_toBottomOf="@id/alpha_num_note"
                 app:layout_constraintStart_toEndOf="@id/alpha_seekbar"
