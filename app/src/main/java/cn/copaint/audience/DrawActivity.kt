@@ -84,9 +84,8 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
     val stepStack = StepStack()
     lateinit var bufferDraw: Draw.Builder
     val sharedFlow = MutableSharedFlow<PaintMessage>(3, 12, BufferOverflow.DROP_OLDEST)
-
-    lateinit var job: Job
     var seq = 0
+    val actionBuffer = ArrayDeque<Draw>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,23 +114,39 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             try {
                 user = authenticationClient.getCurrentUser().execute()
                 setToken(user.token ?: "")
-                setPaintId("10254097819120246")
+                setPaintId("10338064278762102")
             } catch (e: GraphQLException) {
                 runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
+            paintStub.history(
+                HistoryRequest.newBuilder()
+                    .setPaintingId(10338064278762102)
+                    .build()
+            ).collect {
+                for (history in it.historiesList) {
+                    actionBuffer.add(Draw.parseFrom(history.payload))
+                }
+            }
             paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
                 when (it.type) {
                     PaintType.PAINT_TYPE_DRAW -> {
-                        val draw = Payload.parseFrom(it.payload).draw
-                        runOnUiThread {
-                            binding.rasterDrawingSurface.surfaceTouch(draw)
-                        }
+                        actionBuffer.add(Draw.parseFrom(it.payload))
                     }
+                    PaintType.PAINT_TYPE_LAYER -> { }
                     else -> {}
                 }
+            }
+        }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            var draw: Draw?
+            while (true) {
+                delay(200)
+                draw = actionBuffer.poll()
+                if (draw != null) runOnUiThread { binding.rasterDrawingSurface.surfaceTouch(draw) }
             }
         }
 
@@ -157,9 +172,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
                 val drawBuilder = lastEvent!!.createDrawBuilder()
                 binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
                 CoroutineScope(Dispatchers.IO).launch {
-                    val payload = Payload.newBuilder()
-                        .setDraw(drawBuilder.build())
-                        .build()
+                    val payload = drawBuilder.build()
                     val paintMessage = PaintMessage
                         .newBuilder()
                         .setType(PaintType.PAINT_TYPE_DRAW)
@@ -180,11 +193,6 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             }
             true
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     override fun onSurfaceCreated() {
@@ -252,8 +260,7 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         else {
             binding.rasterDrawingSurface.setStepModel(stepModel)
             layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap =
-                binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+            smallLayerList[stepModel.index].bitmap = binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
             layerAdapter.notifyDataSetChanged()
         }
     }

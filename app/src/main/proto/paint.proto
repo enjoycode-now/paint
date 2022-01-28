@@ -100,12 +100,6 @@ message User {
     string user_id = 2;
 }
 
-message Payload {
-    Draw draw = 1;
-    User user = 2;
-    Layer layer = 3;
-}
-
 message PaintMessage {
     // 响应类型
     PaintType type = 1;
