@@ -8,7 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.MotionEvent
-import paint.v1.Paint.Draw
+import cn.copaint.audience.tools.Tool
+import cn.copaint.audience.tools.raster.*
 import com.wacom.ink.Phase
 import com.wacom.ink.PointerData
 import com.wacom.ink.format.enums.InkInputType
@@ -18,8 +19,7 @@ import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.ParticleBrush
 import com.wacom.ink.rasterization.RotationMode
 import com.wacom.ink.rendering.BlendMode
-import cn.copaint.audience.tools.raster.*
-import cn.copaint.audience.tools.Tool
+import paint.v1.Paint.Draw
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,26 +28,28 @@ import kotlin.math.min
  *
  * @return the PointerData for the event.
  */
-fun Draw.toPointerDataList(alphaBias:Float): MutableList<PointerData> {
+fun Draw.toPointerDataList(alphaBias: Float): MutableList<PointerData> {
     val pointDataList = mutableListOf<PointerData>()
-    for(point in pointsList){
-        pointDataList.add(PointerData(
-            pointsList[0].x,
-            pointsList[0].y,
-            phase = Phase.UPDATE,
-            timestamp = 0L,
-            force = pointsList[0].pressure*alphaBias,
-            altitudeAngle = 0f,
-            azimuthAngle = 0f
-        ))
+    for (point in pointsList) {
+        pointDataList.add(
+            PointerData(
+                pointsList[0].x,
+                pointsList[0].y,
+                phase = Phase.UPDATE,
+                timestamp = 0L,
+                force = pointsList[0].pressure * alphaBias,
+                altitudeAngle = 0f,
+                azimuthAngle = 0f
+            )
+        )
     }
-    if (phase == MotionEvent.ACTION_DOWN)pointDataList.first().phase=Phase.BEGIN
-    if (phase == MotionEvent.ACTION_UP)pointDataList.last().phase=Phase.END
+    if (phase == MotionEvent.ACTION_DOWN)pointDataList.first().phase = Phase.BEGIN
+    if (phase == MotionEvent.ACTION_UP)pointDataList.last().phase = Phase.END
     return pointDataList
 }
 
 val Draw.ToolType: InkInputType
-    get()=when (this.tool) {
+    get() = when (this.tool) {
         MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
         MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
         else -> InkInputType.PEN
@@ -76,8 +78,8 @@ fun RasterBrush.toParticleBrush(): ParticleBrush {
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
     }
 
-    //OpenGl needs all the texture sizes to be defined on there are more than one size, however we can found brushes without all the texture
-    //sizes, so we need to generate the rest
+    // OpenGl needs all the texture sizes to be defined on there are more than one size, however we can found brushes without all the texture
+    // sizes, so we need to generate the rest
     if (shapeTextures.size > 1) {
         val shapeTextureList = mutableListOf<Bitmap>()
         val maxTexture = shapeTextures.maxByOrNull { it.width }
@@ -96,7 +98,6 @@ fun RasterBrush.toParticleBrush(): ParticleBrush {
         shapeTextures = shapeTextureList.toTypedArray()
     }
 
-
     val fillTexture = BitmapFactory.decodeByteArray(fillTexture, 0, fillTexture.size, opts)
 
     pb.allocateTextures(shapeTextures, arrayOf(fillTexture), fillWidth.toInt(), fillHeight.toInt())
@@ -105,15 +106,15 @@ fun RasterBrush.toParticleBrush(): ParticleBrush {
 }
 
 val Tool.uri: String
-get() {
-    when (this) {
-        is CrayonTool -> return CrayonTool.uri
-        is EraserRasterTool -> return EraserRasterTool.uri
-        is PencilTool -> return PencilTool.uri
-        is WaterbrushTool -> return WaterbrushTool.uri
+    get() {
+        when (this) {
+            is CrayonTool -> return CrayonTool.uri
+            is EraserRasterTool -> return EraserRasterTool.uri
+            is PencilTool -> return PencilTool.uri
+            is WaterbrushTool -> return WaterbrushTool.uri
+        }
+        return PencilTool.uri
     }
-    return PencilTool.uri
-}
 
 /**
  * A helper method that calculates a normalized value based on the pressure of the pointer.
@@ -129,12 +130,13 @@ get() {
 fun PointerData.computeValueBasedOnPressure(
     minValue: Float,
     maxValue: Float,
-    minPressure: Float = 100f, maxPressure: Float = 4000f,
+    minPressure: Float = 100f,
+    maxPressure: Float = 4000f,
     reverse: Boolean = false,
     remap: ((Float) -> (Float))
 ): Float {
     val normalizePressure = if (reverse) {
-        minPressure + (1-force!!) * (maxPressure - minPressure)
+        minPressure + (1 - force!!) * (maxPressure - minPressure)
     } else {
         minPressure + force!! * (maxPressure - minPressure)
     }
@@ -147,7 +149,7 @@ fun PointerData.computeValueBasedOnPressure(
     return minValue + k * (maxValue - minValue)
 }
 
-val BlendMode.uri:String
+val BlendMode.uri: String
     get() = when (name) {
         "SOURCE_OVER" -> "will://rasterization/3.0/blend-mode/SourceOver"
         "DESTINATION_OVER" -> "will://rasterization/3.0/blend-mode/DestinationOver"
@@ -160,7 +162,7 @@ val BlendMode.uri:String
         else -> "will://rasterization/3.0/blend-mode/SourceOver"
     }
 
-fun Layer.toBitmap(inkCanvas:InkCanvas): Bitmap {
+fun Layer.toBitmap(inkCanvas: InkCanvas): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val tempLayer = inkCanvas.createLayer(width, height)
     inkCanvas.setTarget(tempLayer)
