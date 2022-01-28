@@ -20,42 +20,8 @@ import com.wacom.ink.rasterization.RotationMode
 import com.wacom.ink.rendering.BlendMode
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.tools.Tool
-import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
-
-/**
- * Converts a motion event to PointerData.
- *
- * @return the PointerData for the event.
- */
-fun MotionEvent.toPointerData(): PointerData {
-    val phase = when (this.action) {
-        MotionEvent.ACTION_DOWN -> Phase.BEGIN
-        MotionEvent.ACTION_MOVE -> Phase.UPDATE
-        MotionEvent.ACTION_UP -> Phase.END
-        else -> Phase.END
-    }
-    // compute the azimuth angle to achieve cross-platform consistency
-    val orientationAngle = getOrientation(0) + PI / 2
-    val azimuthAngle = if (orientationAngle > PI) {
-        (orientationAngle - 2 * PI).toFloat()
-    } else {
-        orientationAngle.toFloat()
-    }
-    // compute the altitude angle to achieve cross-platform consistency
-    val altitudeAngle = (PI / 2 - this.getAxisValue(MotionEvent.AXIS_TILT, 0)).toFloat()
-
-    return PointerData(
-        this.x,
-        this.y,
-        phase,
-        timestamp = this.eventTime,
-        force = this.pressure,
-        altitudeAngle = altitudeAngle,
-        azimuthAngle = azimuthAngle
-    )
-}
 
 /**
  * Converts a motion event to PointerData.
@@ -80,25 +46,12 @@ fun Draw.toPointerDataList(alphaBias:Float): MutableList<PointerData> {
     return pointDataList
 }
 
-//fun Point.toPointerData(alphaBias:Float): PointerData {
-//    return PointerData(
-//        x,
-//        y,
-//        phase = Phase.UPDATE,
-//        timestamp = 0L,
-//        force = pressure*alphaBias,
-//        altitudeAngle = 0f,
-//        azimuthAngle = 0f
-//    )
-//}
-
-fun Draw.resolveToolType(): InkInputType {
-    return when (this.tool) {
+val Draw.ToolType: InkInputType
+    get()=when (this.tool) {
         MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
         MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
         else -> InkInputType.PEN
     }
-}
 
 fun com.wacom.ink.format.enums.RotationMode.convert(): RotationMode {
     return when (this) {
@@ -151,7 +104,8 @@ fun RasterBrush.toParticleBrush(): ParticleBrush {
     return pb
 }
 
-fun Tool.uri(): String {
+val Tool.uri: String
+get() {
     when (this) {
         is CrayonTool -> return CrayonTool.uri
         is EraserRasterTool -> return EraserRasterTool.uri
@@ -193,8 +147,8 @@ fun PointerData.computeValueBasedOnPressure(
     return minValue + k * (maxValue - minValue)
 }
 
-fun BlendMode.uri(): String {
-    return when (name) {
+val BlendMode.uri:String
+    get() = when (name) {
         "SOURCE_OVER" -> "will://rasterization/3.0/blend-mode/SourceOver"
         "DESTINATION_OVER" -> "will://rasterization/3.0/blend-mode/DestinationOver"
         "DESTINATION_IN" -> "will://rasterization/3.0/blend-mode/DestinationIn"
@@ -205,7 +159,6 @@ fun BlendMode.uri(): String {
         "MAX" -> "will://rasterization/3.0/blend-mode/Max"
         else -> "will://rasterization/3.0/blend-mode/SourceOver"
     }
-}
 
 fun Layer.toBitmap(inkCanvas:InkCanvas): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

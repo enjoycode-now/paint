@@ -24,6 +24,21 @@ android {
         }
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("../Onyx-key.jks")
+            storePassword "QnRdaSDjHSh87zCK"
+            keyAlias "whiteboard-onyx"
+            keyPassword "QnRdaSDjHSh87zCK"
+        }
+        release {
+            storeFile file("../Onyx-key.jks")
+            storePassword "QnRdaSDjHSh87zCK"
+            keyAlias "whiteboard-onyx"
+            keyPassword "QnRdaSDjHSh87zCK"
+        }
+    }
+
     viewBinding{
         enabled = true
     }

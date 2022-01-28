@@ -5,14 +5,13 @@
 package cn.copaint.audience.tools.raster
 
 import android.content.Context
-import com.wacom.ink.Calculator
-import com.wacom.ink.PathPoint
-import com.wacom.ink.PathPointLayout
 import cn.copaint.audience.brush.BrushPalette
 import cn.copaint.audience.brush.URIBuilder
 import cn.copaint.audience.utils.computeValueBasedOnPressure
+import com.wacom.ink.Calculator
+import com.wacom.ink.PathPoint
+import com.wacom.ink.PathPointLayout
 import kotlin.math.*
-
 
 class CrayonTool(context: Context) : RasterTool(context) {
 
@@ -40,12 +39,12 @@ class CrayonTool(context: Context) : RasterTool(context) {
     var previousAlpha = 0.1f
 
     override fun getLayout(): PathPointLayout {
-       return PathPointLayout(
-                PathPoint.Property.X,
-                PathPoint.Property.Y,
-                PathPoint.Property.SIZE,
-                PathPoint.Property.ALPHA
-            )
+        return PathPointLayout(
+            PathPoint.Property.X,
+            PathPoint.Property.Y,
+            PathPoint.Property.SIZE,
+            PathPoint.Property.ALPHA
+        )
     }
 
     override val touchCalculator: Calculator = { previous, current, next ->
@@ -58,7 +57,7 @@ class CrayonTool(context: Context) : RasterTool(context) {
             minSpeed = 10f,
             maxSpeed = MAX_SPEED,
             // reverse behaviour
-            remap = { 1f - it}
+            remap = { 1f - it }
         )
         if (size == null) {
             size = previousSize
@@ -74,7 +73,7 @@ class CrayonTool(context: Context) : RasterTool(context) {
             minSpeed = 10f,
             maxSpeed = MAX_SPEED,
             // reverse behaviour
-            remap = { 1f - it}
+            remap = { 1f - it }
         )
         if (alpha == null) {
             alpha = previousAlpha
@@ -96,8 +95,10 @@ class CrayonTool(context: Context) : RasterTool(context) {
         // compute the rotation
         val rotation = current.computeNearestAzimuthAngle(previous)
         // Normalize the tilt be minimum seen altitude angle and the maximum with the pen straight up
-        val tiltScale = min(1f,
-            ((PencilTool.PI_HALF - current.altitudeAngle!!) / (PencilTool.PI_HALF - PencilTool.MIN_ALTITUDE_ANGLE).toFloat()))
+        val tiltScale = min(
+            1f,
+            ((PencilTool.PI_HALF - current.altitudeAngle!!) / (PencilTool.PI_HALF - PencilTool.MIN_ALTITUDE_ANGLE).toFloat())
+        )
 
         val size = if (current.force == -1f) {
             current.computeValueBasedOnSpeed(
@@ -109,7 +110,6 @@ class CrayonTool(context: Context) : RasterTool(context) {
                 maxSpeed = 3500f,
                 remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
-
         } else {
             current.computeValueBasedOnPressure(
                 minValue = MIN_CRAYON_SIZE,
@@ -129,7 +129,7 @@ class CrayonTool(context: Context) : RasterTool(context) {
                 minSpeed = 0f,
                 maxSpeed = 3500f,
                 // reverse behaviour
-                remap = { 1.0f - it}
+                remap = { 1.0f - it }
             )
         } else {
             current.computeValueBasedOnPressure(

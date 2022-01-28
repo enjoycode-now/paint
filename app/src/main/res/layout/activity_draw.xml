@@ -36,7 +36,7 @@
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="selectColor"
                 android:src="@drawable/icon_color"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btnClear"
@@ -45,7 +45,7 @@
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="clear"
                 android:src="@drawable/btn_clear"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btnUndo"
@@ -54,7 +54,7 @@
                 android:layout_marginRight="@dimen/btn_separator"
                 android:onClick="undo"
                 android:src="@drawable/btn_undo_selected"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btnRedo"
@@ -63,7 +63,7 @@
                 android:layout_marginRight="@dimen/btn_separator"
                 android:onClick="redo"
                 android:src="@drawable/btn_redo_selected"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btn_pencil"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_pencil"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btn_water_brush"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_water_brush"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btn_ink_brush"
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_feather"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
             <ImageView
                 android:id="@+id/btn_crayon"
@@ -96,7 +96,7 @@
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_crayon"
-                android:tint="@color/select_toolbar_button_stateful" />
+                app:tint="@color/select_toolbar_button_stateful" />
 
 
             <ImageView
@@ -106,8 +106,8 @@
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="selectTool"
                 android:src="@drawable/btn_eraser"
-                android:tint="@color/select_toolbar_button_stateful"
-                android:tooltipText="@string/raster_eraser" />
+                android:tooltipText="@string/raster_eraser"
+                app:tint="@color/select_toolbar_button_stateful" />
 
 
             <ImageView
@@ -117,9 +117,9 @@
                 android:layout_marginVertical="6dp"
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:onClick="smallLayer"
-                android:tint="@color/select_toolbar_button_stateful"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_close_layer_card" />
+                app:srcCompat="@drawable/ic_close_layer_card"
+                app:tint="@color/select_toolbar_button_stateful" />
 
         </LinearLayout>
 

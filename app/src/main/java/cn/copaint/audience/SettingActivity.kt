@@ -24,13 +24,13 @@ class SettingActivity : AppCompatActivity() {
 
     fun onFinish(view: View) = onBackPressed()
 
-    fun onLogout(view: View){
+    fun onLogout(view: View) {
         val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
         sharedPref.edit().putString("token", "").commit()
-        user = User(arn = "",id="", userPoolId ="")
+        user = User(arn = "", id = "", userPoolId = "")
         biography = "这个人没有填简介啊"
         toast("退出登录成功")
-        startActivity(Intent(this,HomePageActivity::class.java))
+        startActivity(Intent(this, HomePageActivity::class.java))
         finish()
     }
 }
