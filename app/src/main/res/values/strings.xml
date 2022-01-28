@@ -40,4 +40,46 @@
     </declare-styleable>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selectBackgroud">选择背景</string>
+    <string name="selectColorAndAlpha">选择颜色和透明度</string>
+    <string name="clearLayer">清空图层</string>
+    <string name="undo">撤销</string>
+    <string name="redo">恢复</string>
+    <string name="pencil">pencil</string>
+    <string name="waterbrush">waterBrush</string>
+    <string name="inkbrush">inkBrush</string>
+    <string name="crayon">crayon</string>
+    <string name="eraser">eraser</string>
+    <string name="controlLayerWindowStatus">控制图层浮窗状态</string>
+    <string name="addLayer">新增图层</string>
+    <string name="lockLayer">lockLayer</string>
+    <string name="copyLayer">copyLayer</string>
+    <string name="search">search</string>
+    <string name="homePage">首页</string>
+    <string name="userPage">我的</string>
+    <string name="please_input_phone_number">请输入手机号</string>
+    <string name="readAndAgree">已阅读并同意</string>
+    <string name="userAgreementAndPrivacyPolicy">《用户协议》《隐私政策》</string>
+    <string name="buyYuanBei">购买元贝</string>
+    <string name="recharge_first">10</string>
+    <string name="recharge_second">60</string>
+    <string name="recharge_third">300</string>
+    <string name="recharge_fourth">980</string>
+    <string name="recharge_fifth">2980</string>
+    <string name="button">Button</string>
+    <string name="purchase_prompt_field">购买即代表已阅读并同意</string>
+    <string name="Yuanbei_Purchase_Agreement">《元贝购买协议》</string>
+    <string name="purchaseNow">立即购买</string>
+    <string name="logout">退出登录</string>
+    <string name="logoutPage_Btn_tip">关注官方公众号【XXXX】，最新资讯尽在掌握</string>
+    <string name="setting">设置</string>
+    <string name="YuanBei">元贝</string>
+    <string name="fan">粉丝</string>
+    <string name="initial_YuanBei_account">200</string>
+    <string name="initial_fan_num">109</string>
+    <string name="initial_author_name">Esther</string>
+    <string name="initial_author_id">0</string>
+    <string name="initial_author_biography">梵高油画系列太独特啦，给人物写生增加色彩🎨\n 画册：两三事、 vintagemuse ⭐️⭐️⭐️\n 画册：两三事、 vintagemuse ⭐️⭐️⭐️\n OOTD｜每日速写｜潮流插画｜复古油画风\n #大触红人#Ootd #笔刷达人</string>
+    <string name="initial_blockchainAddress">0x0</string>
+    <string name="sponsoredWorks">应援作品</string>
 </resources>

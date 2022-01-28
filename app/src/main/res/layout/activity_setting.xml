@@ -12,18 +12,18 @@
         android:layout_height="48dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="40dp"
-        android:drawableStart="@drawable/ic_back_deep_gray"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:onClick="onFinish"
         android:textSize="21sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableStartCompat="@drawable/ic_back_deep_gray" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="关注官方公众号【XXXX】，最新资讯尽在掌握"
+        android:text="@string/logoutPage_Btn_tip"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="10sp"
         android:autoSizeMaxTextSize="30sp"
@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="onLogout"
-        android:text="退出登录"
+        android:text="@string/logout"
         android:textSize="40px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -28,7 +28,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/bg_user_center" />
+                app:srcCompat="@drawable/bg_user_center"
+                android:contentDescription="@null" />
 
             <ImageView
                 android:id="@+id/configButton"
@@ -38,7 +39,8 @@
                 android:onClick="onSetting"
                 app:layout_constraintBottom_toTopOf="@+id/cardView"
                 app:layout_constraintEnd_toEndOf="@+id/cardView"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/setting" />
 
             <View
                 android:id="@+id/headerView"
@@ -73,7 +75,7 @@
                         android:layout_marginStart="144dp"
                         android:layout_marginBottom="8dp"
                         android:onClick="buyScallop"
-                        android:text="元贝"
+                        android:text="@string/YuanBei"
                         android:textColor="#888888"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toTopOf="@+id/textView3"
@@ -99,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="粉丝"
+                        android:text="@string/fan"
                         android:textColor="#888888"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toTopOf="@+id/textView4"
@@ -114,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buyScallop"
-                        android:text="200"
+                        android:text="@string/initial_YuanBei_account"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -127,10 +129,9 @@
                         android:id="@+id/textView4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="109"
+                        android:text="@string/initial_fan_num"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/splitLine"
                         app:layout_constraintEnd_toEndOf="@+id/textView2"
@@ -144,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="112dp"
-                        android:text="Esther"
+                        android:text="@string/initial_author_name"
                         android:textColor="#cc000000"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -158,7 +159,7 @@
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:onClick="copyId"
-                        android:text="0"
+                        android:text="@string/initial_author_id"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/authorName"
@@ -184,11 +185,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
                         android:lineSpacingExtra="12px"
-                        android:text="梵高油画系列太独特啦，给人物写生增加色彩🎨\n
-    画册：两三事、 vintagemuse ⭐️⭐️⭐️\n
-    画册：两三事、 vintagemuse ⭐️⭐️⭐️\n
-    OOTD｜每日速写｜潮流插画｜复古油画风\n
-    #大触红人#Ootd #笔刷达人"
+                        android:text="@string/initial_author_biography"
                         android:textColor="#cc000000"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toTopOf="@+id/grayBackground"
@@ -213,7 +210,7 @@
                         android:drawablePadding="20dp"
                         android:gravity="center_vertical"
                         android:onClick="copyAddress"
-                        android:text="0x0"
+                        android:text="@string/initial_blockchainAddress"
                         android:textColor="#4D000000"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -245,7 +242,7 @@
                 android:layout_marginTop="36dp"
                 android:background="#FAFBFF"
                 android:gravity="center"
-                android:text="应援作品"
+                android:text="@string/sponsoredWorks"
                 android:textColor="#333333"
                 android:textSize="18dp"
                 android:textStyle="bold"
@@ -281,9 +278,9 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:onClick="onHomePage"
-        android:text="首页"
+        android:text="@string/homePage"
         android:textColor="#80ffffff"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/userPageBtn"
         app:layout_constraintHorizontal_bias="0.5"
@@ -296,9 +293,9 @@
         android:layout_width="100dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="我的"
+        android:text="@string/userPage"
         android:textColor="#80ffffff"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

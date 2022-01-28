@@ -21,6 +21,7 @@
         app:layout_constraintVertical_bias="0.36"
         app:vciv_et_background="@drawable/vciv_et_bg"
         app:vciv_et_cursor_color="#F3E5F5"
+        android:elevation="10dp"
         app:vciv_et_cursor_height="96px"
         app:vciv_et_foucs_background="@drawable/vciv_et_focus_bg"
         app:vciv_et_height="144px"
