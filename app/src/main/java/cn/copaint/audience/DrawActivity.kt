@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2020 Wacom.
- * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
- */
 package cn.copaint.audience
 
 import android.annotation.SuppressLint
@@ -26,6 +22,7 @@ import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
+import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GrpcUtils.paintStub
@@ -33,9 +30,6 @@ import cn.copaint.audience.utils.GrpcUtils.setPaintId
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.distance
-import cn.copaint.audience.utils.dp
-import cn.copaint.audience.utils.toBitmap
 import com.bugsnag.android.Bugsnag
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
@@ -49,6 +43,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import paint.v1.Paint.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
@@ -67,7 +62,8 @@ class DrawActivity : AppCompatActivity() {
     // Environment information to save in the ink model
     private lateinit var inkEnvironmentModel: InkEnvironmentModel
 
-    private lateinit var popupWindow: PopupWindow
+    private lateinit var selectPaperWindow: PopupWindow
+    lateinit var layerDetailWindow: PopupWindow
 
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
@@ -77,14 +73,14 @@ class DrawActivity : AppCompatActivity() {
 
     // 多图层
     var smallLayerList = mutableListOf<RoomLayer>()
-
-    lateinit var popUpWindow: PopupWindow
     var layerPos = -1
     val stepStack = StepStack()
     lateinit var bufferDraw: Draw.Builder
     val sharedFlow = MutableSharedFlow<PaintMessage>(3, 12, BufferOverflow.DROP_OLDEST)
-    var seq = 0
+    var seq = -1
+    val historyActionBuffer = ArrayDeque<History>()
     val actionBuffer = ArrayDeque<Draw>()
+    lateinit var job: Job
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,34 +105,45 @@ class DrawActivity : AppCompatActivity() {
         binding.layerRecycle.layoutManager = layoutManager
         binding.layerRecycle.adapter = layerAdapter
 
-        CoroutineScope(Dispatchers.IO).launch {
+        job = CoroutineScope(Dispatchers.IO).launch {
             val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
                 user = authenticationClient.getCurrentUser().execute()
                 setToken(user.token ?: "")
-                setPaintId("10338064278762102")
+                setPaintId("10763227503800950")
             } catch (e: GraphQLException) {
                 runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
                 return@launch
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
-//            paintStub.history(
-//                HistoryRequest.newBuilder()
-//                    .setPaintingId(10338064278762102)
-//                    .build()
-//            ).collect {
-//                for (history in it.historiesList) {
-//                    actionBuffer.add(Draw.parseFrom(history.payload))
-//                }
-//            }
+            paintStub.history(
+                HistoryRequest.newBuilder()
+                    .setPaintingId(10763227503800950L)
+                    .build()
+            ).onCompletion {
+                for (history in historyActionBuffer) {
+                    delay(4)
+                    val draw = Draw.parseFrom(history.payload)
+                    runOnUiThread {
+                        binding.rasterDrawingSurface.surfaceTouch(draw.Front)
+                        binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
+                    }
+                }
+            }.collect {
+                for (history in it.historiesList) {
+                    historyActionBuffer.add(history)
+                }
+            }
             paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
                 when (it.type) {
                     PaintType.PAINT_TYPE_DRAW -> {
                         actionBuffer.add(Draw.parseFrom(it.payload))
                     }
                     PaintType.PAINT_TYPE_LAYER -> { }
+                    PaintType.PAINT_TYPE_ACK_OK -> { }
+                    PaintType.PAINT_TYPE_ACK_ERROR -> { }
                     else -> {}
                 }
             }
@@ -150,6 +157,7 @@ class DrawActivity : AppCompatActivity() {
                 runOnUiThread {
                     while (draw != null) {
                         binding.rasterDrawingSurface.surfaceTouch(draw!!)
+                        binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
                         draw = actionBuffer.poll()
                     }
                 }
@@ -158,6 +166,7 @@ class DrawActivity : AppCompatActivity() {
 
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
+            if (event.action >= 3) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
             if (distance(event, lastEvent) > 65536) {
                 lineProtect = true
@@ -167,38 +176,38 @@ class DrawActivity : AppCompatActivity() {
                 binding.rasterDrawingSurface.surfaceTouch(draw.build())
             }
             if (lineProtect) return@setOnTouchListener true
-
-            if (
-                (event.action == MotionEvent.ACTION_DOWN) ||
-                (event.action == MotionEvent.ACTION_MOVE) ||
-                (event.action == MotionEvent.ACTION_UP)
-            ) {
-                // 到达此处说明该点有效
-                lastEvent = MotionEvent.obtain(event)
-                val drawBuilder = lastEvent!!.createDrawBuilder()
-                binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
-                CoroutineScope(Dispatchers.IO).launch {
-                    val payload = drawBuilder.build()
-                    val paintMessage = PaintMessage
-                        .newBuilder()
-                        .setType(PaintType.PAINT_TYPE_DRAW)
-                        .setSequence(seq++)
-                        .setPayload(payload.toByteString())
-                        .build()
-                    sharedFlow.tryEmit(paintMessage)
-                }
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
-                    MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
-                    MotionEvent.ACTION_UP -> {
-                        lastEvent = null
-                        smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
-                        layerAdapter.notifyItemChanged(layerPos)
+            // 到达此处说明该点有效
+            lastEvent = MotionEvent.obtain(event)
+            val drawBuilder = lastEvent!!.createDrawBuilder()
+            binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
+                MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
+                MotionEvent.ACTION_UP -> {
+                    bufferDraw.addDraw(drawBuilder.build())
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val payload = bufferDraw.build()
+                        val paintMessage = PaintMessage
+                            .newBuilder()
+                            .setType(PaintType.PAINT_TYPE_DRAW)
+                            .setSequence(seq++)
+                            .setPayload(payload.toByteString())
+                            .build()
+                        sharedFlow.tryEmit(paintMessage)
                     }
+
+                    lastEvent = null
+                    smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+                    layerAdapter.notifyItemChanged(layerPos)
                 }
             }
             true
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     fun onSurfaceCreated() {
@@ -367,13 +376,13 @@ class DrawActivity : AppCompatActivity() {
         val width = LinearLayout.LayoutParams.WRAP_CONTENT
         val height = LinearLayout.LayoutParams.WRAP_CONTENT
         val focusable = true // lets taps outside the popup also dismiss it
-        popupWindow = PopupWindow(popupView, width, height, focusable)
+        selectPaperWindow = PopupWindow(popupView, width, height, focusable)
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window token
         val screenPos = IntArray(2)
         view.getLocationOnScreen(screenPos)
-        popupWindow.showAtLocation(
+        selectPaperWindow.showAtLocation(
             view,
             Gravity.NO_GRAVITY,
             screenPos[0],
@@ -397,8 +406,8 @@ class DrawActivity : AppCompatActivity() {
         popBind.alphaNum.text = "$progress%"
 
         // 弹出PopUpWindow
-        popUpWindow = PopupWindow(popBind.root, 500.dp, 450.dp, true)
-        popUpWindow.isOutsideTouchable = true
+        layerDetailWindow = PopupWindow(popBind.root, 500.dp, 450.dp, true)
+        layerDetailWindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗
         var layoutParams = window.attributes
@@ -407,14 +416,14 @@ class DrawActivity : AppCompatActivity() {
         window.attributes = layoutParams
 
         // 弹窗消失时背景恢复
-        popUpWindow.setOnDismissListener {
+        layerDetailWindow.setOnDismissListener {
             layoutParams = window.attributes
             layoutParams.alpha = 1f
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             window.attributes = layoutParams
         }
 
-        popUpWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+        layerDetailWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
 
         popBind.delete.setOnClickListener {
             deleteLayer()
@@ -480,7 +489,7 @@ class DrawActivity : AppCompatActivity() {
     fun changeBackground(background: Int, paper: Int) {
         binding.btnBackground.setImageResource(background)
         binding.drawingLayout.setBackgroundResource(paper)
-        if (this::popupWindow.isInitialized) popupWindow.dismiss()
+        if (this::selectPaperWindow.isInitialized) selectPaperWindow.dismiss()
     }
 
     fun smallLayer(view: View) {

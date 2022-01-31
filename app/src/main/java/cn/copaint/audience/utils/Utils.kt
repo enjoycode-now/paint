@@ -33,11 +33,11 @@ fun Draw.toPointerDataList(alphaBias: Float): MutableList<PointerData> {
     for (point in pointsList) {
         pointDataList.add(
             PointerData(
-                pointsList[0].x,
-                pointsList[0].y,
+                point.x,
+                point.y,
                 phase = Phase.UPDATE,
                 timestamp = 0L,
-                force = pointsList[0].pressure * alphaBias,
+                force = point.pressure * alphaBias,
                 altitudeAngle = 0f,
                 azimuthAngle = 0f
             )
@@ -53,6 +53,28 @@ val Draw.ToolType: InkInputType
         MotionEvent.TOOL_TYPE_STYLUS -> InkInputType.PEN
         MotionEvent.TOOL_TYPE_FINGER -> InkInputType.TOUCH
         else -> InkInputType.PEN
+    }
+
+val Draw.Front: Draw
+    get() {
+        val newDraw = Draw.newBuilder()
+            .setTool(tool)
+            .setColor(color)
+            .setThickness(thickness)
+            .setPhase(MotionEvent.ACTION_DOWN)
+        newDraw.addAllPoints(pointsList.subList(0, (pointsCount + 1) / 2))
+        return newDraw.build()
+    }
+
+val Draw.Rear: Draw
+    get() {
+        val newDraw = Draw.newBuilder()
+            .setTool(tool)
+            .setColor(color)
+            .setThickness(thickness)
+            .setPhase(MotionEvent.ACTION_UP)
+        newDraw.addAllPoints(pointsList.subList((pointsCount - 1) / 2, pointsCount))
+        return newDraw.build()
     }
 
 fun com.wacom.ink.format.enums.RotationMode.convert(): RotationMode {
