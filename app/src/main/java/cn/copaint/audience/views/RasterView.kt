@@ -42,10 +42,6 @@ import paint.v1.Paint.Draw
  */
 class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : TextureView(context, attrs, defStyleAttr) {
 
-    interface InkingSurfaceListener {
-        fun onSurfaceCreated()
-    }
-
     lateinit var inkCanvas: InkCanvas
     lateinit var currentFrameLayer: MutableList<Layer> // 第一层：直接笔画层
     lateinit var strokesLayer: MutableList<Layer> // 第二层：平滑笔画层
@@ -62,8 +58,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     lateinit var inkEnvironmentModel: InkEnvironmentModel // information about the environment
     lateinit var sensorData: SensorData
     lateinit var channelList: List<SensorChannel>
-
-    lateinit var listener: InkingSurfaceListener
 
     var strokeNodeList = mutableListOf<Pair<StrokeNode, RasterBrush>>()
     var sensorDataList = mutableListOf<SensorData>()
@@ -98,7 +92,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
                 strokeRenderer = StrokeRenderer(inkCanvas, PencilTool(context).brush.toParticleBrush(), w, h)
                 drawStrokes(strokeNodeList)
-                listener.onSurfaceCreated()
+                activity.onSurfaceCreated()
             }
 
             override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, w: Int, h: Int) {
@@ -157,10 +151,10 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        if (draw.phase == MotionEvent.ACTION_UP && rasterInkBuilder.splineProducer.allData != null) {
-            addStroke()
-            sensorDataList.add(sensorData)
-        }
+//        if (draw.phase == MotionEvent.ACTION_UP && rasterInkBuilder.splineProducer.allData != null) {
+//            addStroke()
+//            sensorDataList.add(sensorData)
+//        }
 
         if (added != null) drawStroke(draw.phase, added, predicted)
 

@@ -96,12 +96,12 @@ class RasterInkBuilder {
         val isFirst = pathSegment.isFirst
         val isLast = pathSegment.isLast
 
-        val (smoothAddedGeometry, smoothPredictedGeomtry) = smoother.add(
+        val (smoothAddedGeometry, smoothPredictedGeometry) = smoother.add(
             isFirst, isLast, pathSegment.accumulatedAddition, pathSegment.lastPrediction
         )
         pathSegment.reset()
         val (addedSpline, predictedSpline) = splineProducer.add(
-            isFirst, isLast, smoothAddedGeometry, smoothPredictedGeomtry
+            isFirst, isLast, smoothAddedGeometry, smoothPredictedGeometry
         )
 
         return splineInterpolator.add(isFirst, isLast, addedSpline, predictedSpline)

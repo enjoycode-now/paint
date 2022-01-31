@@ -36,7 +36,6 @@ import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.distance
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.toBitmap
-import cn.copaint.audience.views.RasterView
 import com.bugsnag.android.Bugsnag
 import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
@@ -57,7 +56,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.math.ceil
 
-class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
+class DrawActivity : AppCompatActivity() {
 
     // -- Variables For serialisation
     private lateinit var mainGroup: StrokeGroupNode // This is a list of StrokeNode.
@@ -99,7 +98,9 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
         binding.rasterDrawingSurface.activity = this
         binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
-        binding.rasterDrawingSurface.listener = this
+        val pair = inkEnvironmentModel.createSensorData(2)
+        binding.rasterDrawingSurface.sensorData = pair.first
+        binding.rasterDrawingSurface.channelList = pair.second
 
         changeBackground(R.drawable.btn_paper_04, R.drawable.background4)
 
@@ -121,15 +122,15 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
-            paintStub.history(
-                HistoryRequest.newBuilder()
-                    .setPaintingId(10338064278762102)
-                    .build()
-            ).collect {
-                for (history in it.historiesList) {
-                    actionBuffer.add(Draw.parseFrom(history.payload))
-                }
-            }
+//            paintStub.history(
+//                HistoryRequest.newBuilder()
+//                    .setPaintingId(10338064278762102)
+//                    .build()
+//            ).collect {
+//                for (history in it.historiesList) {
+//                    actionBuffer.add(Draw.parseFrom(history.payload))
+//                }
+//            }
             paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
                 when (it.type) {
                     PaintType.PAINT_TYPE_DRAW -> {
@@ -144,9 +145,14 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         CoroutineScope(Dispatchers.Default).launch {
             var draw: Draw?
             while (true) {
-                delay(200)
+                delay(2000)
                 draw = actionBuffer.poll()
-                if (draw != null) runOnUiThread { binding.rasterDrawingSurface.surfaceTouch(draw) }
+                runOnUiThread {
+                    while (draw != null) {
+                        binding.rasterDrawingSurface.surfaceTouch(draw!!)
+                        draw = actionBuffer.poll()
+                    }
+                }
             }
         }
 
@@ -195,13 +201,13 @@ class DrawActivity : AppCompatActivity(), RasterView.InkingSurfaceListener {
         }
     }
 
-    override fun onSurfaceCreated() {
+    fun onSurfaceCreated() {
         setTool(btn_pencil, PencilTool(this))
     }
 
     fun MotionEvent.createDrawBuilder(): Draw.Builder {
         val drawBuilder = Draw.newBuilder()
-            .setTool(getToolType(0))
+            .setTool(2)
             .setColor(drawingColor)
             .setPhase(action)
             .setThickness(1f)
