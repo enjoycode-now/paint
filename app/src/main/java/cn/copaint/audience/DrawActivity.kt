@@ -301,14 +301,11 @@ class DrawActivity : AppCompatActivity() {
             .showIndicator(true)
             .showValue(true)
             .build()
-            .show(
-                view,
-                object : ColorPickerObserver() {
-                    override fun onColorPicked(color: Int) {
-                        this@DrawActivity.setColor(color)
-                    }
+            .show(object : ColorPickerObserver() {
+                override fun onColorPicked(color: Int) {
+                    this@DrawActivity.setColor(color)
                 }
-            )
+            })
     }
 
     fun setColor(color: Int) {
