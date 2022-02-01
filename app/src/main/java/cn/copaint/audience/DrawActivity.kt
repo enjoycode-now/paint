@@ -62,9 +62,7 @@ class DrawActivity : AppCompatActivity() {
     // Environment information to save in the ink model
     private lateinit var inkEnvironmentModel: InkEnvironmentModel
 
-    private lateinit var selectPaperWindow: PopupWindow
     lateinit var layerDetailWindow: PopupWindow
-
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
     var lineProtect = false
@@ -78,9 +76,9 @@ class DrawActivity : AppCompatActivity() {
     lateinit var bufferDraw: Draw.Builder
     val sharedFlow = MutableSharedFlow<PaintMessage>(3, 12, BufferOverflow.DROP_OLDEST)
     var seq = -1
-    val historyActionBuffer = ArrayDeque<History>()
     val actionBuffer = ArrayDeque<Draw>()
     lateinit var job: Job
+    var historyComplete = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,8 +95,6 @@ class DrawActivity : AppCompatActivity() {
         val pair = inkEnvironmentModel.createSensorData(2)
         binding.rasterDrawingSurface.sensorData = pair.first
         binding.rasterDrawingSurface.channelList = pair.second
-
-        changeBackground(R.drawable.btn_paper_04, R.drawable.background4)
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.reverseLayout = true
@@ -123,17 +119,14 @@ class DrawActivity : AppCompatActivity() {
                     .setPaintingId(10763227503800950L)
                     .build()
             ).onCompletion {
-                for (history in historyActionBuffer) {
-                    delay(4)
+                historyComplete = true
+            }.collect {
+                for (history in it.historiesList) {
                     val draw = Draw.parseFrom(history.payload)
                     runOnUiThread {
                         binding.rasterDrawingSurface.surfaceTouch(draw.Front)
                         binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
                     }
-                }
-            }.collect {
-                for (history in it.historiesList) {
-                    historyActionBuffer.add(history)
                 }
             }
             paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
@@ -149,24 +142,9 @@ class DrawActivity : AppCompatActivity() {
             }
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            var draw: Draw?
-            while (true) {
-                delay(2000)
-                draw = actionBuffer.poll()
-                runOnUiThread {
-                    while (draw != null) {
-                        binding.rasterDrawingSurface.surfaceTouch(draw!!)
-                        binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
-                        draw = actionBuffer.poll()
-                    }
-                }
-            }
-        }
-
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
             if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
-            if (event.action >= 3) return@setOnTouchListener true
+            if (event.action > 2) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
             if (distance(event, lastEvent) > 65536) {
                 lineProtect = true
@@ -208,6 +186,22 @@ class DrawActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    suspend fun listenLiveDraw() {
+        var draw: Draw?
+        while (true) {
+            delay(2000)
+            if (!historyComplete)continue
+            draw = actionBuffer.poll()
+            runOnUiThread {
+                while (draw != null) {
+                    binding.rasterDrawingSurface.surfaceTouch(draw!!.Front)
+                    binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
+                    draw = actionBuffer.poll()
+                }
+            }
+        }
     }
 
     fun onSurfaceCreated() {
@@ -368,37 +362,6 @@ class DrawActivity : AppCompatActivity() {
         binding.rasterDrawingSurface.refreshView()
     }
 
-    fun openPaperDialog(view: View) {
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val popupView: View = inflater.inflate(R.layout.background_selector, null)
-
-        // create the popup window
-        val width = LinearLayout.LayoutParams.WRAP_CONTENT
-        val height = LinearLayout.LayoutParams.WRAP_CONTENT
-        val focusable = true // lets taps outside the popup also dismiss it
-        selectPaperWindow = PopupWindow(popupView, width, height, focusable)
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window token
-        val screenPos = IntArray(2)
-        view.getLocationOnScreen(screenPos)
-        selectPaperWindow.showAtLocation(
-            view,
-            Gravity.NO_GRAVITY,
-            screenPos[0],
-            screenPos[1] + binding.navbarContainer.height
-        )
-    }
-
-    fun selectPaper(view: View) {
-        when (view.id) {
-            R.id.btnBackground1 -> changeBackground(R.drawable.btn_paper_01, R.drawable.background1)
-            R.id.btnBackground2 -> changeBackground(R.drawable.btn_paper_02, R.drawable.background2)
-            R.id.btnBackground3 -> changeBackground(R.drawable.btn_paper_03, R.drawable.btn_paper_03)
-            R.id.btnBackground4 -> changeBackground(R.drawable.btn_paper_04, R.drawable.background4)
-        }
-    }
-
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
         val progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
@@ -484,12 +447,6 @@ class DrawActivity : AppCompatActivity() {
         if (layerPos > 0) layerPos--
         binding.rasterDrawingSurface.refreshView()
         changeToLayer(layerPos)
-    }
-
-    fun changeBackground(background: Int, paper: Int) {
-        binding.btnBackground.setImageResource(background)
-        binding.drawingLayout.setBackgroundResource(paper)
-        if (this::selectPaperWindow.isInitialized) selectPaperWindow.dismiss()
     }
 
     fun smallLayer(view: View) {
