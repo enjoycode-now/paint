@@ -1,20 +1,17 @@
-/*
- * Copyright (C) 2020 Wacom.
- * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
- */
 package cn.copaint.audience.tools.raster
 
 import android.content.Context
+import cn.copaint.audience.brush.BrushPalette
+import cn.copaint.audience.brush.URIBuilder
+import cn.copaint.audience.utils.computeValueBasedOnPressure
 import com.wacom.ink.Calculator
 import com.wacom.ink.PathPoint
 import com.wacom.ink.PathPointLayout
 import com.wacom.ink.rendering.BlendMode
-import cn.copaint.audience.brush.BrushPalette
-import cn.copaint.audience.brush.URIBuilder
-import cn.copaint.audience.utils.computeValueBasedOnPressure
 import kotlin.math.pow
 
 class EraserRasterTool(context: Context) : RasterTool(context) {
+    override val toolNumber = 4
 
     companion object {
         val uri = URIBuilder.getToolURI("raster", "eraser")
@@ -65,5 +62,4 @@ class EraserRasterTool(context: Context) : RasterTool(context) {
     override fun getBlendMode(): BlendMode {
         return BlendMode.DESTINATION_OUT
     }
-
 }

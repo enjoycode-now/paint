@@ -10,6 +10,8 @@ import com.wacom.ink.PathPointLayout
 import kotlin.math.*
 
 class InkBrushTool(context: Context) : RasterTool(context) {
+
+    override val toolNumber = 2
     private var previousSize = MIN_PENCIL_SIZE
 
     companion object {

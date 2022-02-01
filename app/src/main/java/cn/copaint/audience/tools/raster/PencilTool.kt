@@ -1,19 +1,17 @@
-/*
- * Copyright (C) 2020 Wacom.
- * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
- */
 package cn.copaint.audience.tools.raster
 
 import android.content.Context
-import com.wacom.ink.Calculator
-import com.wacom.ink.PathPoint
-import com.wacom.ink.PathPointLayout
 import cn.copaint.audience.brush.BrushPalette
 import cn.copaint.audience.brush.URIBuilder
 import cn.copaint.audience.utils.computeValueBasedOnPressure
+import com.wacom.ink.Calculator
+import com.wacom.ink.PathPoint
+import com.wacom.ink.PathPointLayout
 import kotlin.math.*
 
 class PencilTool(context: Context) : RasterTool(context) {
+
+    override val toolNumber = 0
     private var previousSize = MIN_PENCIL_SIZE
 
     companion object {
@@ -117,8 +115,10 @@ class PencilTool(context: Context) : RasterTool(context) {
         // compute the rotation
         val rotation = current.computeNearestAzimuthAngle(previous)
         // Normalize the tilt be minimum seen altitude angle and the maximum with the pen straight up
-        val tiltScale = min(1f,
-            ((PI_HALF - current.altitudeAngle!!) / (PI_HALF - MIN_ALTITUDE_ANGLE).toFloat()))
+        val tiltScale = min(
+            1f,
+            ((PI_HALF - current.altitudeAngle!!) / (PI_HALF - MIN_ALTITUDE_ANGLE).toFloat())
+        )
         // now, based on the tilt of the pencil the size of the brush size is increasing, as the
         // pencil tip is covering a larger area
         val size = if (current.force == -1f) {
@@ -131,7 +131,6 @@ class PencilTool(context: Context) : RasterTool(context) {
                 maxSpeed = 3500f,
                 remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
-
         } else {
             current.computeValueBasedOnPressure(
                 minValue = MIN_PENCIL_SIZE,

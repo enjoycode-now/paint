@@ -15,6 +15,8 @@ import kotlin.math.*
 
 class CrayonTool(context: Context) : RasterTool(context) {
 
+    override val toolNumber = 3
+
     companion object {
         val uri = URIBuilder.getToolURI("raster", "crayon")
         // Minimum size of the pencil tip

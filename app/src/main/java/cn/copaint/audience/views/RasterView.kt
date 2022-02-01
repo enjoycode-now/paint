@@ -14,8 +14,7 @@ import cn.copaint.audience.DrawActivity
 import cn.copaint.audience.model.StepModel
 import cn.copaint.audience.raster.RasterInkBuilder
 import cn.copaint.audience.serialization.InkEnvironmentModel
-import cn.copaint.audience.tools.raster.PencilTool
-import cn.copaint.audience.tools.raster.RasterTool
+import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
 import com.wacom.ink.InterpolatedSpline
 import com.wacom.ink.StrokeConstants
@@ -131,13 +130,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         val (added, predicted) = rasterInkBuilder.build()
 
-        if (draw.phase == MotionEvent.ACTION_DOWN) {
-            // initialize the sensor data each time a new stroke begin
-            val pair = inkEnvironmentModel.createSensorData(draw.tool)
-            sensorData = pair.first
-            channelList = pair.second
-        }
-
         for (data in pointerDataList) {
             for (channel in channelList) {
                 when (channel.typeURI) {
@@ -150,11 +142,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 }
             }
         }
-
-//        if (draw.phase == MotionEvent.ACTION_UP && rasterInkBuilder.splineProducer.allData != null) {
-//            addStroke()
-//            sensorDataList.add(sensorData)
-//        }
 
         if (added != null) drawStroke(draw.phase, added, predicted)
 
@@ -172,36 +159,15 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         invalidate()
     }
 
-    private fun addStroke() {
-        // Adding the style
-        val style = Style(
-            rasterTool.brush.name, // Brush URI
-            particlesRandomSeed = 1, // Particle random seed
-            props = PathPointProperties( // Coloring path properties
-                red = defaults.red,
-                green = defaults.green,
-                blue = defaults.blue,
-                alpha = defaults.alpha
-            ),
-            renderModeUri = rasterTool.getBlendMode().uri
-        )
-        // Adding stroke to the Stroke Repository
-        val path = Stroke(
-            Identifier(), // Generated UUID
-            rasterInkBuilder.splineProducer.allData!!.copy(), // Spline
-            style // Style
-        )
-
-        // Adding a node to the Ink tree
-        val node = StrokeNode(path)
-        node.data.sensorDataID = sensorData.id
-        node.data.sensorDataOffset = 0
-        strokeNodeList.add(Pair(node, rasterTool.brush))
-    }
-
-    fun setTool(tool: RasterTool) {
+    fun setTool(tool: Int) {
         newTool = true
-        rasterTool = tool
+        rasterTool = when (tool) {
+            0 -> PencilTool(context)
+            1 -> WaterbrushTool(context)
+            2 -> InkBrushTool(context)
+            3 -> CrayonTool(context)
+            else -> EraserRasterTool(context)
+        }
         strokeRenderer.strokeBrush = rasterTool.brush.toParticleBrush()
         rasterInkBuilder.updatePipeline(rasterTool)
     }

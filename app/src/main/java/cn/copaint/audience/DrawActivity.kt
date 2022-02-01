@@ -173,6 +173,7 @@ class DrawActivity : AppCompatActivity() {
             for (history in it.historiesList) {
                 val draw = Draw.parseFrom(history.payload)
                 runOnUiThread {
+                    selectTool(draw.tool)
                     binding.rasterDrawingSurface.surfaceTouch(draw.Front)
                     binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
                 }
@@ -199,6 +200,7 @@ class DrawActivity : AppCompatActivity() {
             draw = buffer.poll()
             runOnUiThread {
                 while (draw != null) {
+                    selectTool(draw!!.tool)
                     binding.rasterDrawingSurface.surfaceTouch(draw!!.Front)
                     binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
                     draw = buffer.poll()
@@ -208,12 +210,12 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun onSurfaceCreated() {
-        setTool(btn_pencil, PencilTool(this))
+        selectTool(binding.btnPencil)
     }
 
     fun MotionEvent.createDrawBuilder(): Draw.Builder {
         val drawBuilder = Draw.newBuilder()
-            .setTool(2)
+            .setTool(binding.rasterDrawingSurface.rasterTool.toolNumber)
             .setColor(drawingColor)
             .setPhase(action)
             .setThickness(1f)
@@ -315,18 +317,27 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun selectTool(view: View) {
-        when (view.id) {
-            R.id.btn_pencil -> setTool(view, PencilTool(this))
-            R.id.btn_water_brush -> setTool(view, WaterbrushTool(this))
-            R.id.btn_ink_brush -> setTool(view, InkBrushTool(this))
-            R.id.btn_crayon -> setTool(view, CrayonTool(this))
-            R.id.btn_eraser -> setTool(view, EraserRasterTool(this))
-        }
+        highlightTool(view)
+        binding.rasterDrawingSurface.setTool(
+            when (view.id) {
+                R.id.btn_pencil -> 0
+                R.id.btn_water_brush -> 1
+                R.id.btn_ink_brush -> 2
+                R.id.btn_crayon -> 3
+                else -> 4
+            }
+        )
     }
 
-    fun setTool(view: View, tool: RasterTool) {
+    fun selectTool(tool: Int) {
+        highlightTool(when(tool){
+            0->binding.btnPencil
+            1->binding.btnWaterBrush
+            2->binding.btnInkBrush
+            3->binding.btnCrayon
+            else->binding.btnEraser
+        })
         binding.rasterDrawingSurface.setTool(tool)
-        highlightTool(view)
     }
 
     fun highlightTool(view: View) {

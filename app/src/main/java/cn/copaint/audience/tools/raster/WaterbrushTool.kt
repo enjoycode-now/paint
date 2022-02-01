@@ -1,21 +1,19 @@
-/*
- * Copyright (C) 2020 Wacom.
- * Use of this source code is governed by the MIT License that can be found in the LICENSE file.
- */
 package cn.copaint.audience.tools.raster
 
 import android.content.Context
-import com.wacom.ink.Calculator
-import com.wacom.ink.PathPoint
-import com.wacom.ink.PathPointLayout
 import cn.copaint.audience.brush.BrushPalette
 import cn.copaint.audience.brush.URIBuilder
 import cn.copaint.audience.utils.computeValueBasedOnPressure
+import com.wacom.ink.Calculator
+import com.wacom.ink.PathPoint
+import com.wacom.ink.PathPointLayout
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 
 class WaterbrushTool(context: Context) : RasterTool(context) {
+
+    override val toolNumber = 1
 
     companion object {
         val uri = URIBuilder.getToolURI("raster", "water_brush")
@@ -44,13 +42,13 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
              * - Rotation - the rotation of the brush
              */
             return PathPointLayout(
-                    PathPoint.Property.X,
-                    PathPoint.Property.Y,
-                    PathPoint.Property.SIZE,
-                    PathPoint.Property.ROTATION,
-                    PathPoint.Property.OFFSET_X,
-                    PathPoint.Property.OFFSET_Y,
-                    PathPoint.Property.ALPHA
+                PathPoint.Property.X,
+                PathPoint.Property.Y,
+                PathPoint.Property.SIZE,
+                PathPoint.Property.ROTATION,
+                PathPoint.Property.OFFSET_X,
+                PathPoint.Property.OFFSET_Y,
+                PathPoint.Property.ALPHA
             )
         } else {
             /**
@@ -59,10 +57,10 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
              * - Size - the size of the brush at any point of the stroke
              */
             return PathPointLayout(
-                    PathPoint.Property.X,
-                    PathPoint.Property.Y,
-                    PathPoint.Property.SIZE,
-                    PathPoint.Property.ALPHA
+                PathPoint.Property.X,
+                PathPoint.Property.Y,
+                PathPoint.Property.SIZE,
+                PathPoint.Property.ALPHA
             )
         }
     }
@@ -70,16 +68,17 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
     override val touchCalculator: Calculator = { previous, current, next ->
         // Use the following to compute size based on speed:
         var size = current.computeValueBasedOnSpeed(
-                previous,
-                next,
-                initialValue = 40f,
-                finalValue = 40f,
-                minValue = MIN_BRUSH_SIZE,
-                maxValue = MAX_BRUSH_SIZE,
-                minSpeed = 38f,
-                maxSpeed = MAX_SPEED,
-                // reverse behaviour
-                remap = { 1f - it})
+            previous,
+            next,
+            initialValue = 40f,
+            finalValue = 40f,
+            minValue = MIN_BRUSH_SIZE,
+            maxValue = MAX_BRUSH_SIZE,
+            minSpeed = 38f,
+            maxSpeed = MAX_SPEED,
+            // reverse behaviour
+            remap = { 1f - it }
+        )
 
         if (size == null) {
             size = previousSize
@@ -88,16 +87,17 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
         }
 
         var alpha = current.computeValueBasedOnSpeed(
-                previous,
-                next,
-                initialValue = 0.05f,
-                finalValue = 0.05f,
-                minValue = MIN_ALPHA,
-                maxValue = 0.5f,
-                minSpeed = 1000f,
-                maxSpeed = MAX_SPEED,
-                // reverse behaviour
-                remap = { 1f - it})
+            previous,
+            next,
+            initialValue = 0.05f,
+            finalValue = 0.05f,
+            minValue = MIN_ALPHA,
+            maxValue = 0.5f,
+            minSpeed = 1000f,
+            maxSpeed = MAX_SPEED,
+            // reverse behaviour
+            remap = { 1f - it }
+        )
 
         if (alpha == null) {
             alpha = previousAlpha
@@ -119,7 +119,6 @@ class WaterbrushTool(context: Context) : RasterTool(context) {
                 maxSpeed = 3500f,
                 remap = { v: Float -> v.toDouble().pow(1.17).toFloat() }
             )
-
         } else {
             current.computeValueBasedOnPressure(
                 minValue = 30f,
