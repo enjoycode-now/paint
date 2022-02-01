@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
@@ -78,7 +77,6 @@ class DrawActivity : AppCompatActivity() {
     var seq = -1
     val actionBuffer = ArrayDeque<Draw>()
     lateinit var job: Job
-    var historyComplete = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +99,7 @@ class DrawActivity : AppCompatActivity() {
         binding.layerRecycle.layoutManager = layoutManager
         binding.layerRecycle.adapter = layerAdapter
 
-        job = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
             authenticationClient.token = sharedPref.getString("token", "") ?: ""
             try {
@@ -114,32 +112,8 @@ class DrawActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 toast("用户信息获取失败")
             }
-            paintStub.history(
-                HistoryRequest.newBuilder()
-                    .setPaintingId(10763227503800950L)
-                    .build()
-            ).onCompletion {
-                historyComplete = true
-            }.collect {
-                for (history in it.historiesList) {
-                    val draw = Draw.parseFrom(history.payload)
-                    runOnUiThread {
-                        binding.rasterDrawingSurface.surfaceTouch(draw.Front)
-                        binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
-                    }
-                }
-            }
-            paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
-                when (it.type) {
-                    PaintType.PAINT_TYPE_DRAW -> {
-                        actionBuffer.add(Draw.parseFrom(it.payload))
-                    }
-                    PaintType.PAINT_TYPE_LAYER -> { }
-                    PaintType.PAINT_TYPE_ACK_OK -> { }
-                    PaintType.PAINT_TYPE_ACK_ERROR -> { }
-                    else -> {}
-                }
-            }
+            job = collectLiveDraw()
+            collectHistoryDraw()
         }
 
         binding.rasterDrawingSurface.setOnTouchListener { _, event ->
@@ -188,17 +162,46 @@ class DrawActivity : AppCompatActivity() {
         job.cancel()
     }
 
-    suspend fun listenLiveDraw() {
+    fun collectHistoryDraw() = CoroutineScope(Dispatchers.IO).launch {
+        paintStub.history(
+            HistoryRequest.newBuilder()
+                .setPaintingId(10763227503800950L)
+                .build()
+        ).onCompletion {
+            drawBufferPoint(actionBuffer)
+        }.collect {
+            for (history in it.historiesList) {
+                val draw = Draw.parseFrom(history.payload)
+                runOnUiThread {
+                    binding.rasterDrawingSurface.surfaceTouch(draw.Front)
+                    binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
+                }
+            }
+        }
+    }
+
+    fun collectLiveDraw() = CoroutineScope(Dispatchers.IO).launch {
+        paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
+            when (it.type) {
+                PaintType.PAINT_TYPE_DRAW -> actionBuffer.add(Draw.parseFrom(it.payload))
+                PaintType.PAINT_TYPE_LAYER -> { }
+                PaintType.PAINT_TYPE_ACK_OK -> { }
+                PaintType.PAINT_TYPE_ACK_ERROR -> { }
+                else -> {}
+            }
+        }
+    }
+
+    suspend fun drawBufferPoint(buffer: ArrayDeque<Draw>) {
         var draw: Draw?
         while (true) {
             delay(2000)
-            if (!historyComplete)continue
-            draw = actionBuffer.poll()
+            draw = buffer.poll()
             runOnUiThread {
                 while (draw != null) {
                     binding.rasterDrawingSurface.surfaceTouch(draw!!.Front)
                     binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
-                    draw = actionBuffer.poll()
+                    draw = buffer.poll()
                 }
             }
         }
