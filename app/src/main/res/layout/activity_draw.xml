@@ -136,7 +136,7 @@
         android:background="#FFFFFF">
 
         <cn.copaint.audience.views.RasterView
-            android:id="@+id/rasterDrawingSurface"
+            android:id="@+id/raster_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

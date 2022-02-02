@@ -13,6 +13,7 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.authing.core.auth.AuthenticationClient
 import cn.authing.core.graphql.GraphQLException
 import cn.copaint.audience.adapter.LayerAdapter
 import cn.copaint.audience.databinding.ActivityDrawBinding
@@ -23,6 +24,7 @@ import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
+import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
@@ -50,74 +52,52 @@ import java.io.IOException
 import java.util.*
 import kotlin.math.ceil
 
+@SuppressLint("NotifyDataSetChanged")
 class DrawActivity : AppCompatActivity() {
-
-    // -- Variables For serialisation
-    private lateinit var mainGroup: StrokeGroupNode // This is a list of StrokeNode.
-
-    // A StrokeNode contains information about an Stroke
-    private lateinit var inkModel: InkModel // This is the main serializable class, what we save and
-
-    // Environment information to save in the ink model
-    private lateinit var inkEnvironmentModel: InkEnvironmentModel
-
     lateinit var layerDetailWindow: PopupWindow
     private var drawingColor: Int = Color.argb(255, 74, 74, 74)
     private var lastEvent: MotionEvent? = null
     var lineProtect = false
     val layerAdapter = LayerAdapter(this)
-    private lateinit var binding: ActivityDrawBinding
+    lateinit var bind: ActivityDrawBinding
 
     // 多图层
-    var smallLayerList = mutableListOf<RoomLayer>()
+    var smallLayers = mutableListOf<RoomLayer>()
     var layerPos = -1
     val stepStack = StepStack()
     lateinit var bufferDraw: Draw.Builder
     val sharedFlow = MutableSharedFlow<PaintMessage>(3, 12, BufferOverflow.DROP_OLDEST)
     var seq = -1
-    val actionBuffer = ArrayDeque<Draw>()
+    val drawBuffer = ArrayDeque<Draw>()
     lateinit var job: Job
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
-        binding = ActivityDrawBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        resetInkModel()
+        bind = ActivityDrawBinding.inflate(layoutInflater)
+        setContentView(bind.root)
         app = this
 
-        inkEnvironmentModel = InkEnvironmentModel(this) // Initializes the environment data for serialization
-        binding.rasterDrawingSurface.activity = this
-        binding.rasterDrawingSurface.inkEnvironmentModel = inkEnvironmentModel
-        val pair = inkEnvironmentModel.createSensorData(2)
-        binding.rasterDrawingSurface.sensorData = pair.first
-        binding.rasterDrawingSurface.channelList = pair.second
-
-        val layoutManager = LinearLayoutManager(this)
-        layoutManager.reverseLayout = true
-        binding.layerRecycle.layoutManager = layoutManager
-        binding.layerRecycle.adapter = layerAdapter
+        bind.layerRecycle.layoutManager = LinearLayoutManager(this).apply { reverseLayout = true }
+        bind.layerRecycle.adapter = layerAdapter
+        bind.rasterView.activity = this
 
         CoroutineScope(Dispatchers.IO).launch {
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            authenticationClient.token = sharedPref.getString("token", "") ?: ""
-            try {
-                user = authenticationClient.getCurrentUser().execute()
-                setToken(user.token ?: "")
+            if (!authenticationClient.update()) {
+                runOnUiThread {
+                    startActivity(Intent(app, LoginActivity::class.java))
+                    finish()
+                }
+            } else {
                 setPaintId("10763227503800950")
-            } catch (e: GraphQLException) {
-                runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
-                return@launch
-            } catch (e: IOException) {
-                toast("用户信息获取失败")
+                job = collectLiveDraw()
+                collectHistoryDraw()
             }
-            job = collectLiveDraw()
-            collectHistoryDraw()
         }
 
-        binding.rasterDrawingSurface.setOnTouchListener { _, event ->
-            if (!smallLayerList[layerPos].isShow) return@setOnTouchListener true
+        bind.rasterView.setOnTouchListener { _, event ->
+            if (!smallLayers[layerPos].isShow) return@setOnTouchListener true
             if (event.action > 2) return@setOnTouchListener true
             if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
             if (distance(event, lastEvent) > 65536) {
@@ -125,32 +105,24 @@ class DrawActivity : AppCompatActivity() {
                 lastEvent!!.action = MotionEvent.ACTION_UP
                 val draw = lastEvent!!.createDrawBuilder()
                 lastEvent = null
-                binding.rasterDrawingSurface.surfaceTouch(draw.build())
+                bind.rasterView.surfaceTouch(draw.build())
             }
             if (lineProtect) return@setOnTouchListener true
+
             // 到达此处说明该点有效
             lastEvent = MotionEvent.obtain(event)
             val drawBuilder = lastEvent!!.createDrawBuilder()
-            binding.rasterDrawingSurface.surfaceTouch(drawBuilder.build())
+            bind.rasterView.surfaceTouch(drawBuilder.build())
+
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
                 MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
                 MotionEvent.ACTION_UP -> {
                     bufferDraw.addDraw(drawBuilder.build())
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val payload = bufferDraw.build()
-                        val paintMessage = PaintMessage
-                            .newBuilder()
-                            .setType(PaintType.PAINT_TYPE_DRAW)
-                            .setSequence(seq++)
-                            .setPayload(payload.toByteString())
-                            .build()
-                        sharedFlow.tryEmit(paintMessage)
-                    }
-
+                    emitLiveDraw()
                     lastEvent = null
-                    smallLayerList[layerPos].bitmap = binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
-                    layerAdapter.notifyItemChanged(layerPos)
+                    smallLayers[layerPos].bitmap = bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
+                    layerAdapter.notifyDataSetChanged()
                 }
             }
             true
@@ -168,23 +140,34 @@ class DrawActivity : AppCompatActivity() {
                 .setPaintingId(10763227503800950L)
                 .build()
         ).onCompletion {
-            drawBufferPoint(actionBuffer)
+            drawBufferPoint(drawBuffer)
         }.collect {
             for (history in it.historiesList) {
                 val draw = Draw.parseFrom(history.payload)
                 runOnUiThread {
                     selectTool(draw.tool)
-                    binding.rasterDrawingSurface.surfaceTouch(draw.Front)
-                    binding.rasterDrawingSurface.surfaceTouch(draw.Rear)
+                    bind.rasterView.surfaceTouch(draw.Front)
+                    bind.rasterView.surfaceTouch(draw.Rear)
                 }
             }
         }
     }
 
+    fun emitLiveDraw() = CoroutineScope(Dispatchers.IO).launch {
+        val payload = bufferDraw.build()
+        val paintMessage = PaintMessage
+            .newBuilder()
+            .setType(PaintType.PAINT_TYPE_DRAW)
+            .setSequence(seq++)
+            .setPayload(payload.toByteString())
+            .build()
+        sharedFlow.tryEmit(paintMessage)
+    }
+
     fun collectLiveDraw() = CoroutineScope(Dispatchers.IO).launch {
         paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
             when (it.type) {
-                PaintType.PAINT_TYPE_DRAW -> actionBuffer.add(Draw.parseFrom(it.payload))
+                PaintType.PAINT_TYPE_DRAW -> drawBuffer.add(Draw.parseFrom(it.payload))
                 PaintType.PAINT_TYPE_LAYER -> { }
                 PaintType.PAINT_TYPE_ACK_OK -> { }
                 PaintType.PAINT_TYPE_ACK_ERROR -> { }
@@ -198,24 +181,27 @@ class DrawActivity : AppCompatActivity() {
         while (true) {
             delay(2000)
             draw = buffer.poll()
-            runOnUiThread {
+            if (draw != null) runOnUiThread {
                 while (draw != null) {
                     selectTool(draw!!.tool)
-                    binding.rasterDrawingSurface.surfaceTouch(draw!!.Front)
-                    binding.rasterDrawingSurface.surfaceTouch(draw!!.Rear)
+                    setColor(draw!!.color)
+                    bind.rasterView.surfaceTouch(draw!!.Front)
+                    bind.rasterView.surfaceTouch(draw!!.Rear)
                     draw = buffer.poll()
                 }
+                smallLayers[layerPos].bitmap = bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
+                layerAdapter.notifyDataSetChanged()
             }
         }
     }
 
     fun onSurfaceCreated() {
-        selectTool(binding.btnPencil)
+        selectTool(bind.btnPencil)
     }
 
     fun MotionEvent.createDrawBuilder(): Draw.Builder {
         val drawBuilder = Draw.newBuilder()
-            .setTool(binding.rasterDrawingSurface.rasterTool.toolNumber)
+            .setTool(bind.rasterView.rasterTool.toolNumber)
             .setColor(drawingColor)
             .setPhase(action)
             .setThickness(1f)
@@ -245,14 +231,13 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun add(view: View) {
-        if (smallLayerList.size >= 0xF) return
-        smallLayerList.add(RoomLayer())
-        binding.rasterDrawingSurface.addLayer()
-        binding.rasterDrawingSurface.refreshView()
-        binding.rasterDrawingSurface.invalidate()
-        smallLayerList.last().bitmap =
-            binding.rasterDrawingSurface.strokesLayer[smallLayerList.lastIndex].toBitmap(binding.rasterDrawingSurface.inkCanvas)
-        changeToLayer(smallLayerList.lastIndex)
+        if (smallLayers.size >= 0xF) return
+        smallLayers.add(RoomLayer())
+        bind.rasterView.addLayer()
+        bind.rasterView.refreshView()
+        bind.rasterView.invalidate()
+        smallLayers.last().bitmap = bind.rasterView.toBitmap(smallLayers.lastIndex)
+        changeToLayer(smallLayers.lastIndex)
         layerAdapter.notifyDataSetChanged()
     }
 
@@ -260,10 +245,9 @@ class DrawActivity : AppCompatActivity() {
         val stepModel = stepStack.undo()
         if (stepModel == null) toast("无法继续撤回")
         else {
-            binding.rasterDrawingSurface.setStepModel(stepModel)
+            bind.rasterView.setStepModel(stepModel)
             layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap =
-                binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+            smallLayers[stepModel.index].bitmap = bind.rasterView.toBitmap(stepModel.index)
             layerAdapter.notifyDataSetChanged()
         }
     }
@@ -272,24 +256,24 @@ class DrawActivity : AppCompatActivity() {
         val stepModel = stepStack.redo()
         if (stepModel == null) toast("无法继续重做")
         else {
-            binding.rasterDrawingSurface.setStepModel(stepModel)
+            bind.rasterView.setStepModel(stepModel)
             layerPos = stepModel.index
-            smallLayerList[stepModel.index].bitmap = binding.rasterDrawingSurface.strokesLayer[stepModel.index].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+            smallLayers[stepModel.index].bitmap = bind.rasterView.toBitmap(stepModel.index)
             layerAdapter.notifyDataSetChanged()
         }
     }
 
     fun changeToLayer(pos: Int) {
         layerPos = pos
-        stepStack.addStep(binding.rasterDrawingSurface.getStepModel())
+        stepStack.addStep(bind.rasterView.getStepModel())
         layerAdapter.notifyItemChanged(pos)
     }
 
     fun onTextureReady() {
-        add(binding.addLayerButton)
+        add(bind.addLayerButton)
         changeToLayer(0)
-        smallLayerList[0].bitmap =
-            binding.rasterDrawingSurface.strokesLayer[0].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+        smallLayers[0].bitmap =
+            bind.rasterView.strokesLayer[0].toBitmap(bind.rasterView.inkCanvas)
         layerAdapter.notifyItemChanged(0)
     }
 
@@ -312,13 +296,13 @@ class DrawActivity : AppCompatActivity() {
 
     fun setColor(color: Int) {
         drawingColor = color
-        binding.btnColor.setColorFilter(drawingColor, PorterDuff.Mode.SRC_ATOP)
-        binding.rasterDrawingSurface.setColor(drawingColor)
+        bind.btnColor.setColorFilter(drawingColor, PorterDuff.Mode.SRC_ATOP)
+        bind.rasterView.setColor(drawingColor)
     }
 
     fun selectTool(view: View) {
         highlightTool(view)
-        binding.rasterDrawingSurface.setTool(
+        bind.rasterView.setTool(
             when (view.id) {
                 R.id.btn_pencil -> 0
                 R.id.btn_water_brush -> 1
@@ -330,52 +314,40 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun selectTool(tool: Int) {
-        highlightTool(when(tool){
-            0->binding.btnPencil
-            1->binding.btnWaterBrush
-            2->binding.btnInkBrush
-            3->binding.btnCrayon
-            else->binding.btnEraser
-        })
-        binding.rasterDrawingSurface.setTool(tool)
+        highlightTool(
+            when (tool) {
+                0 -> bind.btnPencil
+                1 -> bind.btnWaterBrush
+                2 -> bind.btnInkBrush
+                3 -> bind.btnCrayon
+                else -> bind.btnEraser
+            }
+        )
+        bind.rasterView.setTool(tool)
     }
 
     fun highlightTool(view: View) {
-        binding.btnPencil.isActivated = false
-        binding.btnWaterBrush.isActivated = false
-        binding.btnInkBrush.isActivated = false
-        binding.btnCrayon.isActivated = false
-        binding.btnEraser.isActivated = false
+        bind.btnPencil.isActivated = false
+        bind.btnWaterBrush.isActivated = false
+        bind.btnInkBrush.isActivated = false
+        bind.btnCrayon.isActivated = false
+        bind.btnEraser.isActivated = false
         view.isActivated = true
     }
 
-    private fun resetInkModel() {
-        inkModel = InkModel()
-        val root = StrokeGroupNode(Identifier())
-        inkModel.inkTree.root = root
-        mainGroup = StrokeGroupNode(Identifier())
-        root.add(mainGroup)
-    }
-
     fun clear(view: View) {
-        resetInkModel()
-        binding.rasterDrawingSurface.clear()
-        binding.rasterDrawingSurface.refreshView()
-        binding.rasterDrawingSurface.invalidate()
-        stepStack.addStep(binding.rasterDrawingSurface.getStepModel())
-        smallLayerList[layerPos].bitmap =
-            binding.rasterDrawingSurface.strokesLayer[layerPos].toBitmap(binding.rasterDrawingSurface.inkCanvas)
+        bind.rasterView.clear()
+        bind.rasterView.refreshView()
+        bind.rasterView.invalidate()
+        stepStack.addStep(bind.rasterView.getStepModel())
+        smallLayers[layerPos].bitmap =
+            bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
         layerAdapter.notifyItemChanged(layerPos)
-    }
-
-    fun changeVisibilityOfSmallLayer() {
-        resetInkModel()
-        binding.rasterDrawingSurface.refreshView()
     }
 
     fun layerToolPopupWindow(view: View) {
         val popBind = ItemToolsmenuBinding.inflate(LayoutInflater.from(this))
-        val progress = smallLayerList[layerPos].alpha * 100 / 255f.toInt()
+        val progress = smallLayers[layerPos].alpha * 100 / 255f.toInt()
         popBind.alphaSeekbar.progress = progress
         popBind.alphaNum.text = "$progress%"
 
@@ -397,7 +369,7 @@ class DrawActivity : AppCompatActivity() {
             window.attributes = layoutParams
         }
 
-        layerDetailWindow.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+        layerDetailWindow.showAtLocation(bind.root, Gravity.CENTER, 0, 0)
 
         popBind.delete.setOnClickListener {
             deleteLayer()
@@ -426,7 +398,7 @@ class DrawActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 // 向上取整函ceil()
-                if (seekBar != null) smallLayerList[layerPos].alpha =
+                if (seekBar != null) smallLayers[layerPos].alpha =
                     ceil(seekBar.progress * 2.55).toInt()
                 layerAdapter.notifyItemChanged(layerPos)
             }
@@ -435,40 +407,39 @@ class DrawActivity : AppCompatActivity() {
         popBind.addAlphaBtn.setOnClickListener {
             popBind.alphaSeekbar.progress++
             popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
-            smallLayerList[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
+            smallLayers[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
             layerAdapter.notifyItemChanged(layerPos)
         }
 
         popBind.minusAlphaBtn.setOnClickListener {
             popBind.alphaSeekbar.progress--
             popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
-            smallLayerList[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
+            smallLayers[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
             layerAdapter.notifyItemChanged(layerPos)
         }
     }
 
     fun deleteLayer() {
-        if (smallLayerList.lastIndex == 0) {
-            toast("最后一个图层无法删除")
-            return
+        if (smallLayers.lastIndex == 0) toast("最后一个图层无法删除")
+        else {
+            smallLayers.removeAt(layerPos)
+            bind.rasterView.strokesLayer.removeAt(layerPos)
+            bind.rasterView.currentFrameLayer.removeAt(layerPos)
+            if (layerPos > 0) layerPos--
+            bind.rasterView.refreshView()
+            changeToLayer(layerPos)
         }
-        smallLayerList.removeAt(layerPos)
-        binding.rasterDrawingSurface.strokesLayer.removeAt(layerPos)
-        binding.rasterDrawingSurface.currentFrameLayer.removeAt(layerPos)
-        if (layerPos > 0) layerPos--
-        binding.rasterDrawingSurface.refreshView()
-        changeToLayer(layerPos)
     }
 
     fun smallLayer(view: View) {
-        when (binding.layerCard.visibility) {
+        when (bind.layerCard.visibility) {
             View.VISIBLE -> {
-                binding.layerCard.visibility = View.GONE
-                binding.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
+                bind.layerCard.visibility = View.GONE
+                bind.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
             }
             else -> {
-                binding.layerCard.visibility = View.VISIBLE
-                binding.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
+                bind.layerCard.visibility = View.VISIBLE
+                bind.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
             }
         }
     }

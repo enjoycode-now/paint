@@ -17,6 +17,7 @@ import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.biography
+import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
@@ -56,20 +57,15 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
 
         CoroutineScope(Dispatchers.IO).launch {
-            updateInfo()
-            val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE) ?: return@launch
-            authenticationClient.token = sharedPref.getString("token", "") ?: ""
-            try {
-                user = authenticationClient.getCurrentUser().execute()
-                setToken(user.token ?: "")
-            } catch (e: GraphQLException) {
-                runOnUiThread { startActivity(Intent(app, LoginActivity::class.java)) }
-                return@launch
-            } catch (e: IOException) {
-                toast("用户信息获取失败")
+            if (!authenticationClient.update()) {
+                runOnUiThread {
+                    startActivity(Intent(app, LoginActivity::class.java))
+                    finish()
+                }
+            } else {
+                updateUiInfo()
+                biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
             }
-            biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
-            updateInfo()
         }
     }
 
@@ -85,7 +81,7 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateInfo() {
+    private fun updateUiInfo() {
         runOnUiThread {
             binding.authorName.text = user.nickname
             binding.authorId.text = user.id.uppercase()

@@ -5,6 +5,7 @@
 package cn.copaint.audience.views
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.SurfaceTexture
 import android.util.AttributeSet
@@ -22,13 +23,9 @@ import com.wacom.ink.egl.EGLRenderingContext
 import com.wacom.ink.format.enums.InkInputType
 import com.wacom.ink.format.enums.InkSensorType
 import com.wacom.ink.format.input.SensorChannel
-import com.wacom.ink.format.rendering.PathPointProperties
 import com.wacom.ink.format.rendering.RasterBrush
-import com.wacom.ink.format.rendering.Style
 import com.wacom.ink.format.tree.data.SensorData
-import com.wacom.ink.format.tree.data.Stroke
 import com.wacom.ink.format.tree.nodes.StrokeNode
-import com.wacom.ink.model.Identifier
 import com.wacom.ink.rasterization.InkCanvas
 import com.wacom.ink.rasterization.Layer
 import com.wacom.ink.rasterization.StrokeRenderer
@@ -52,11 +49,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var rasterInkBuilder = RasterInkBuilder() // The ink builder
     var rasterTool: RasterTool = PencilTool(context)
     private var defaults: StrokeConstants = StrokeConstants() // The stroke defaults
-
-    // for serialisation
-    lateinit var inkEnvironmentModel: InkEnvironmentModel // information about the environment
-    lateinit var sensorData: SensorData
-    lateinit var channelList: List<SensorChannel>
 
     var strokeNodeList = mutableListOf<Pair<StrokeNode, RasterBrush>>()
     var sensorDataList = mutableListOf<SensorData>()
@@ -130,19 +122,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         val (added, predicted) = rasterInkBuilder.build()
 
-        for (data in pointerDataList) {
-            for (channel in channelList) {
-                when (channel.typeURI) {
-                    InkSensorType.X -> sensorData.add(channel, data.x)
-                    InkSensorType.Y -> sensorData.add(channel, data.y)
-                    InkSensorType.TIMESTAMP -> sensorData.addTimestamp(channel, data.timestamp)
-                    InkSensorType.PRESSURE -> sensorData.add(channel, data.force!!)
-                    InkSensorType.ALTITUDE -> sensorData.add(channel, data.altitudeAngle!!)
-                    InkSensorType.AZIMUTH -> sensorData.add(channel, data.azimuthAngle!!)
-                }
-            }
-        }
-
         if (added != null) drawStroke(draw.phase, added, predicted)
 
         renderView()
@@ -185,7 +164,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
         for ((i, layer) in strokesLayer.withIndex()) {
-            if (!activity.smallLayerList[i].isShow)continue
+            if (!activity.smallLayers[i].isShow)continue
             if (i == activity.layerPos) inkCanvas.drawLayer(currentFrameLayer[activity.layerPos], BlendMode.SOURCE_OVER)
             else inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
@@ -197,7 +176,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         inkCanvas.clearColor()
         // Copy the current frame layer in the view layer to present it on the screen.
         for ((i, layer) in strokesLayer.withIndex()) {
-            if (!activity.smallLayerList[i].isShow)continue
+            if (!activity.smallLayers[i].isShow)continue
             inkCanvas.drawLayer(layer, BlendMode.SOURCE_OVER)
         }
         inkCanvas.invalidate()
@@ -287,5 +266,15 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     fun addLayer() {
         strokesLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
+    }
+
+    fun toBitmap(pos:Int): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val tempLayer = inkCanvas.createLayer(width, height)
+        inkCanvas.setTarget(tempLayer)
+        inkCanvas.clearColor(Color.WHITE)
+        inkCanvas.drawLayer(strokesLayer[pos], BlendMode.SOURCE_OVER)
+        inkCanvas.readPixels(tempLayer, bitmap, 0, 0, 0, 0, bitmap.width, bitmap.height)
+        return bitmap
     }
 }
