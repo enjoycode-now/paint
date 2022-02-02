@@ -1,7 +1,6 @@
 package cn.copaint.audience
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -13,29 +12,21 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.authing.core.auth.AuthenticationClient
-import cn.authing.core.graphql.GraphQLException
 import cn.copaint.audience.adapter.LayerAdapter
 import cn.copaint.audience.databinding.ActivityDrawBinding
 import cn.copaint.audience.databinding.ItemToolsmenuBinding
 import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
-import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.update
-import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
-import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag
-import com.wacom.ink.format.InkModel
 import com.wacom.ink.format.input.*
-import com.wacom.ink.format.tree.groups.StrokeGroupNode
-import com.wacom.ink.model.Identifier
 import kotlinx.android.synthetic.main.activity_draw.*
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.item_layer_small.view.*
@@ -48,7 +39,6 @@ import kotlinx.coroutines.flow.onCompletion
 import paint.v1.Paint.*
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
-import java.io.IOException
 import java.util.*
 import kotlin.math.ceil
 
@@ -97,32 +87,20 @@ class DrawActivity : AppCompatActivity() {
         }
 
         bind.rasterView.setOnTouchListener { _, event ->
-            if (!smallLayers[layerPos].isShow) return@setOnTouchListener true
-            if (event.action > 2) return@setOnTouchListener true
-            if (event.action == MotionEvent.ACTION_DOWN) lineProtect = false
-            if (distance(event, lastEvent) > 65536) {
-                lineProtect = true
-                lastEvent!!.action = MotionEvent.ACTION_UP
-                val draw = lastEvent!!.createDrawBuilder()
-                lastEvent = null
-                bind.rasterView.surfaceTouch(draw.build())
-            }
-            if (lineProtect) return@setOnTouchListener true
-
-            // 到达此处说明该点有效
-            lastEvent = MotionEvent.obtain(event)
-            val drawBuilder = lastEvent!!.createDrawBuilder()
-            bind.rasterView.surfaceTouch(drawBuilder.build())
-
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
-                MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
-                MotionEvent.ACTION_UP -> {
-                    bufferDraw.addDraw(drawBuilder.build())
-                    emitLiveDraw()
-                    lastEvent = null
-                    smallLayers[layerPos].bitmap = bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
-                    layerAdapter.notifyDataSetChanged()
+            if (event.validate()) {
+                lastEvent = MotionEvent.obtain(event)
+                val drawBuilder = lastEvent!!.createDrawBuilder()
+                bind.rasterView.surfaceTouch(drawBuilder.build())
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
+                    MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
+                    MotionEvent.ACTION_UP -> {
+                        bufferDraw.addDraw(drawBuilder.build())
+                        emitLiveDraw()
+                        smallLayers[layerPos].bitmap =
+                            bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
+                        layerAdapter.notifyDataSetChanged()
+                    }
                 }
             }
             true
@@ -131,7 +109,25 @@ class DrawActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
+        if(this::job.isInitialized) job.cancel()
+    }
+
+    fun MotionEvent.validate(): Boolean {
+        if (!smallLayers[layerPos].isShow) return false
+        if (action > 2) return false
+        if (action == MotionEvent.ACTION_DOWN) {
+            lastEvent = null
+            lineProtect = false
+        }
+        if (distance(this, lastEvent) > 65536) {
+            lineProtect = true
+            lastEvent!!.action = MotionEvent.ACTION_UP
+            val draw = lastEvent!!.createDrawBuilder()
+            lastEvent = null
+            bind.rasterView.surfaceTouch(draw.build())
+        }
+        if (lineProtect) return false
+        return true
     }
 
     fun collectHistoryDraw() = CoroutineScope(Dispatchers.IO).launch {
