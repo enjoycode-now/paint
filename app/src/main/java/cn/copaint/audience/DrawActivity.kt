@@ -214,8 +214,8 @@ class DrawActivity : AppCompatActivity() {
             draw = buffer.poll()
             if (draw != null) runOnUiThread {
                 while (draw != null) {
-                    setColor(draw!!.color)
                     selectTool(draw!!.tool)
+                    setColor(draw!!.color)
                     bind.rasterView.surfaceTouch(draw!!.Front, MotionEvent.ACTION_DOWN)
                     bind.rasterView.surfaceTouch(draw!!.Rear, MotionEvent.ACTION_UP)
                     draw = buffer.poll()
