@@ -56,6 +56,12 @@ enum LayerAction {
 
     // 切换到图层
     LAYER_ACTION_CHANGE = 4;
+
+    // 增加图层
+    LAYER_ACTION_ADD = 5;
+
+    // 删除图层
+    LAYER_ACTION_DELETE = 6;
 }
 
 message Point {
@@ -74,11 +80,8 @@ message Draw {
     // 粗细
     float thickness = 3;
 
-    // 阶段
-    int32 phase = 4;
-
     // 点数组
-    repeated Point points = 5;
+    repeated Point points = 4;
 }
 
 message Layer {
@@ -127,7 +130,7 @@ message Painting {
 
 message History {
     int32 sequence = 1;
-    int32 type = 2;
+    PaintType type = 2;
     bytes payload = 3;
 }
 

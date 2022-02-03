@@ -80,7 +80,7 @@ class DrawActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-                setPaintId("10763227503800950")
+                setPaintId("11115083807601270")
                 job = collectLiveDraw()
                 collectHistoryDraw()
             }
@@ -90,7 +90,7 @@ class DrawActivity : AppCompatActivity() {
             if (event.validate()) {
                 lastEvent = MotionEvent.obtain(event)
                 val drawBuilder = lastEvent!!.createDrawBuilder()
-                bind.rasterView.surfaceTouch(drawBuilder.build())
+                bind.rasterView.surfaceTouch(drawBuilder.build(), event.action)
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> bufferDraw = drawBuilder
                     MotionEvent.ACTION_MOVE -> bufferDraw.addDraw(drawBuilder.build())
@@ -109,7 +109,7 @@ class DrawActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(this::job.isInitialized) job.cancel()
+        if (this::job.isInitialized) job.cancel()
     }
 
     fun MotionEvent.validate(): Boolean {
@@ -124,7 +124,7 @@ class DrawActivity : AppCompatActivity() {
             lastEvent!!.action = MotionEvent.ACTION_UP
             val draw = lastEvent!!.createDrawBuilder()
             lastEvent = null
-            bind.rasterView.surfaceTouch(draw.build())
+            bind.rasterView.surfaceTouch(draw.build(), MotionEvent.ACTION_UP)
         }
         if (lineProtect) return false
         return true
@@ -133,17 +133,38 @@ class DrawActivity : AppCompatActivity() {
     fun collectHistoryDraw() = CoroutineScope(Dispatchers.IO).launch {
         paintStub.history(
             HistoryRequest.newBuilder()
-                .setPaintingId(10763227503800950L)
+                .setPaintingId(11115083807601270L)
                 .build()
         ).onCompletion {
             drawBufferPoint(drawBuffer)
         }.collect {
-            for (history in it.historiesList) {
-                val draw = Draw.parseFrom(history.payload)
-                runOnUiThread {
-                    selectTool(draw.tool)
-                    bind.rasterView.surfaceTouch(draw.Front)
-                    bind.rasterView.surfaceTouch(draw.Rear)
+            for (it in it.historiesList) {
+                when (it.type) {
+                    PaintType.PAINT_TYPE_DRAW -> {
+                        val draw = Draw.parseFrom(it.payload)
+                        runOnUiThread {
+                            selectTool(draw.tool)
+                            bind.rasterView.surfaceTouch(draw.Front, MotionEvent.ACTION_DOWN)
+                            bind.rasterView.surfaceTouch(draw.Rear, MotionEvent.ACTION_UP)
+                        }
+                    }
+                    PaintType.PAINT_TYPE_LAYER -> {
+                        val layer = Layer.parseFrom(it.payload)
+                        when (layer.action) {
+                            LayerAction.LAYER_ACTION_HIDE -> hideLayer(layer.index)
+                            LayerAction.LAYER_ACTION_LOCK -> { }
+                            LayerAction.LAYER_ACTION_ALPHA -> { }
+                            LayerAction.LAYER_ACTION_ADD -> add()
+                            LayerAction.LAYER_ACTION_DELETE -> deleteLayer(layer.index)
+                            LayerAction.LAYER_ACTION_CHANGE -> changeToLayer(layer.index)
+                            else -> { }
+                        }
+                    }
+                    PaintType.PAINT_TYPE_UNDO -> undo()
+                    PaintType.PAINT_TYPE_REDO -> redo()
+                    PaintType.PAINT_TYPE_ACK_OK -> { }
+                    PaintType.PAINT_TYPE_ACK_ERROR -> { }
+                    else -> { }
                 }
             }
         }
@@ -164,10 +185,23 @@ class DrawActivity : AppCompatActivity() {
         paintStub.paint(sharedFlow.buffer(10, BufferOverflow.SUSPEND)).collect {
             when (it.type) {
                 PaintType.PAINT_TYPE_DRAW -> drawBuffer.add(Draw.parseFrom(it.payload))
-                PaintType.PAINT_TYPE_LAYER -> { }
+                PaintType.PAINT_TYPE_LAYER -> {
+                    val layer = Layer.parseFrom(it.payload)
+                    when (layer.action) {
+                        LayerAction.LAYER_ACTION_HIDE -> hideLayer(layer.index)
+                        LayerAction.LAYER_ACTION_LOCK -> { }
+                        LayerAction.LAYER_ACTION_ALPHA -> { }
+                        LayerAction.LAYER_ACTION_ADD -> add()
+                        LayerAction.LAYER_ACTION_DELETE -> deleteLayer(layer.index)
+                        LayerAction.LAYER_ACTION_CHANGE -> changeToLayer(layer.index)
+                        else -> { }
+                    }
+                }
+                PaintType.PAINT_TYPE_UNDO -> undo()
+                PaintType.PAINT_TYPE_REDO -> redo()
                 PaintType.PAINT_TYPE_ACK_OK -> { }
                 PaintType.PAINT_TYPE_ACK_ERROR -> { }
-                else -> {}
+                else -> { }
             }
         }
     }
@@ -175,14 +209,14 @@ class DrawActivity : AppCompatActivity() {
     suspend fun drawBufferPoint(buffer: ArrayDeque<Draw>) {
         var draw: Draw?
         while (true) {
-            delay(2000)
+            delay(250)
             draw = buffer.poll()
             if (draw != null) runOnUiThread {
                 while (draw != null) {
                     selectTool(draw!!.tool)
                     setColor(draw!!.color)
-                    bind.rasterView.surfaceTouch(draw!!.Front)
-                    bind.rasterView.surfaceTouch(draw!!.Rear)
+                    bind.rasterView.surfaceTouch(draw!!.Front, MotionEvent.ACTION_DOWN)
+                    bind.rasterView.surfaceTouch(draw!!.Rear, MotionEvent.ACTION_UP)
                     draw = buffer.poll()
                 }
                 smallLayers[layerPos].bitmap = bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
@@ -199,7 +233,6 @@ class DrawActivity : AppCompatActivity() {
         val drawBuilder = Draw.newBuilder()
             .setTool(bind.rasterView.rasterTool.toolNumber)
             .setColor(drawingColor)
-            .setPhase(action)
             .setThickness(1f)
 
         for (i in 0 until historySize) {
@@ -226,8 +259,27 @@ class DrawActivity : AppCompatActivity() {
         return this
     }
 
+    fun hideLayer(pos: Int) {
+        smallLayers[pos].isShow = !smallLayers[pos].isShow
+        layerAdapter.notifyItemChanged(pos)
+        bind.rasterView.refreshView()
+    }
+
     fun add(view: View) {
         if (smallLayers.size >= 0xF) return
+        val payload = Layer.newBuilder()
+            .setAction(LayerAction.LAYER_ACTION_ADD)
+            .build()
+        val paintMessage = PaintMessage.newBuilder()
+            .setType(PaintType.PAINT_TYPE_LAYER)
+            .setSequence(seq++)
+            .setPayload(payload.toByteString())
+            .build()
+        sharedFlow.tryEmit(paintMessage)
+        add()
+    }
+
+    fun add() {
         smallLayers.add(RoomLayer())
         bind.rasterView.addLayer()
         bind.rasterView.refreshView()
@@ -237,7 +289,18 @@ class DrawActivity : AppCompatActivity() {
         layerAdapter.notifyDataSetChanged()
     }
 
+    // 响应界面撤回
     fun undo(view: View) {
+        val paintMessage = PaintMessage.newBuilder()
+            .setType(PaintType.PAINT_TYPE_UNDO)
+            .setSequence(seq++)
+            .build()
+        sharedFlow.tryEmit(paintMessage)
+        undo()
+    }
+
+    // 实际撤回
+    fun undo() {
         val stepModel = stepStack.undo()
         if (stepModel == null) toast("无法继续撤回")
         else {
@@ -248,7 +311,18 @@ class DrawActivity : AppCompatActivity() {
         }
     }
 
+    // 响应界面重做
     fun redo(view: View) {
+        val paintMessage = PaintMessage.newBuilder()
+            .setType(PaintType.PAINT_TYPE_REDO)
+            .setSequence(seq++)
+            .build()
+        sharedFlow.tryEmit(paintMessage)
+        redo()
+    }
+
+    // 实际重做
+    fun redo() {
         val stepModel = stepStack.redo()
         if (stepModel == null) toast("无法继续重做")
         else {
@@ -260,17 +334,15 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun changeToLayer(pos: Int) {
+        if (pos == layerPos)return
         layerPos = pos
         stepStack.addStep(bind.rasterView.getStepModel())
         layerAdapter.notifyItemChanged(pos)
     }
 
     fun onTextureReady() {
-        add(bind.addLayerButton)
+        add()
         changeToLayer(0)
-        smallLayers[0].bitmap =
-            bind.rasterView.strokesLayer[0].toBitmap(bind.rasterView.inkCanvas)
-        layerAdapter.notifyItemChanged(0)
     }
 
     fun selectColor(view: View) {
@@ -368,7 +440,20 @@ class DrawActivity : AppCompatActivity() {
         layerDetailWindow.showAtLocation(bind.root, Gravity.CENTER, 0, 0)
 
         popBind.delete.setOnClickListener {
-            deleteLayer()
+            if (smallLayers.lastIndex == 0) toast("最后一个图层无法删除")
+            else {
+                val payload = Layer.newBuilder()
+                    .setAction(LayerAction.LAYER_ACTION_DELETE)
+                    .setIndex(layerPos)
+                    .build()
+                val paintMessage = PaintMessage.newBuilder()
+                    .setType(PaintType.PAINT_TYPE_LAYER)
+                    .setSequence(seq++)
+                    .setPayload(payload.toByteString())
+                    .build()
+                sharedFlow.tryEmit(paintMessage)
+                deleteLayer(layerPos)
+            }
         }
 
         popBind.eraser.setOnClickListener {
@@ -415,27 +500,25 @@ class DrawActivity : AppCompatActivity() {
         }
     }
 
-    fun deleteLayer() {
-        if (smallLayers.lastIndex == 0) toast("最后一个图层无法删除")
-        else {
-            smallLayers.removeAt(layerPos)
-            bind.rasterView.strokesLayer.removeAt(layerPos)
-            bind.rasterView.currentFrameLayer.removeAt(layerPos)
-            if (layerPos > 0) layerPos--
-            bind.rasterView.refreshView()
-            changeToLayer(layerPos)
-        }
+    fun deleteLayer(layerIndex: Int) {
+        changeToLayer(layerIndex)
+        smallLayers.removeAt(layerPos)
+        bind.rasterView.strokesLayer.removeAt(layerPos)
+        bind.rasterView.currentFrameLayer.removeAt(layerPos)
+        if (layerPos > 0) layerPos--
+        bind.rasterView.refreshView()
+        changeToLayer(layerPos)
     }
 
-    fun smallLayer(view: View) {
+    fun hideLayerPop(view: View) {
         when (bind.layerCard.visibility) {
             View.VISIBLE -> {
                 bind.layerCard.visibility = View.GONE
-                bind.btnSmallLayer.setImageResource(R.drawable.ic_expand_layer_card)
+                bind.btnHideLayerPop.setImageResource(R.drawable.ic_expand_layer_card)
             }
             else -> {
                 bind.layerCard.visibility = View.VISIBLE
-                bind.btnSmallLayer.setImageResource(R.drawable.ic_close_layer_card)
+                bind.btnHideLayerPop.setImageResource(R.drawable.ic_close_layer_card)
             }
         }
     }

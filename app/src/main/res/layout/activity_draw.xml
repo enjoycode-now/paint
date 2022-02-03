@@ -113,13 +113,13 @@
 
 
             <ImageView
-                android:id="@+id/btn_smallLayer"
+                android:id="@+id/btn_hide_layer_pop"
                 android:layout_width="@dimen/btn_width"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="6dp"
                 android:layout_marginEnd="@dimen/btn_separator"
                 android:contentDescription="@string/controlLayerWindowStatus"
-                android:onClick="smallLayer"
+                android:onClick="hideLayerPop"
                 android:visibility="visible"
                 app:srcCompat="@drawable/ic_close_layer_card"
                 app:tint="@color/select_toolbar_button_stateful" />

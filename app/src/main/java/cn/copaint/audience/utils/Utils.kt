@@ -28,7 +28,7 @@ import kotlin.math.min
  *
  * @return the PointerData for the event.
  */
-fun Draw.toPointerDataList(alphaBias: Float): MutableList<PointerData> {
+fun Draw.toPointerDataList(alphaBias: Float, phase: Int): MutableList<PointerData> {
     val pointDataList = mutableListOf<PointerData>()
     for (point in pointsList) {
         pointDataList.add(
@@ -61,7 +61,6 @@ val Draw.Front: Draw
             .setTool(tool)
             .setColor(color)
             .setThickness(thickness)
-            .setPhase(MotionEvent.ACTION_DOWN)
         newDraw.addAllPoints(pointsList.subList(0, (pointsCount + 1) / 2))
         return newDraw.build()
     }
@@ -72,7 +71,6 @@ val Draw.Rear: Draw
             .setTool(tool)
             .setColor(color)
             .setThickness(thickness)
-            .setPhase(MotionEvent.ACTION_UP)
         newDraw.addAllPoints(pointsList.subList((pointsCount - 1) / 2, pointsCount))
         return newDraw.build()
     }

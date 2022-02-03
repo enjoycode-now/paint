@@ -21,7 +21,6 @@ import com.wacom.ink.InterpolatedSpline
 import com.wacom.ink.StrokeConstants
 import com.wacom.ink.egl.EGLRenderingContext
 import com.wacom.ink.format.enums.InkInputType
-import com.wacom.ink.format.enums.InkSensorType
 import com.wacom.ink.format.input.SensorChannel
 import com.wacom.ink.format.rendering.RasterBrush
 import com.wacom.ink.format.tree.data.SensorData
@@ -102,7 +101,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // This function is going to be call when we touch the surface
-    fun surfaceTouch(draw: Draw) {
+    fun surfaceTouch(draw: Draw, phase: Int) {
         if (draw.ToolType == InkInputType.PEN) {
             if ((newTool) || (!isStylus)) {
                 newTool = false
@@ -117,12 +116,12 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        val pointerDataList = draw.toPointerDataList(defaults.alpha)
+        val pointerDataList = draw.toPointerDataList(defaults.alpha, phase)
         for (data in pointerDataList) rasterInkBuilder.add(data, null)
 
         val (added, predicted) = rasterInkBuilder.build()
 
-        if (added != null) drawStroke(draw.phase, added, predicted)
+        if (added != null) drawStroke(phase, added, predicted)
 
         renderView()
     }
@@ -255,7 +254,6 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     fun clear() {
-        strokeNodeList.clear()
         sensorDataList.clear()
         inkCanvas.clearLayer(currentFrameLayer[activity.layerPos])
         inkCanvas.clearLayer(strokesLayer[activity.layerPos])
@@ -268,7 +266,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         currentFrameLayer.add(inkCanvas.createLayer(textureWidth, textureHeight))
     }
 
-    fun toBitmap(pos:Int): Bitmap {
+    fun toBitmap(pos: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val tempLayer = inkCanvas.createLayer(width, height)
         inkCanvas.setTarget(tempLayer)
