@@ -142,8 +142,9 @@ class DrawActivity : AppCompatActivity() {
                 when (it.type) {
                     PaintType.PAINT_TYPE_DRAW -> {
                         val draw = Draw.parseFrom(it.payload)
+                        setColor(draw.color)
+                        selectTool(draw.tool)
                         runOnUiThread {
-                            selectTool(draw.tool)
                             bind.rasterView.surfaceTouch(draw.Front, MotionEvent.ACTION_DOWN)
                             bind.rasterView.surfaceTouch(draw.Rear, MotionEvent.ACTION_UP)
                         }
@@ -261,8 +262,10 @@ class DrawActivity : AppCompatActivity() {
 
     fun hideLayer(pos: Int) {
         smallLayers[pos].isShow = !smallLayers[pos].isShow
-        layerAdapter.notifyItemChanged(pos)
-        bind.rasterView.refreshView()
+        runOnUiThread {
+            layerAdapter.notifyItemChanged(pos)
+            bind.rasterView.refreshView()
+        }
     }
 
     fun add(view: View) {
@@ -280,13 +283,15 @@ class DrawActivity : AppCompatActivity() {
     }
 
     fun add() {
-        smallLayers.add(RoomLayer())
-        bind.rasterView.addLayer()
-        bind.rasterView.refreshView()
-        bind.rasterView.invalidate()
-        smallLayers.last().bitmap = bind.rasterView.toBitmap(smallLayers.lastIndex)
-        changeToLayer(smallLayers.lastIndex)
-        layerAdapter.notifyDataSetChanged()
+        runOnUiThread {
+            smallLayers.add(RoomLayer())
+            bind.rasterView.addLayer()
+            bind.rasterView.refreshView()
+            bind.rasterView.invalidate()
+            smallLayers.last().bitmap = bind.rasterView.toBitmap(smallLayers.lastIndex)
+            changeToLayer(smallLayers.lastIndex)
+            layerAdapter.notifyDataSetChanged()
+        }
     }
 
     // 响应界面撤回
@@ -337,7 +342,7 @@ class DrawActivity : AppCompatActivity() {
         if (pos == layerPos)return
         layerPos = pos
         stepStack.addStep(bind.rasterView.getStepModel())
-        layerAdapter.notifyItemChanged(pos)
+        runOnUiThread { layerAdapter.notifyItemChanged(pos) }
     }
 
     fun onTextureReady() {
