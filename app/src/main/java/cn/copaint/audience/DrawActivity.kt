@@ -143,6 +143,7 @@ class DrawActivity : AppCompatActivity() {
                     PaintType.PAINT_TYPE_DRAW -> {
                         val draw = Draw.parseFrom(it.payload)
                         runOnUiThread {
+                            setColor(draw.color)
                             selectTool(draw.tool)
                             bind.rasterView.surfaceTouch(draw.Front, MotionEvent.ACTION_DOWN)
                             bind.rasterView.surfaceTouch(draw.Rear, MotionEvent.ACTION_UP)
@@ -154,9 +155,9 @@ class DrawActivity : AppCompatActivity() {
                             LayerAction.LAYER_ACTION_HIDE -> hideLayer(layer.index)
                             LayerAction.LAYER_ACTION_LOCK -> { }
                             LayerAction.LAYER_ACTION_ALPHA -> { }
-                            LayerAction.LAYER_ACTION_ADD -> add()
-                            LayerAction.LAYER_ACTION_DELETE -> deleteLayer(layer.index)
-                            LayerAction.LAYER_ACTION_CHANGE -> changeToLayer(layer.index)
+                            LayerAction.LAYER_ACTION_ADD -> runOnUiThread { add() }
+                            LayerAction.LAYER_ACTION_DELETE -> runOnUiThread { deleteLayer(layer.index) }
+                            LayerAction.LAYER_ACTION_CHANGE -> runOnUiThread { changeToLayer(layer.index) }
                             else -> { }
                         }
                     }
@@ -213,8 +214,8 @@ class DrawActivity : AppCompatActivity() {
             draw = buffer.poll()
             if (draw != null) runOnUiThread {
                 while (draw != null) {
-                    selectTool(draw!!.tool)
                     setColor(draw!!.color)
+                    selectTool(draw!!.tool)
                     bind.rasterView.surfaceTouch(draw!!.Front, MotionEvent.ACTION_DOWN)
                     bind.rasterView.surfaceTouch(draw!!.Rear, MotionEvent.ACTION_UP)
                     draw = buffer.poll()
