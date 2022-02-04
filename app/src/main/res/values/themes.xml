@@ -13,6 +13,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/black</item> <!-- EdiText输入时的光标与下划线-->
+    </style>
+    
+    <style name="Theme.WhiteBoardWacom.TransparentStatusBar" parent="Theme.WhiteBoardWacom">
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

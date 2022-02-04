@@ -35,7 +35,6 @@ class UserActivity : AppCompatActivity() {
     val sponsorList = mutableListOf<String>()
     private lateinit var binding: ActivityUserBinding
     val adapter = SupportWorksAdapter(this)
-    private val RESQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,16 +97,6 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) {
-            Glide.with(this)
-                .load(data?.data)
-                .into(binding.userAvatar)
-        }
-    }
-
     private fun hignLightBtn(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
@@ -118,10 +107,8 @@ class UserActivity : AppCompatActivity() {
         view.setTextColor(Color.argb(255, 0, 0, 0))
     }
 
-    fun onChangeAvatar(view: View) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startActivityForResult(intent, RESQUEST_CODE)
+    fun editProfile(view: View) {
+        startActivity(Intent(this, EditProfileActivity::class.java))
     }
 
     fun onSetting(view: View) {

@@ -164,7 +164,10 @@ class DrawActivity : AppCompatActivity() {
                     PaintType.PAINT_TYPE_UNDO -> undo()
                     PaintType.PAINT_TYPE_REDO -> redo()
                     PaintType.PAINT_TYPE_ACK_OK -> { }
-                    PaintType.PAINT_TYPE_ACK_ERROR -> { }
+                    PaintType.PAINT_TYPE_ACK_ERROR -> {
+                        toast("服务器发生错误，正在退出...")
+                        finish()
+                    }
                     else -> { }
                 }
             }
@@ -262,7 +265,7 @@ class DrawActivity : AppCompatActivity() {
 
     fun hideLayer(pos: Int) {
         smallLayers[pos].isShow = !smallLayers[pos].isShow
-        layerAdapter.notifyItemChanged(pos)
+        layerAdapter.notifyDataSetChanged()
         bind.rasterView.refreshView()
     }
 
@@ -338,7 +341,7 @@ class DrawActivity : AppCompatActivity() {
         if (pos == layerPos)return
         layerPos = pos
         stepStack.addStep(bind.rasterView.getStepModel())
-        layerAdapter.notifyItemChanged(pos)
+        layerAdapter.notifyDataSetChanged()
     }
 
     fun onTextureReady() {
@@ -411,7 +414,7 @@ class DrawActivity : AppCompatActivity() {
         stepStack.addStep(bind.rasterView.getStepModel())
         smallLayers[layerPos].bitmap =
             bind.rasterView.strokesLayer[layerPos].toBitmap(bind.rasterView.inkCanvas)
-        layerAdapter.notifyItemChanged(layerPos)
+        layerAdapter.notifyDataSetChanged()
     }
 
     fun layerToolPopupWindow(view: View) {
@@ -482,7 +485,7 @@ class DrawActivity : AppCompatActivity() {
                 // 向上取整函ceil()
                 if (seekBar != null) smallLayers[layerPos].alpha =
                     ceil(seekBar.progress * 2.55).toInt()
-                layerAdapter.notifyItemChanged(layerPos)
+                layerAdapter.notifyDataSetChanged()
             }
         })
 
@@ -490,14 +493,14 @@ class DrawActivity : AppCompatActivity() {
             popBind.alphaSeekbar.progress++
             popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
             smallLayers[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
-            layerAdapter.notifyItemChanged(layerPos)
+            layerAdapter.notifyDataSetChanged()
         }
 
         popBind.minusAlphaBtn.setOnClickListener {
             popBind.alphaSeekbar.progress--
             popBind.alphaNum.text = "${popBind.alphaSeekbar.progress}%"
             smallLayers[layerPos].alpha = ceil(popBind.alphaSeekbar.progress * 2.55).toInt()
-            layerAdapter.notifyItemChanged(layerPos)
+            layerAdapter.notifyDataSetChanged()
         }
     }
 
