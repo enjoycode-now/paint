@@ -79,8 +79,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:ems="10"
+        android:hint="昵称"
         android:inputType="textPersonName"
-        android:text="昵称"
         app:layout_constraintBottom_toBottomOf="@+id/userAvatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/userAvatar"
@@ -92,20 +92,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:text="性别"
-        app:layout_constraintBottom_toBottomOf="@+id/genderText"
+        app:layout_constraintBottom_toBottomOf="@+id/unknowGender"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/genderText" />
-
-    <EditText
-        android:id="@+id/genderText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/biography" />
+        app:layout_constraintTop_toTopOf="@+id/unknowGender" />
 
     <TextView
         android:id="@+id/birthNote"
@@ -117,46 +106,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/birthText" />
 
-    <EditText
+    <TextView
         android:id="@+id/birthText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:ems="10"
-        android:inputType="text"
+        android:hint="1970-1-1"
+        android:onClick="pickBirthDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genderText" />
+        app:layout_constraintTop_toBottomOf="@+id/unknowGender" />
 
     <TextView
-        android:id="@+id/placeNote"
+        android:id="@+id/addressNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:text="所在地"
-        app:layout_constraintBottom_toBottomOf="@+id/placeText"
+        app:layout_constraintBottom_toBottomOf="@+id/addressText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/placeText" />
+        app:layout_constraintTop_toTopOf="@+id/addressText" />
 
     <EditText
-        android:id="@+id/placeText"
+        android:id="@+id/addressText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:ems="10"
+        android:hint="所在地"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birthText" />
 
     <Button
-        android:id="@+id/submitButton"
+        android:id="@+id/unknowGender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="确认"
+        android:layout_marginEnd="32dp"
+        android:onClick="clickGender"
+        android:text="未知"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeText" />
+        app:layout_constraintTop_toBottomOf="@+id/biography" />
+
+    <Button
+        android:id="@+id/femaleGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickGender"
+        android:text="女"
+        app:layout_constraintEnd_toStartOf="@+id/unknowGender"
+        app:layout_constraintTop_toTopOf="@+id/unknowGender" />
+
+    <Button
+        android:id="@+id/maleGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickGender"
+        android:text="男"
+        app:layout_constraintEnd_toStartOf="@+id/femaleGender"
+        app:layout_constraintTop_toTopOf="@+id/femaleGender" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

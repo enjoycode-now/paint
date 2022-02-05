@@ -12,23 +12,19 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import cn.authing.core.graphql.GraphQLException
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.AuthingUtils.user
-import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.getDigest
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.* // ktlint-disable no-wildcard-imports
-import java.io.IOException
-import java.lang.Exception
+import kotlinx.coroutines.*
 
 class UserActivity : AppCompatActivity() {
 
@@ -54,6 +50,10 @@ class UserActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         CoroutineScope(Dispatchers.IO).launch {
             if (!authenticationClient.update()) {
@@ -62,14 +62,11 @@ class UserActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-                updateUiInfo()
                 biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
+                updateUiInfo()
             }
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
         // 应援记录数据
         CoroutineScope(Dispatchers.Default).launch {
             for (i in 0..31) {
@@ -88,12 +85,8 @@ class UserActivity : AppCompatActivity() {
             val displayAddress = "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...").uppercase()
             binding.blockchainAddress.text = displayAddress
             binding.biography.text = biography
-            try {
-                Glide.with(this@UserActivity)
-                    .load(user.photo)
-                    .into(binding.userAvatar)
-            } catch (e: Exception) {
-            }
+            Glide.with(this@UserActivity).load(user.photo).into(binding.userAvatar)
+            binding.editProfileButton.isEnabled=true
         }
     }
 
