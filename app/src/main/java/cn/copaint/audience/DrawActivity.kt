@@ -19,8 +19,6 @@ import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
-import cn.copaint.audience.utils.AuthingUtils.authenticationClient
-import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
 import cn.copaint.audience.utils.ToastUtils.app
@@ -73,18 +71,9 @@ class DrawActivity : AppCompatActivity() {
         bind.layerRecycle.adapter = layerAdapter
         bind.rasterView.activity = this
 
-        CoroutineScope(Dispatchers.IO).launch {
-            if (!authenticationClient.update()) {
-                runOnUiThread {
-                    startActivity(Intent(app, LoginActivity::class.java))
-                    finish()
-                }
-            } else {
-                setPaintId("11115083807601270")
-                job = collectLiveDraw()
-                collectHistoryDraw()
-            }
-        }
+        setPaintId("11115083807601270")
+        job = collectLiveDraw()
+        collectHistoryDraw()
 
         bind.rasterView.setOnTouchListener { _, event ->
             if (event.validate()) {

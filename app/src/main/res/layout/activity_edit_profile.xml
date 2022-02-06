@@ -14,6 +14,7 @@
         android:layout_marginTop="32dp"
         android:drawablePadding="8dp"
         android:gravity="center"
+        android:onClick="onBackPressed"
         android:textSize="21sp"
         app:drawableStartCompat="@drawable/ic_back_deep_gray"
         app:layout_constraintStart_toStartOf="parent"

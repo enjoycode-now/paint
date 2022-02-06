@@ -13,7 +13,12 @@ import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
+import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.AuthingUtils.authenticationClient
+import cn.copaint.audience.utils.AuthingUtils.loginCheck
+import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
+import cn.copaint.audience.utils.GrpcUtils
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
@@ -37,8 +42,8 @@ class HomePageActivity : AppCompatActivity() {
         binding = ActivityHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
-        buildStub()
 
+        buildStub()
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
@@ -54,6 +59,7 @@ class HomePageActivity : AppCompatActivity() {
         }.attach()
 
         CoroutineScope(Dispatchers.Default).launch {
+            authenticationClient.update()
             repeat(32) {
                 picQueue.add("https://api.ghser.com/random/pe.php")
                 delay(125)
@@ -62,7 +68,7 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onDrawActivity(view: View) {
-        startActivity(Intent(this, DrawActivity::class.java))
+        if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
     }
 
     private fun highLightBtn(view: View) {
@@ -76,12 +82,14 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onUserPage(view: View) {
-        highLightBtn(binding.userPageBtn)
-        binding.homePageBtn.isSelected = false
-        binding.userPageBtn.isSelected = true
-        startActivity(Intent(this, UserActivity::class.java))
-        overridePendingTransition(0, 0)
-        finish()
+        if (loginCheck()) {
+            highLightBtn(binding.userPageBtn)
+            binding.homePageBtn.isSelected = false
+            binding.userPageBtn.isSelected = true
+            startActivity(Intent(this, UserActivity::class.java))
+            overridePendingTransition(0, 0)
+            finish()
+        }
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {
