@@ -9,14 +9,12 @@ import cn.copaint.audience.LoginActivity
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import okhttp3.MediaType
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+
 
 object AuthingUtils {
     val authenticationClient = AuthenticationClient("61e51b153de29133842c975b")
@@ -53,14 +51,15 @@ object AuthingUtils {
         }
     }
 
-    fun uploadAvatar(byteArray: ByteArray){
+    fun uploadAvatar(byteArray: ByteArray) {
         val client = OkHttpClient().newBuilder().build()
-        val requestBody = byteArray.toRequestBody("image/jpeg".toMediaType(), 0, byteArray.size)
-        val response = client.newCall(
-            Request.Builder()
-                .url("https://core.authing.cn/api/v2/upload?folder=photos")
-                .post(requestBody)
-                .build()
-        )
+        val body: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("file", "/C:/Users/g3908/Pictures/屏幕截图 2022-01-25 094719.jpg", RequestBody.create("application/octet-stream".toMediaType(), byteArray))
+            .build()
+        val request: Request = Request.Builder()
+            .url("https://core.authing.cn/api/v2/upload?folder=photos")
+            .method("POST", body)
+            .build()
+        val response: Response = client.newCall(request).execute()
     }
 }
