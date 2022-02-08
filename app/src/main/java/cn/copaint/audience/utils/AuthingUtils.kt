@@ -11,6 +11,7 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 object AuthingUtils {
@@ -50,8 +51,8 @@ object AuthingUtils {
 
     fun uploadAvatar(byteArray: ByteArray): String {
         val client = OkHttpClient().newBuilder().build()
-        val body: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("file", "/C:/Users/g3908/Pictures/屏幕截图 2022-01-25 094719.jpg", RequestBody.create("application/octet-stream".toMediaType(), byteArray))
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("file", "aa.jpg", byteArray.toRequestBody("image/jpeg".toMediaType(), 0, byteArray.size))
             .build()
         val request: Request = Request.Builder()
             .url("https://core.authing.cn/api/v2/upload?folder=photos")

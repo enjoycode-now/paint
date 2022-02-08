@@ -16,7 +16,6 @@
         android:gravity="center"
         android:onClick="onBackPressed"
         android:textSize="21sp"
-        android:onClick="back"
         app:drawableStartCompat="@drawable/ic_back_deep_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
