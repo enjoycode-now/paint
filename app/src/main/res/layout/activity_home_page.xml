@@ -43,8 +43,8 @@
 
     <ImageView
         android:id="@+id/searchButton"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:contentDescription="@string/search"
         android:fitsSystemWindows="true"
         android:onClick="onDrawActivity"

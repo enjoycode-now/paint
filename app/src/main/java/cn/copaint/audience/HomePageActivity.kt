@@ -29,7 +29,7 @@ class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityHomePageBinding
 
-    val fragmentList = mutableListOf(FollowFragment(), LiveFragment(), RecommendFragment())
+    val fragmentList = mutableListOf(LiveFragment(), FollowFragment(), RecommendFragment())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +47,8 @@ class HomePageActivity : AppCompatActivity() {
 
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "关注"
-                1 -> tab.text = "直播"
+                0 -> tab.text = "直播"
+                1 -> tab.text = "关注"
                 2 -> tab.text = "推荐"
             }
         }.attach()

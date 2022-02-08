@@ -110,4 +110,9 @@ class EditProfileActivity : AppCompatActivity() {
                 .into(binding.userAvatar)
         }
     }
+
+    fun back(view: android.view.View) {
+        onBackPressed()
+        finish()
+    }
 }
