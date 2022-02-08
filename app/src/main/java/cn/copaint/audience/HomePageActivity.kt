@@ -21,8 +21,6 @@ import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.activity_home_page.*
-import kotlinx.android.synthetic.main.item_support_works.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
