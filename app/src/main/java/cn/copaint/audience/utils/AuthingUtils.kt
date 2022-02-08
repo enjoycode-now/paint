@@ -48,7 +48,7 @@ object AuthingUtils {
         }
     }
 
-    suspend fun uploadAvatar(byteArray: ByteArray):String {
+    fun uploadAvatar(byteArray: ByteArray): String {
         val client = OkHttpClient().newBuilder().build()
         val body: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("file", "/C:/Users/g3908/Pictures/屏幕截图 2022-01-25 094719.jpg", RequestBody.create("application/octet-stream".toMediaType(), byteArray))
