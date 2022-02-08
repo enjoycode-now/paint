@@ -42,7 +42,8 @@ class EditProfileActivity : AppCompatActivity() {
         binding.nickName.doAfterTextChanged { text -> updateInput.nickname = text.toString() }
         binding.addressText.doAfterTextChanged { text -> updateInput.address = text.toString() }
         binding.biography.doAfterTextChanged { text ->
-            setBiography = authenticationClient.setUdfValue(mapOf(Pair("biography", text.toString())))
+            setBiography =
+                authenticationClient.setUdfValue(mapOf(Pair("biography", text.toString())))
         }
     }
 
@@ -51,7 +52,7 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onBackPressed() {
         CoroutineScope(Dispatchers.IO).launch {
             authenticationClient.updateProfile(updateInput).execute()
-            if (this@EditProfileActivity::setBiography.isInitialized)setBiography.execute()
+            if (this@EditProfileActivity::setBiography.isInitialized) setBiography.execute()
             authenticationClient.update()
             runOnUiThread { super.onBackPressed() }
         }
@@ -110,7 +111,9 @@ class EditProfileActivity : AppCompatActivity() {
             val uri = data?.data ?: return
             Glide.with(this).load(uri).into(binding.userAvatar)
             val inputStream = contentResolver.openInputStream(uri) ?: return
-            CoroutineScope(Dispatchers.IO).launch { uploadAvatar(inputStream.readBytes()) }
+            CoroutineScope(Dispatchers.IO).launch {
+                updateInput.photo = uploadAvatar(inputStream.readBytes()) ?: updateInput.photo
+            }
         }
     }
 }
