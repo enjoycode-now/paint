@@ -25,9 +25,6 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag
 import com.wacom.ink.format.input.*
-import kotlinx.android.synthetic.main.activity_draw.*
-import kotlinx.android.synthetic.main.activity_user.*
-import kotlinx.android.synthetic.main.item_layer_small.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
