@@ -2,7 +2,6 @@ package cn.copaint.audience.utils
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
 import cn.authing.core.auth.AuthenticationClient
 import cn.authing.core.graphql.GraphQLException
 import cn.authing.core.types.User
@@ -10,13 +9,13 @@ import cn.copaint.audience.LoginActivity
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.squareup.okhttp.MediaType
-import com.squareup.okhttp.RequestBody
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 object AuthingUtils {
@@ -52,5 +51,16 @@ object AuthingUtils {
             toast("用户信息获取失败")
             false
         }
+    }
+
+    fun uploadAvatar(byteArray: ByteArray){
+        val client = OkHttpClient().newBuilder().build()
+        val requestBody = byteArray.toRequestBody("image/jpeg".toMediaType(), 0, byteArray.size)
+        val response = client.newCall(
+            Request.Builder()
+                .url("https://core.authing.cn/api/v2/upload?folder=photos")
+                .post(requestBody)
+                .build()
+        )
     }
 }
