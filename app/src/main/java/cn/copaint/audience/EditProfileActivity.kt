@@ -106,4 +106,9 @@ class EditProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) Glide.with(this).load(data?.data).into(binding.userAvatar)
     }
+
+    fun back(view: android.view.View) {
+        onBackPressed()
+        finish()
+    }
 }
