@@ -103,7 +103,6 @@ dependencies {
     // Bugsnag
     implementation "com.bugsnag:bugsnag-android:5.+"
 
-
     // GRPC Deps
     implementation "io.grpc:grpc-okhttp:1.37.0"
     implementation 'io.grpc:grpc-protobuf-lite:1.37.0'

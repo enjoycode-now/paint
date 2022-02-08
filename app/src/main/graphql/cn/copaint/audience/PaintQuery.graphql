@@ -1,0 +1,17 @@
+query Paintings {
+    paintings(first: 10, orderBy: {direction: DESC, field: CREATOR}) {
+        edges {
+            node {
+                id
+                creator
+                name
+                description
+                status
+                historySize
+                createdAt
+                updatedAt
+            }
+            cursor
+        }
+    }
+}
