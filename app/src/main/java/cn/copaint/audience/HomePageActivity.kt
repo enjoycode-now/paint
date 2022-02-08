@@ -13,12 +13,10 @@ import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
-import cn.copaint.audience.utils.GrpcUtils
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
@@ -47,7 +45,7 @@ class HomePageActivity : AppCompatActivity() {
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
-            setCurrentItem(1, false)
+            setCurrentItem(2, false)
         }
 
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
