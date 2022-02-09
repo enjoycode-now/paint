@@ -43,7 +43,11 @@ class MyWorksActivity : AppCompatActivity() {
         }
     }
 
-    fun onUserPageCreaterActivity(view: View) {
-        if (AuthingUtils.loginCheck()) startActivity(Intent(this, UserPageCreaterActivity::class.java))
+    fun onPublishedWorkActivity(view: View) {
+        if (AuthingUtils.loginCheck()) startActivity(Intent(this, PublishedWorkActivity::class.java))
+    }
+
+    fun onUserPageCreatorActivity(view: View) {
+        if (AuthingUtils.loginCheck()) startActivity(Intent(this, UserPageCreatorActivity::class.java))
     }
 }
