@@ -94,6 +94,10 @@ class UserActivity : AppCompatActivity() {
         startActivity(Intent(this, SettingActivity::class.java))
     }
 
+    fun onFollows(view: View) {
+        startActivity(Intent(this, FollowsActivity::class.java))
+    }
+
     fun onHomePage(view: View) {
         hignLightBtn(binding.homePageBtn)
         startActivity(Intent(this, HomePageActivity::class.java))

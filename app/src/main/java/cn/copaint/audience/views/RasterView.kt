@@ -12,9 +12,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.TextureView
 import cn.copaint.audience.DrawActivity
-import cn.copaint.audience.model.StepModel
+import cn.copaint.audience.model.Step
 import cn.copaint.audience.raster.RasterInkBuilder
-import cn.copaint.audience.serialization.InkEnvironmentModel
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
 import com.wacom.ink.InterpolatedSpline
@@ -126,7 +125,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         renderView()
     }
 
-    fun setStepModel(stepModel: StepModel) {
+    fun setStepModel(stepModel: Step) {
         with(stepModel) {
             inkCanvas.setTarget(currentFrameLayer[index])
             inkCanvas.drawLayer(layer, BlendMode.COPY)
@@ -197,7 +196,7 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             inkCanvas.setTarget(currentFrameLayer[activity.layerPos])
             inkCanvas.clearColor()
             inkCanvas.drawLayer(strokesLayer[activity.layerPos], BlendMode.SOURCE_OVER)
-            val stepModel = StepModel(
+            val stepModel = Step(
                 inkCanvas.createLayer(textureWidth, textureHeight),
                 activity.layerPos
             )
@@ -207,8 +206,8 @@ class RasterView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-    fun getStepModel(): StepModel {
-        val stepModel = StepModel(
+    fun getStepModel(): Step {
+        val stepModel = Step(
             inkCanvas.createLayer(textureWidth, textureHeight),
             activity.layerPos
         )
