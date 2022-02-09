@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserPageCreaterActivity">
+
+
+    <cn.copaint.audience.views.ParentNestedScrollView
+        android:id="@+id/parentNestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:isScrollContainer="true"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <ImageView
+                android:id="@+id/backgroundImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                app:layout_constraintDimensionRatio="15:7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/bg_user_center" />
+
+            <ImageView
+                android:id="@+id/configButton"
+                android:layout_width="72px"
+                android:layout_height="72px"
+                android:background="@drawable/ic_she"
+                android:contentDescription="@string/setting"
+                android:onClick="onSetting"
+                app:layout_constraintBottom_toTopOf="@+id/cardView"
+                app:layout_constraintEnd_toEndOf="@+id/cardView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/headerView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="15:4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:padding="6dp"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headerView"
+                app:layout_constraintWidth_percent="0.9">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="0dp">
+
+                    <TextView
+                        android:id="@+id/moneyNote"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="144dp"
+                        android:layout_marginBottom="8dp"
+                        android:onClick="buyScallop"
+                        android:text="@string/YuanBei"
+                        android:textColor="#888888"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toTopOf="@+id/moneyText"
+                        app:layout_constraintEnd_toStartOf="@+id/splitLine"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/splitLine"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <View
+                        android:id="@+id/splitLine"
+                        android:layout_width="1dp"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="24dp"
+                        android:background="#EEEEEE"
+                        app:layout_constraintEnd_toStartOf="@+id/fansNote"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/moneyNote"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/fansNote"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/fan"
+                        android:textColor="#888888"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toTopOf="@+id/fansText"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/splitLine"
+                        app:layout_constraintTop_toTopOf="@+id/splitLine"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/moneyText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="buyScallop"
+                        android:text="@string/initial_YuanBei_account"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/splitLine"
+                        app:layout_constraintEnd_toEndOf="@id/moneyNote"
+                        app:layout_constraintStart_toStartOf="@id/moneyNote"
+                        app:layout_constraintTop_toBottomOf="@+id/moneyNote" />
+
+                    <TextView
+                        android:id="@+id/fansText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/initial_fan_num"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/splitLine"
+                        app:layout_constraintEnd_toEndOf="@+id/fansNote"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="@+id/fansNote"
+                        app:layout_constraintTop_toBottomOf="@+id/fansNote" />
+
+                    <TextView
+                        android:id="@+id/authorName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="112dp"
+                        android:text="@string/initial_author_name"
+                        android:textColor="#cc000000"
+                        android:textSize="24sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/authorId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:onClick="copyId"
+                        android:text="@string/initial_author_id"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/authorName"
+                        app:layout_constraintTop_toBottomOf="@+id/authorName" />
+
+                    <Button
+                        android:id="@+id/editProfileButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:onClick="editProfile"
+                        android:text="编辑资料"
+                        app:layout_constraintBottom_toTopOf="@+id/lineView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/authorName" />
+
+                    <View
+                        android:id="@+id/lineView"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="24dp"
+                        android:background="#EEEEEE"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/authorId" />
+
+
+                    <TextView
+                        android:id="@+id/biography"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:lineSpacingExtra="12px"
+                        android:text="@string/initial_author_biography"
+                        android:textColor="#cc000000"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toTopOf="@+id/grayBackground"
+                        app:layout_constraintEnd_toEndOf="@+id/lineView"
+                        app:layout_constraintStart_toStartOf="@+id/lineView"
+                        app:layout_constraintTop_toBottomOf="@+id/lineView" />
+
+                    <View
+                        android:id="@+id/grayBackground"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:background="#FAFAFA"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/blockchainAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="24dp"
+                        android:drawablePadding="20dp"
+                        android:gravity="center_vertical"
+                        android:onClick="copyAddress"
+                        android:text="@string/initial_blockchainAddress"
+                        android:textColor="#4D000000"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/grayBackground" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userAvatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="24dp"
+                android:elevation="2dp"
+                android:src="@drawable/avatar_sample"
+                app:civ_border_color="#FFFFFF"
+                app:civ_border_width="6dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@+id/headerView"
+                app:layout_constraintWidth_percent="0.2" />
+
+            <LinearLayout
+                android:id="@+id/wordOrder"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/cardView">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:text="作品订单"
+                    android:textSize="16sp"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/servicegreement"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/wordOrder">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="服务协议"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/privacyPolicy"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/servicegreement">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="隐私政策"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/contactUs"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/privacyPolicy">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="联系我们"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/versionCodeLayout"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/contactUs">
+
+                <TextView
+                    android:id="@+id/versionCode"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="版本号：v1.0.0"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_marginTop="48dp"
+                android:text="关注官方公众号【XXXX】，最新资讯尽在掌握"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/versionCodeLayout"
+                app:layout_constraintVertical_bias="1" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </cn.copaint.audience.views.ParentNestedScrollView>
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

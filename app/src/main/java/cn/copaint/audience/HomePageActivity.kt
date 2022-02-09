@@ -67,6 +67,10 @@ class HomePageActivity : AppCompatActivity() {
         if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
     }
 
+    fun onUserPageCreaterActivity(view: View) {
+        if (loginCheck()) startActivity(Intent(this, UserPageCreaterActivity::class.java))
+    }
+
     private fun highLightBtn(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
