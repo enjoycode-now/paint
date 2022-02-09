@@ -15,14 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhiteBoardWacom"
         tools:replace="android:label">
+        <activity
+            android:name=".FollowsActivity"
+            android:exported="false" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".PayActivity"/>
+        <activity android:name=".PayActivity" />
         <activity android:name=".VerificationCodeActivity" />
         <activity
             android:name=".UserActivity"
-            android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar"
-            />
+            android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar" />
         <activity
             android:name=".HomePageActivity"
             android:exported="true"
@@ -33,11 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
         <activity
             android:name=".DrawActivity"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
