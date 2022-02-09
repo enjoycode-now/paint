@@ -67,8 +67,8 @@ class HomePageActivity : AppCompatActivity() {
         if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
     }
 
-    fun onUserPageCreaterActivity(view: View) {
-        if (loginCheck()) startActivity(Intent(this, UserPageCreaterActivity::class.java))
+    fun onUserPageCreatorActivity(view: View) {
+        if (loginCheck()) startActivity(Intent(this, UserPageCreatorActivity::class.java))
     }
 
     private fun highLightBtn(view: View) {

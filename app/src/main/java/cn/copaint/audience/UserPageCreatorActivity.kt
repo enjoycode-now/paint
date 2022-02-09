@@ -7,21 +7,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import cn.copaint.audience.databinding.ActivityUserPageCreaterBinding
+import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.getDigest
 import com.bugsnag.android.Bugsnag
 
-class UserPageCreaterActivity : AppCompatActivity() {
-    lateinit var binding: ActivityUserPageCreaterBinding
+class UserPageCreatorActivity : AppCompatActivity() {
+    lateinit var binding: ActivityUserPageCreatorBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUserPageCreaterBinding.inflate(layoutInflater)
+        binding = ActivityUserPageCreatorBinding.inflate(layoutInflater)
         Bugsnag.start(this)
         setContentView(binding.root)
         app = this
+    }
+
+    fun onFans(view: View) {
+        startActivity(Intent(this, FansActivity::class.java))
     }
 
     fun editProfile(view: View) {
