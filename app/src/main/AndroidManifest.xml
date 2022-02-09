@@ -16,6 +16,9 @@
         android:theme="@style/Theme.WhiteBoardWacom"
         tools:replace="android:label">
         <activity
+            android:name=".MyWorksActivity"
+            android:exported="false" />
+        <activity
             android:name=".FollowsActivity"
             android:exported="false" />
         <activity
