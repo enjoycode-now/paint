@@ -11,20 +11,21 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="256px"
-        android:layout_height="256px"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         app:layout_constraintBottom_toTopOf="@+id/phoneNumberCard"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.502"
         app:srcCompat="@drawable/ic_round_white"
         tools:ignore="ContentDescription,PxUsage" />
-
 
     <androidx.cardview.widget.CardView
         android:id="@+id/phoneNumberCard"
         android:layout_width="0dp"
-        android:layout_height="128px"
+        android:layout_height="64dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +33,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.48"
-        app:layout_constraintWidth_percent="0.75">
+        app:layout_constraintWidth_percent="0.8">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/phoneNumberLayout"
@@ -44,7 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="4dp"
-                android:padding="28px"
+                android:padding="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +60,7 @@
                 android:background="@null"
                 android:hint="@string/please_input_phone_number"
                 android:inputType="phone"
-                android:textSize="48px"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/submitButton"
                 app:layout_constraintStart_toEndOf="@+id/im_login_left"
@@ -73,7 +74,7 @@
                 android:layout_height="0dp"
                 android:layout_marginEnd="4dp"
                 android:onClick="onSubmit"
-                android:padding="28px"
+                android:padding="12dp"
                 android:src="@drawable/ic_next_dark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
@@ -91,11 +92,11 @@
         android:id="@+id/checkbox"
         style="@style/myCheckBox"
         android:layout_width="wrap_content"
-        android:layout_height="64px"
+        android:layout_height="36dp"
         android:layout_marginTop="48dp"
         android:src="@drawable/ic_select_nor"
         android:text="@string/readAndAgree"
-        android:textSize="36px"
+        android:textSize="16dp"
         app:layout_constraintEnd_toStartOf="@+id/text2"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,12 +105,12 @@
     <TextView
         android:id="@+id/text2"
         android:layout_width="wrap_content"
-        android:layout_height="64px"
+        android:layout_height="36dp"
         android:layout_marginStart="8dp"
         android:gravity="center_vertical"
         android:text="@string/userAgreementAndPrivacyPolicy"
         android:textColor="#17A1EC"
-        android:textSize="36px"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/checkbox"

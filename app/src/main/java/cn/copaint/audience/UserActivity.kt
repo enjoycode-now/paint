@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
-import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.biography
-import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -54,19 +52,7 @@ class UserActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            if (!authenticationClient.update()) {
-                runOnUiThread {
-                    startActivity(Intent(app, LoginActivity::class.java))
-                    finish()
-                }
-            } else {
-                biography = (authenticationClient.getUdfValue().execute()["biography"] ?: "这个人没有填简介啊") as String
-                updateUiInfo()
-            }
-        }
-
+        updateUiInfo()
         // 应援记录数据
         CoroutineScope(Dispatchers.Default).launch {
             for (i in 0..31) {
@@ -106,6 +92,10 @@ class UserActivity : AppCompatActivity() {
 
     fun onSetting(view: View) {
         startActivity(Intent(this, SettingActivity::class.java))
+    }
+
+    fun onFollows(view: View) {
+        startActivity(Intent(this, FollowsActivity::class.java))
     }
 
     fun onHomePage(view: View) {

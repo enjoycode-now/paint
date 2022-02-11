@@ -1,7 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.protobuf'
+plugins {
+    id "com.android.application"
+    id "com.apollographql.apollo3" version "3.1.0"
+    id "kotlin-android"
+    id "com.google.protobuf"
+}
 
 android {
     compileSdkVersion 31
@@ -77,6 +79,10 @@ protobuf {
     }
 }
 
+apollo {
+    packageName.set("cn.copaint.audience")
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -97,12 +103,13 @@ dependencies {
     // Bugsnag
     implementation "com.bugsnag:bugsnag-android:5.+"
 
-
     // GRPC Deps
     implementation "io.grpc:grpc-okhttp:1.37.0"
     implementation 'io.grpc:grpc-protobuf-lite:1.37.0'
     implementation 'io.grpc:grpc-kotlin-stub:1.1.0'
     implementation 'io.grpc:protoc-gen-grpc-kotlin:1.1.0'
+
+    implementation "com.apollographql.apollo3:apollo-runtime:3.1.0"
 
     // ColorPicker
     implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
@@ -123,5 +130,6 @@ dependencies {
 
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+' // 使用微信支付时添加,具体版本参考微信官方文档
+
 
 }

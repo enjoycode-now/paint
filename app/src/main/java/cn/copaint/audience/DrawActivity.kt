@@ -19,17 +19,12 @@ import cn.copaint.audience.model.RoomLayer
 import cn.copaint.audience.model.StepStack
 import cn.copaint.audience.tools.raster.*
 import cn.copaint.audience.utils.*
-import cn.copaint.audience.utils.AuthingUtils.authenticationClient
-import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.GrpcUtils.paintStub
 import cn.copaint.audience.utils.GrpcUtils.setPaintId
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag
 import com.wacom.ink.format.input.*
-import kotlinx.android.synthetic.main.activity_draw.*
-import kotlinx.android.synthetic.main.activity_user.*
-import kotlinx.android.synthetic.main.item_layer_small.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -73,18 +68,9 @@ class DrawActivity : AppCompatActivity() {
         bind.layerRecycle.adapter = layerAdapter
         bind.rasterView.activity = this
 
-        CoroutineScope(Dispatchers.IO).launch {
-            if (!authenticationClient.update()) {
-                runOnUiThread {
-                    startActivity(Intent(app, LoginActivity::class.java))
-                    finish()
-                }
-            } else {
-                setPaintId("11115083807601270")
-                job = collectLiveDraw()
-                collectHistoryDraw()
-            }
-        }
+        setPaintId("11115083807601270")
+        job = collectLiveDraw()
+        collectHistoryDraw()
 
         bind.rasterView.setOnTouchListener { _, event ->
             if (event.validate()) {

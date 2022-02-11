@@ -1,0 +1,198 @@
+""""""
+input AddTagToPaintingInput {
+    """"""
+    paintingID: ID!
+
+    """"""
+    tag: String!
+}
+
+""""""
+type AddTagToPaintingResponse {
+    """"""
+    tag: String!
+}
+
+""""""
+input CreatePaintingInput {
+    """"""
+    name: String!
+
+    """"""
+    description: String!
+
+    """"""
+    TagIDs: [ID!]
+}
+
+"""
+Define a Relay Cursor type:
+https://relay.dev/graphql/connections.htm#sec-Cursor
+"""
+scalar Cursor
+
+"""
+Define a mutation for creating paintings.
+https://graphql.org/learn/queries/#mutations
+"""
+type Mutation {
+    """"""
+    createPainting(input: CreatePaintingInput!): Painting!
+
+    """"""
+    addTagToPainting(input: AddTagToPaintingInput!): AddTagToPaintingResponse!
+}
+
+""""""
+interface Node {
+    """"""
+    id: ID!
+}
+
+""""""
+enum OrderDirection {
+    """"""
+    ASC
+
+    """"""
+    DESC
+}
+
+""""""
+type PageInfo {
+    """"""
+    hasNextPage: Boolean!
+
+    """"""
+    hasPreviousPage: Boolean!
+
+    """"""
+    startCursor: Cursor
+
+    """"""
+    endCursor: Cursor
+}
+
+""""""
+type Painting implements Node {
+    """"""
+    id: ID!
+
+    """"""
+    creator: String!
+
+    """"""
+    name: String!
+
+    """"""
+    description: String!
+
+    """"""
+    status: Status!
+
+    """"""
+    historySize: Int!
+
+    """"""
+    tags: [Tag!]
+
+    """"""
+    createdAt: Time
+
+    """"""
+    updatedAt: Time
+}
+
+""""""
+type PaintingConnection {
+    """"""
+    totalCount: Int!
+
+    """"""
+    pageInfo: PageInfo!
+
+    """"""
+    edges: [PaintingEdge]
+}
+
+""""""
+type PaintingEdge {
+    """"""
+    node: Painting
+
+    """"""
+    cursor: Cursor!
+}
+
+""""""
+input PaintingOrder {
+    """"""
+    direction: OrderDirection!
+
+    """"""
+    field: PaintingOrderField
+}
+
+"""
+The following enums are matched the entgql annotations in the ent/schema.
+"""
+enum PaintingOrderField {
+    """"""
+    CREATED_AT
+
+    """"""
+    UPDATED_AT
+
+    """"""
+    CREATOR
+
+    """"""
+    STATUS
+
+    """"""
+    HISTORY_SIZE
+}
+
+"""
+Define a query for getting all paintings and support the Node interface.
+"""
+type Query {
+    """"""
+    node(id: ID!): Node
+
+    """"""
+    nodes(ids: [ID!]!): [Node]!
+
+    """"""
+    paintings(after: Cursor, first: Int, before: Cursor, last: Int, orderBy: PaintingOrder): PaintingConnection
+}
+
+""""""
+enum Status {
+    """"""
+    IN_PROGRESS
+
+    """"""
+    BAN
+
+    """"""
+    REVIEW
+
+    """"""
+    COMPLETED
+}
+
+""""""
+type Tag implements Node {
+    """"""
+    id: ID!
+
+    """"""
+    name: String!
+
+    """"""
+    createdAt: Time
+}
+
+"""Maps a Time GraphQL scalar to a Go time.Time struct."""
+scalar Time

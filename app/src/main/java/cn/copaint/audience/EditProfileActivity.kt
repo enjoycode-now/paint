@@ -15,6 +15,8 @@ import cn.authing.core.types.UserDefinedData
 import cn.copaint.audience.databinding.ActivityEditProfileBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.biography
+import cn.copaint.audience.utils.AuthingUtils.update
+import cn.copaint.audience.utils.AuthingUtils.uploadAvatar
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
@@ -40,16 +42,18 @@ class EditProfileActivity : AppCompatActivity() {
         binding.nickName.doAfterTextChanged { text -> updateInput.nickname = text.toString() }
         binding.addressText.doAfterTextChanged { text -> updateInput.address = text.toString() }
         binding.biography.doAfterTextChanged { text ->
-            setBiography = authenticationClient.setUdfValue(
-                mapOf(Pair("biography", text.toString()))
-            )
+            setBiography =
+                authenticationClient.setUdfValue(mapOf(Pair("biography", text.toString())))
         }
     }
+
+    fun onBackPressed(view: View) = onBackPressed()
 
     override fun onBackPressed() {
         CoroutineScope(Dispatchers.IO).launch {
             authenticationClient.updateProfile(updateInput).execute()
-            if (this@EditProfileActivity::setBiography.isInitialized)setBiography.execute()
+            if (this@EditProfileActivity::setBiography.isInitialized) setBiography.execute()
+            authenticationClient.update()
             runOnUiThread { super.onBackPressed() }
         }
     }
@@ -103,11 +107,13 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RESQUEST_CODE && resultCode == RESULT_OK) {
-            Glide.with(this)
-                .load(data?.data)
-                .into(binding.userAvatar)
+            val uri = data?.data ?: return
+            Glide.with(this).load(uri).into(binding.userAvatar)
+            val inputStream = contentResolver.openInputStream(uri) ?: return
+            CoroutineScope(Dispatchers.IO).launch {
+                updateInput.photo = uploadAvatar(inputStream.readBytes()) ?: updateInput.photo
+            }
         }
     }
 }

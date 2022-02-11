@@ -13,13 +13,14 @@ import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
+import cn.copaint.audience.utils.AuthingUtils.authenticationClient
+import cn.copaint.audience.utils.AuthingUtils.loginCheck
+import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.activity_home_page.*
-import kotlinx.android.synthetic.main.item_support_works.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,7 +30,7 @@ class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityHomePageBinding
 
-    val fragmentList = mutableListOf(FollowFragment(), LiveFragment(), RecommendFragment())
+    val fragmentList = mutableListOf(LiveFragment(), FollowFragment(), RecommendFragment())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,23 +38,24 @@ class HomePageActivity : AppCompatActivity() {
         binding = ActivityHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
-        buildStub()
 
+        buildStub()
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
-            setCurrentItem(1, false)
+            setCurrentItem(2, false)
         }
 
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "关注"
-                1 -> tab.text = "直播"
+                0 -> tab.text = "直播"
+                1 -> tab.text = "关注"
                 2 -> tab.text = "推荐"
             }
         }.attach()
 
         CoroutineScope(Dispatchers.Default).launch {
+            authenticationClient.update()
             repeat(32) {
                 picQueue.add("https://api.ghser.com/random/pe.php")
                 delay(125)
@@ -62,7 +64,11 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onDrawActivity(view: View) {
-        startActivity(Intent(this, DrawActivity::class.java))
+        if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
+    }
+
+    fun onMyWorksActivity(view: View) {
+        if (loginCheck()) startActivity(Intent(this, MyWorksActivity::class.java))
     }
 
     private fun highLightBtn(view: View) {
@@ -76,12 +82,14 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onUserPage(view: View) {
-        highLightBtn(binding.userPageBtn)
-        binding.homePageBtn.isSelected = false
-        binding.userPageBtn.isSelected = true
-        startActivity(Intent(this, UserActivity::class.java))
-        overridePendingTransition(0, 0)
-        finish()
+        if (loginCheck()) {
+            highLightBtn(binding.userPageBtn)
+            binding.homePageBtn.isSelected = false
+            binding.userPageBtn.isSelected = true
+            startActivity(Intent(this, UserActivity::class.java))
+            overridePendingTransition(0, 0)
+            finish()
+        }
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {
