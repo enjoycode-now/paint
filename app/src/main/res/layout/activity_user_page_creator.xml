@@ -253,11 +253,17 @@
             <LinearLayout
                 android:id="@+id/wordOrder"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@id/cardView">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/work_order" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -271,17 +277,32 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_next_dark" />
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB" />
             </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/wordOrder"
+                app:layout_constraintStart_toStartOf="@id/wordOrder"
+                app:layout_constraintEnd_toEndOf="@id/wordOrder"
+                android:background="#08000000"
+                />
 
             <LinearLayout
                 android:id="@+id/servicegreement"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@id/wordOrder">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/service_agreement" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -295,17 +316,32 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_next_dark" />
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
             </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/servicegreement"
+                app:layout_constraintStart_toStartOf="@id/servicegreement"
+                app:layout_constraintEnd_toEndOf="@id/servicegreement"
+                android:background="#08000000"
+                />
 
             <LinearLayout
                 android:id="@+id/privacyPolicy"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@id/servicegreement">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/privacy_policy" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -319,17 +355,33 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_next_dark" />
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
             </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/privacyPolicy"
+                app:layout_constraintStart_toStartOf="@id/privacyPolicy"
+                app:layout_constraintEnd_toEndOf="@id/privacyPolicy"
+                android:background="#08000000"
+                />
 
             <LinearLayout
                 android:id="@+id/contactUs"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@id/privacyPolicy">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/contact_us" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -343,17 +395,33 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_next_dark" />
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
             </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/contactUs"
+                app:layout_constraintStart_toStartOf="@id/contactUs"
+                app:layout_constraintEnd_toEndOf="@id/contactUs"
+                android:background="#08000000"
+                />
 
             <LinearLayout
                 android:id="@+id/versionCodeLayout"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
                 app:layout_constraintTop_toBottomOf="@id/contactUs">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/version_code" />
 
                 <TextView
                     android:id="@+id/versionCode"
@@ -365,12 +433,22 @@
                     android:text="版本号：v1.0.0"
                     android:textColor="@color/black" />
             </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/versionCodeLayout"
+                app:layout_constraintStart_toStartOf="@id/versionCodeLayout"
+                app:layout_constraintEnd_toEndOf="@id/versionCodeLayout"
+                android:background="#08000000"
+                />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="24dp"
                 android:gravity="center"
                 android:layout_marginTop="48dp"
+                android:textColor="#AFAFAF"
+                android:textSize="12sp"
                 android:text="关注官方公众号【XXXX】，最新资讯尽在掌握"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/versionCodeLayout"

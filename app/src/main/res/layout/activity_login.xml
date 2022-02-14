@@ -50,7 +50,7 @@
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_login_left"
+                app:srcCompat="@drawable/ic_phone_num"
                 android:contentDescription="@null"/>
 
             <EditText
