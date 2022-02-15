@@ -125,6 +125,7 @@
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
+                        android:onClick="buyScallop"
                         app:layout_constraintBottom_toBottomOf="@+id/splitLine"
                         app:layout_constraintEnd_toEndOf="@id/moneyNote"
                         app:layout_constraintStart_toStartOf="@id/moneyNote"

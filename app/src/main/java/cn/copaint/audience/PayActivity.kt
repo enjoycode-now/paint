@@ -1,8 +1,13 @@
 package cn.copaint.audience
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Message
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.adapter.YuanbeiDetailAdapter
+import cn.copaint.audience.databinding.ActivityPayBinding
 import cn.copaint.audience.utils.ToastUtils.app
 import com.alipay.sdk.app.PayTask
 
@@ -10,11 +15,24 @@ class PayActivity : AppCompatActivity() {
 
 //    lateinit var mHandler: Handler
     val SDK_PAY_FLAG = 1
+    lateinit var binding: ActivityPayBinding
+    lateinit var ryAdpater: YuanbeiDetailAdapter
+    val YuanbeiDetailList = mutableListOf<Int>(-100, -23, -344, 200, 34545, 234, 999)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pay)
+        binding = ActivityPayBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         app = this
+
+        initView()
+    }
+
+    private fun initView() {
+        binding.firstGear.background = getDrawable(R.drawable.cardview_checked_paypage)
+        ryAdpater = YuanbeiDetailAdapter(this)
+        binding.YuanbeiDetailRecyclerview.layoutManager = LinearLayoutManager(this)
+        binding.YuanbeiDetailRecyclerview.adapter = ryAdpater
     }
 
     fun aliPay(view: android.view.View) {
@@ -35,6 +53,27 @@ class PayActivity : AppCompatActivity() {
         // 必须异步调用
         val payThread = Thread(payRunnable)
         payThread.start()
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun onSelectNum(view: View) {
+        val cardviewId = mutableListOf<Int>(R.id.firstGear, R.id.SecondGear, R.id.ThirdGear, R.id.fourthGear, R.id.fifthGear, R.id.LastGear)
+        for (id in cardviewId) {
+            findViewById<View>(id).background = getDrawable(R.drawable.cardview_unchecked_paypage)
+        }
+        view.background = getDrawable(R.drawable.cardview_checked_paypage)
+        when (view.id) {
+            R.id.firstGear -> { binding.submitButton.setText("立即购买" + "100元贝") }
+            R.id.SecondGear -> { binding.submitButton.setText("立即购买" + "600元贝") }
+            R.id.ThirdGear -> { binding.submitButton.setText("立即购买" + "300元贝") }
+            R.id.fourthGear -> { binding.submitButton.setText("立即购买" + "9800元贝") }
+            R.id.fifthGear -> { binding.submitButton.setText("立即购买" + "9800元贝") }
+            else -> { binding.submitButton.setText("立即购买") }
+        }
+    }
+
+    fun onBackBtn(view: View) {
+        finish()
     }
 
 //    @SuppressLint("HandlerLeak")
