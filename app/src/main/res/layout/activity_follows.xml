@@ -27,6 +27,7 @@
         android:layout_marginTop="3dp"
         android:text="关注的人"
         android:textSize="21sp"
+        android:onClick="justTestFunction"
         app:layout_constraintBottom_toBottomOf="@+id/onBackButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

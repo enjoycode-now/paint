@@ -5,11 +5,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.FansAdapter
-import cn.copaint.audience.adapter.FollowAdapter
 import cn.copaint.audience.databinding.ActivityFollowsBinding
 import cn.copaint.audience.model.Follow
 import cn.copaint.audience.utils.ToastUtils.app
+import com.apollographql.apollo3.ApolloClient
 import com.bugsnag.android.Bugsnag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FansActivity : AppCompatActivity() {
     lateinit var binding: ActivityFollowsBinding
@@ -31,4 +34,15 @@ class FansActivity : AppCompatActivity() {
     }
 
     fun onBackPress(view: View) = onBackPressed()
+
+    fun justTestFunction(view: View) {
+        val apolloclient = ApolloClient.Builder()
+            .serverUrl("http://120.78.173.15:20000/query")
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = apolloclient.query(TestPaintingQuery()).execute()
+            binding.searchEdit.setText(response.data.toString() ?: "null")
+        }
+    }
 }
