@@ -1,0 +1,10 @@
+mutation CreateTopUpOrder($amount: Float!) {
+    createTopUpOrder(amount: $amount) {
+        id
+        topUpOrderStatus
+        amount
+        topUpOrderPaymentMethod
+        alipayTradeNo
+        wechatPayTradeNo
+    }
+}

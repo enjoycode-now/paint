@@ -6,7 +6,6 @@ query Paintings {
                 creator
                 name
                 description
-                status
                 historySize
                 createdAt
                 updatedAt

@@ -1,0 +1,5 @@
+query TopUpOrderPayment($topUpOrderId: ID!, $method: TopUpOrderPaymentMethod!) {
+    topUpOrderPayment(topUpOrderID: $topUpOrderId, method: $method) {
+        result
+    }
+}

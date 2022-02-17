@@ -14,12 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
+import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.getDigest
+import com.apollographql.apollo3.ApolloClient
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
@@ -48,6 +50,20 @@ class UserActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
+        initData()
+    }
+
+    private fun initData() {
+        val apolloclient = ApolloClient.Builder()
+            .serverUrl("http://120.78.173.15:20000/query")
+            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = apolloclient.query(UserPage_InitQuery()).execute()
+            binding.moneyText.setText(response.data?.wallet?.balance.toString())
+            binding.fansText.setText(response.data?.followers?.totalCount.toString())
+        }
     }
 
     override fun onResume() {
@@ -72,7 +88,7 @@ class UserActivity : AppCompatActivity() {
             binding.blockchainAddress.text = displayAddress
             binding.biography.text = biography
             Glide.with(this@UserActivity).load(user.photo).into(binding.userAvatar)
-            binding.editProfileButton.isEnabled=true
+            binding.editProfileButton.isEnabled = true
         }
     }
 

@@ -1,0 +1,20 @@
+query PayACtivity_Init {
+    wallet {
+        id
+        userID
+        income
+        balance
+    }
+    balanceRecords {
+        edges {
+            node {
+                id
+                balanceRecordType
+                balanceRecordAction
+                balance
+                createdAt
+            }
+        }
+        totalCount
+    }
+}

@@ -38,7 +38,7 @@
         android:id="@+id/remainYuanbei"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:text="元贝余额：200"
+        android:text="元贝余额：0"
         android:textColor="#323233"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/ThirdGear"

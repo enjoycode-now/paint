@@ -1,0 +1,8 @@
+query UserPage_Init {
+    wallet {
+        balance
+    }
+    followers {
+        totalCount
+    }
+}

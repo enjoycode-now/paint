@@ -35,14 +35,4 @@ class FansActivity : AppCompatActivity() {
 
     fun onBackPress(view: View) = onBackPressed()
 
-    fun justTestFunction(view: View) {
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = apolloclient.query(TestPaintingQuery()).execute()
-            binding.searchEdit.setText(response.data.toString() ?: "null")
-        }
-    }
 }
