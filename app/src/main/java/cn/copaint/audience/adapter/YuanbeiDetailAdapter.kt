@@ -8,9 +8,14 @@ import cn.copaint.audience.databinding.ItemYuanbeiDetailBinding
 import cn.copaint.audience.type.BalanceRecordAction
 import cn.copaint.audience.type.BalanceRecordType
 import cn.copaint.audience.utils.ToastUtils.toast
-import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.regex.Pattern
+import java.text.SimpleDateFormat as SimpleDateFormat1
 
 class YuanbeiDetailAdapter(private var activity: PayActivity) :
     RecyclerView.Adapter<YuanbeiDetailAdapter.ViewHolder>() {
@@ -40,7 +45,7 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
                 type = "-"
             }
             binding.detailNum.setText(type + list[position].balance.toString())
-            binding.createAt.setText("时间：" + rcfDateStr2DateStr(list[position].createAt))
+            binding.createAt.setText(rcfDateStr2DateStr(list[position].createAt))
             when (list[position].balanceRecordAction) {
                 BalanceRecordAction.TOP_UP -> {
                     binding.purchasedWorkName.setText("元贝充值")
@@ -60,14 +65,12 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
 
         // 将rcf339时间字符串 转换为 标准时间字符串
         fun rcfDateStr2DateStr(str: String): String {
-//            var instant = Instant.parse(str)
-//            instant.to
-
-            val cal = Calendar.getInstance(Locale.getDefault())
-            val sdf = SimpleDateFormat("yyyy-MM-dd-HH:mm:ss")
-            val sdf2 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            cal.time = sdf.parse(str.replace("Z", "").replace("T", "-"))
-            return sdf2.format(cal.time)
+            val instant = Instant.parse(str)
+//            ZonedDateTime.ofInstant(LocalDateTime.ofInstant(instant), ZoneOffset.UTC,)
+            val datetime =
+                LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId())
+            return DateTimeFormatter.ofPattern("创建于 yyyy 年 MM 月 dd 日 HH:mm:ss")
+                .format(datetime)
         }
 
     }
