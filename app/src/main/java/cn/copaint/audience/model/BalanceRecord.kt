@@ -1,3 +1,12 @@
 package cn.copaint.audience.model
 
-class BalanceRecord(val id: String, var balance: Float, var balanceRecordAction: String, var balanceRecordType: String, var createAt: String)
+import cn.copaint.audience.type.BalanceRecordAction
+import cn.copaint.audience.type.BalanceRecordType
+
+class BalanceRecord(
+    val id: String,
+    var balance: Double,
+    var balanceRecordAction: BalanceRecordAction,
+    var balanceRecordType: BalanceRecordType,
+    var createAt: String
+)

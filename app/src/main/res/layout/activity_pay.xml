@@ -10,35 +10,36 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="#FAFBFF"
+        app:layout_constraintHeight_percent="0.08"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <ImageView
             android:id="@+id/onBackButton"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:onClick="onBackBtn"
-            android:src="@drawable/ic_back_deep_gray"
-            app:tint="#999999" />
+            android:paddingVertical="5dp"
+            android:src="@drawable/ic_back_deep_gray" />
 
         <TextView
             android:id="@+id/titleNote"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="元贝账户"
             android:textAlignment="center"
             android:textColor="#CC000000"
-            android:textSize="28sp"
-            tools:layout_editor_absoluteX="37dp"
-            tools:layout_editor_absoluteY="13dp" />
+            android:textSize="28sp" />
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
         android:id="@+id/remainYuanbei"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:text="元贝余额：0"
+        android:text="元贝余额：loading"
         android:textColor="#323233"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/ThirdGear"
@@ -49,13 +50,13 @@
         android:id="@+id/firstGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
         android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
+        app:cardCornerRadius="6dp"
         app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toStartOf="@+id/SecondGear"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/remainYuanbei">
+        app:layout_constraintTop_toBottomOf="@id/remainYuanbei"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="100元贝"
+                android:text="10元贝"
                 android:textSize="20sp" />
 
             <TextView
@@ -85,14 +86,14 @@
         android:id="@+id/SecondGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
         android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
-        app:layout_constraintDimensionRatio="5:3"
+        app:cardCornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="@+id/firstGear"
+        app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toStartOf="@+id/ThirdGear"
         app:layout_constraintStart_toEndOf="@+id/firstGear"
-        app:layout_constraintTop_toTopOf="@id/firstGear">
+        app:layout_constraintTop_toTopOf="@id/firstGear"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="600元贝"
+                android:text="60元贝"
                 android:textSize="20sp" />
 
             <TextView
@@ -122,14 +123,14 @@
         android:id="@+id/ThirdGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
         android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
-        app:layout_constraintDimensionRatio="5:3"
+        app:cardCornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="@+id/SecondGear"
+        app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/SecondGear"
-        app:layout_constraintTop_toTopOf="@id/SecondGear">
+        app:layout_constraintTop_toTopOf="@id/SecondGear"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,7 +143,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="3000元贝"
+                android:text="300元贝"
                 android:textSize="20sp" />
 
             <TextView
@@ -158,14 +159,14 @@
         android:id="@+id/fourthGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
         android:layout_marginTop="32dp"
         android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
+        app:cardCornerRadius="6dp"
         app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toStartOf="@+id/fifthGear"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/firstGear">
+        app:layout_constraintTop_toBottomOf="@id/firstGear"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -178,7 +179,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="9800元贝"
+                android:text="980元贝"
                 android:textSize="20sp" />
 
             <TextView
@@ -194,15 +195,15 @@
         android:id="@+id/fifthGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
-        android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
-        app:layout_constraintDimensionRatio="5:3"
         android:background="@drawable/cardview_unchecked_paypage"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="@+id/fourthGear"
+        app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toStartOf="@+id/LastGear"
         app:layout_constraintStart_toEndOf="@id/fourthGear"
-        app:layout_constraintTop_toTopOf="@id/fourthGear">
+        app:layout_constraintTop_toTopOf="@id/fourthGear"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -222,7 +223,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="98元"
+                android:text="980元"
                 android:textSize="15sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -231,15 +232,15 @@
         android:id="@+id/LastGear"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="6dp"
-        android:onClick="onSelectNum"
-        app:layout_constraintWidth_percent="0.28"
-        app:layout_constraintDimensionRatio="5:3"
         android:background="@drawable/cardview_unchecked_paypage"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="@+id/fifthGear"
+        app:layout_constraintDimensionRatio="5:3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fifthGear"
-        app:layout_constraintTop_toTopOf="@id/fifthGear">
+        app:layout_constraintTop_toTopOf="@id/fifthGear"
+        app:layout_constraintWidth_percent="0.28">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -310,33 +311,33 @@
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:background="#FAFBFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lawNote"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-    <TextView
-        android:id="@+id/YuanbeiDetailNote"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="元贝收支明细"
-        android:textColor="#CC000000"
-        android:textSize="18sp"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/YuanbeiDetailRecyclerview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:overScrollMode="never"
-        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/YuanbeiDetailNote"
-        app:layout_constraintStart_toStartOf="@id/YuanbeiDetailNote"
-        app:layout_constraintTop_toBottomOf="@id/YuanbeiDetailNote"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lawNote">
+
+        <TextView
+            android:id="@+id/YuanbeiDetailNote"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="元贝收支明细"
+            android:textColor="#CC000000"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.9" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/YuanbeiDetailRecyclerview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/YuanbeiDetailNote"
+            app:layout_constraintStart_toStartOf="@id/YuanbeiDetailNote"
+            app:layout_constraintTop_toBottomOf="@id/YuanbeiDetailNote" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

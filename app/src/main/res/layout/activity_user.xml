@@ -86,6 +86,19 @@
                         app:layout_constraintVertical_chainStyle="packed" />
 
                     <View
+                        android:id="@+id/touch_moneyNote"
+                        android:layout_width="82dp"
+                        android:layout_height="68dp"
+                        android:layout_marginStart="144dp"
+                        android:layout_marginBottom="8dp"
+                        android:onClick="buyScallop"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/splitLine"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintTop_toTopOf="@+id/splitLine"
+                        />
+
+                    <View
                         android:id="@+id/splitLine"
                         android:layout_width="1dp"
                         android:layout_height="48dp"
@@ -140,6 +153,17 @@
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="@+id/fansNote"
                         app:layout_constraintTop_toBottomOf="@+id/fansNote" />
+
+                    <View
+                        android:id="@+id/touch_fansNote"
+                        android:layout_width="82dp"
+                        android:layout_height="68dp"
+                        android:onClick="onFollows"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/splitLine"
+                        app:layout_constraintTop_toTopOf="@+id/splitLine"
+                        />
 
                     <TextView
                         android:id="@+id/authorName"

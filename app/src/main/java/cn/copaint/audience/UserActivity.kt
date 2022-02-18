@@ -35,7 +35,6 @@ class UserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
-        setContentView(R.layout.activity_user)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
@@ -44,13 +43,14 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        val statusBarHeight = if (statusBarId> 0)resources.getDimensionPixelSize(statusBarId) else 24.dp
+        val statusBarHeight =
+            if (statusBarId > 0) resources.getDimensionPixelSize(statusBarId) else 24.dp
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
-        binding.supportWorksRecyclerView.layoutParams.height = screenHeight - statusBarHeight - 96.dp
-        initData()
+        binding.supportWorksRecyclerView.layoutParams.height =
+            screenHeight - statusBarHeight - 96.dp
     }
 
     private fun initData() {
@@ -61,13 +61,17 @@ class UserActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val response = apolloclient.query(UserPage_InitQuery()).execute()
-            binding.moneyText.setText(response.data?.wallet?.balance.toString())
-            binding.fansText.setText(response.data?.followers?.totalCount.toString())
+            runOnUiThread {
+                binding.moneyText.setText(response.data?.wallet?.balance.toString())
+                binding.fansText.setText(response.data?.followers?.totalCount.toString())
+            }
+
         }
     }
 
     override fun onResume() {
         super.onResume()
+        initData()
         updateUiInfo()
         // 应援记录数据
         CoroutineScope(Dispatchers.Default).launch {
@@ -84,7 +88,9 @@ class UserActivity : AppCompatActivity() {
             binding.authorName.text = user.nickname
             binding.authorId.text = user.id.uppercase()
             val blockChainAddress = user.id.getDigest("SHA-256")
-            val displayAddress = "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...").uppercase()
+            val displayAddress =
+                "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...")
+                    .uppercase()
             binding.blockchainAddress.text = displayAddress
             binding.biography.text = biography
             Glide.with(this@UserActivity).load(user.photo).into(binding.userAvatar)
