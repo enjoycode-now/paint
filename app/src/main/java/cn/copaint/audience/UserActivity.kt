@@ -53,25 +53,9 @@ class UserActivity : AppCompatActivity() {
             screenHeight - statusBarHeight - 96.dp
     }
 
-    private fun initData() {
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = apolloclient.query(UserPage_InitQuery()).execute()
-            runOnUiThread {
-                binding.moneyText.setText(response.data?.wallet?.balance.toString())
-                binding.fansText.setText(response.data?.followers?.totalCount.toString())
-            }
-
-        }
-    }
 
     override fun onResume() {
         super.onResume()
-        initData()
         updateUiInfo()
         // 应援记录数据
         CoroutineScope(Dispatchers.Default).launch {
@@ -85,6 +69,19 @@ class UserActivity : AppCompatActivity() {
 
     private fun updateUiInfo() {
         runOnUiThread {
+            val apolloclient = ApolloClient.Builder()
+                .serverUrl("http://120.78.173.15:20000/query")
+                .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
+                .build()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = apolloclient.query(UserPage_InitQuery()).execute()
+                runOnUiThread {
+                    binding.moneyText.text = response.data?.wallet?.balance.toString()
+                    binding.fansText.text = response.data?.followers?.totalCount.toString()
+                }
+
+            }
             binding.authorName.text = user.nickname
             binding.authorId.text = user.id.uppercase()
             val blockChainAddress = user.id.getDigest("SHA-256")

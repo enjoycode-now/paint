@@ -39,22 +39,26 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
 
             val list = activity.YuanbeiDetailList
             lateinit var type: String
-            if (list[position].balanceRecordType.equals(BalanceRecordType.OBTAIN)) {
+            if (list[position].balanceRecordType == BalanceRecordType.OBTAIN) {
                 type = "+"
             } else {
                 type = "-"
             }
-            binding.detailNum.setText(type + list[position].balance.toString())
-            binding.createAt.setText(rcfDateStr2DateStr(list[position].createAt))
+            binding.detailNum.text = type + list[position].balance.toString()
+            binding.createAt.text = rcfDateStr2DateStr(list[position].createAt)
+
             when (list[position].balanceRecordAction) {
                 BalanceRecordAction.TOP_UP -> {
-                    binding.purchasedWorkName.setText("元贝充值")
+                    binding.purchasedWorkName.text = "元贝充值"
+                    binding.purchasedWorkShare.text = ""
                 }
                 BalanceRecordAction.TRANSACTION -> {
-                    binding.purchasedWorkName.setText("交易所得")
+                    binding.purchasedWorkName.text = "交易所得"
+                    binding.purchasedWorkShare.text = "份额xx%"
                 }
                 else -> {
-                    binding.purchasedWorkName.setText("其他")
+                    binding.purchasedWorkName.text = "其他"
+                    binding.purchasedWorkShare.text = ""
                 }
             }
 
@@ -66,7 +70,6 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
         // 将rcf339时间字符串 转换为 标准时间字符串
         fun rcfDateStr2DateStr(str: String): String {
             val instant = Instant.parse(str)
-//            ZonedDateTime.ofInstant(LocalDateTime.ofInstant(instant), ZoneOffset.UTC,)
             val datetime =
                 LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId())
             return DateTimeFormatter.ofPattern("创建于 yyyy 年 MM 月 dd 日 HH:mm:ss")
