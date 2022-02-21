@@ -118,7 +118,7 @@
                         android:text="关注"
                         android:textColor="#888888"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toTopOf="@+id/fansText"
+                        app:layout_constraintBottom_toTopOf="@+id/followingText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toEndOf="@+id/splitLine"
@@ -130,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buyScallop"
-                        android:text="@string/initial_YuanBei_account"
+                        android:text="@string/loading"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -140,11 +140,11 @@
                         app:layout_constraintTop_toBottomOf="@+id/moneyNote" />
 
                     <TextView
-                        android:id="@+id/fansText"
+                        android:id="@+id/followingText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="onFollows"
-                        android:text="@string/initial_fan_num"
+                        android:text="@string/loading"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -173,7 +173,7 @@
                         android:layout_marginTop="112dp"
                         android:text="@string/initial_author_name"
                         android:textColor="#cc000000"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -185,9 +185,9 @@
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:onClick="copyId"
-                        android:text="@string/initial_author_id"
+                        android:text="@string/loading"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="@+id/authorName"
                         app:layout_constraintTop_toBottomOf="@+id/authorName" />
 
@@ -225,7 +225,7 @@
                         android:lineSpacingExtra="12px"
                         android:text="@string/initial_author_biography"
                         android:textColor="#cc000000"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toTopOf="@+id/grayBackground"
                         app:layout_constraintEnd_toEndOf="@+id/lineView"
                         app:layout_constraintStart_toStartOf="@+id/lineView"

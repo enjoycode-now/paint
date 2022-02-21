@@ -10,12 +10,15 @@
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhiteBoardWacom"
+        android:usesCleartextTraffic="true"
         tools:replace="android:label">
+        <activity
+            android:name=".TransactionOrderDetialActivity"
+            android:exported="false" />
         <activity
             android:name=".PublishedWorkActivity"
             android:exported="false" />
@@ -31,7 +34,7 @@
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".PayActivity" />
-        <activity android:name=".FansActivity"/>
+        <activity android:name=".FansActivity" />
         <activity android:name=".VerificationCodeActivity" />
         <activity
             android:name=".UserActivity"

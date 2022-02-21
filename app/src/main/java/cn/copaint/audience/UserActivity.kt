@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
+import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
@@ -22,6 +23,7 @@ import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.getDigest
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
@@ -75,10 +77,12 @@ class UserActivity : AppCompatActivity() {
                 .build()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val response = apolloclient.query(UserPage_InitQuery()).execute()
+                val response = apolloclient.query(UserPage_InitQuery(input = Optional.presentIfNotNull(
+                    FollowInfoInput(userID = user.id)
+                ))).execute()
                 runOnUiThread {
                     binding.moneyText.text = response.data?.wallet?.balance.toString()
-                    binding.fansText.text = response.data?.followers?.totalCount.toString()
+                    binding.followingText.text = response.data?.followInfo?.followingCount.toString()
                 }
 
             }

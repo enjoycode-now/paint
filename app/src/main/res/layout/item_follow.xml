@@ -21,19 +21,23 @@
         android:id="@+id/nicikname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        android:textSize="16sp"
         android:text="昵称"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <TextView
         android:id="@+id/unsubscribe"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="2dp"
-        app:srcCompat="@drawable/ic_delete"
+        android:background="@drawable/follow_text_bg"
+        android:gravity="center"
+        android:textColor="#8767E2"
+        android:textSize="14sp"
+        android:text="已关注"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

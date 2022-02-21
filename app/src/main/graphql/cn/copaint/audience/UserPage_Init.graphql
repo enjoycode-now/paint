@@ -1,8 +1,9 @@
-query UserPage_Init {
+query UserPage_Init($input: FollowInfoInput) {
     wallet {
         balance
     }
-    followers {
-        totalCount
+    followInfo(input: $input) {
+        followingCount
+        followersCount
     }
 }

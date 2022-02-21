@@ -1,0 +1,13 @@
+query GetFollowersList($after: Cursor, $first: Int, $where: FollowerWhereInput) {
+    followers(after: $after, first: $first, where: $where) {
+        totalCount
+        edges {
+            node {
+                id
+                userID
+                followerID
+            }
+            cursor
+        }
+    }
+}

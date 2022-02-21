@@ -1,0 +1,9 @@
+query GetAuthingUsersInfo($authingIDs: [String!]!) {
+    authingUsersInfo(authingIDs: $authingIDs) {
+        id
+        nickname
+        gender
+        photo
+        biography
+    }
+}
