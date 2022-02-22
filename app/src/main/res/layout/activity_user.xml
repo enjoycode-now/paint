@@ -33,9 +33,9 @@
 
             <ImageView
                 android:id="@+id/configButton"
-                android:layout_width="72px"
-                android:layout_height="72px"
-                android:background="@drawable/ic_she"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_more"
                 android:onClick="onSetting"
                 app:layout_constraintBottom_toTopOf="@+id/cardView"
                 app:layout_constraintEnd_toEndOf="@+id/cardView"
@@ -46,7 +46,7 @@
                 android:id="@+id/headerView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="15:4"
+                app:layout_constraintDimensionRatio="5:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -193,11 +193,15 @@
 
                     <Button
                         android:id="@+id/editProfileButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="65dp"
+                        android:layout_height="30dp"
                         android:layout_marginEnd="24dp"
                         android:enabled="false"
                         android:onClick="editProfile"
+                        android:autoSizeMinTextSize="5sp"
+                        android:background="@drawable/btn_edit"
+                        android:textSize="12sp"
+                        android:textColor="#8767E2"
                         android:text="编辑资料"
                         app:layout_constraintBottom_toTopOf="@+id/lineView"
                         app:layout_constraintEnd_toEndOf="parent"
