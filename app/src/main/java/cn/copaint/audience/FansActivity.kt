@@ -41,7 +41,7 @@ class FansActivity : AppCompatActivity() {
         app = this
 
         //防止弹出软键盘时将屏幕顶上去
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.followRecycle.layoutManager = LinearLayoutManager(this)
         binding.followRecycle.adapter = fansAdapter
     }
