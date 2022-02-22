@@ -27,7 +27,7 @@ class FollowAdapter(private val activity: FollowsActivity) :
 
     class ViewHolder(val itemBind: ItemFollowBinding) : RecyclerView.ViewHolder(itemBind.root) {
         fun bind(follow: GetAuthingUsersInfoQuery.AuthingUsersInfo, activity: FollowsActivity) {
-            itemBind.nicikname.text = follow.nickname.takeIf { it == null }.let { "此用户未命名" }
+            itemBind.nicikname.text = follow.nickname ?: "此用户未命名"
             if (follow.photo == "" || follow.photo?.endsWith("svg") == true) {
                 Glide.with(activity).load(R.drawable.avatar_sample).into(itemBind.avatar)
             } else {

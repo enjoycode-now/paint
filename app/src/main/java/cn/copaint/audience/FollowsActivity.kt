@@ -63,6 +63,7 @@ class FollowsActivity : AppCompatActivity() {
 
             Log.i("FollowActivity", response.toString())
 
+            // 获取全部关注对象的userid
             val userIdList = mutableListOf<String>()
             response?.followers?.edges?.forEach {
                 it?.node?.userID?.let { it1 -> userIdList.add(it1) }

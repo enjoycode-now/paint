@@ -53,11 +53,14 @@ class ItemRecommendFragment : Fragment() {
         }
 
         binding.toolbar.followBtn.setOnClickListener {
-            if (AuthingUtils.loginCheck() && !followStatus) {
-                followUser(creatorId)
-            } else {
-                unFollowUser(creatorId)
+            if(AuthingUtils.loginCheck()){
+                if (!followStatus) {
+                    followUser(creatorId)
+                } else {
+                    unFollowUser(creatorId)
+                }
             }
+
         }
 
         CoroutineScope(Dispatchers.Default).launch {
