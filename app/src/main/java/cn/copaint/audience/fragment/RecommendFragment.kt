@@ -41,7 +41,7 @@ class RecommendFragment : Fragment() {
         override fun getItemCount() = Int.MAX_VALUE
 
         override fun createFragment(position: Int): Fragment {
-            return ItemLiveFragment()
+            return ItemRecommendFragment()
         }
     }
 }

@@ -1,0 +1,19 @@
+query UserPageCreator_Init($input: FollowInfoInput, $authingIDs: [String!]!, $where: FollowerWhereInput) {
+    followInfo(input: $input) {
+        followingCount
+        followersCount
+    }
+    wallet {
+        balance
+    }
+    authingUsersInfo(authingIDs: $authingIDs) {
+        id
+        nickname
+        gender
+        photo
+        biography
+    }
+    followers(where: $where) {
+        totalCount
+    }
+}

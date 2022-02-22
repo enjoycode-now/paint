@@ -7,21 +7,102 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
+import cn.copaint.audience.type.FollowInfoInput
+import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.getDigest
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UserPageCreatorActivity : AppCompatActivity() {
+    lateinit var creatorId: String
+    var is_follow = true
+    lateinit var apolloclient: ApolloClient
     lateinit var binding: ActivityUserPageCreatorBinding
+    var lastTimeMillis = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserPageCreatorBinding.inflate(layoutInflater)
         Bugsnag.start(this)
         setContentView(binding.root)
         app = this
+        apolloclient = ApolloClient.Builder()
+            .serverUrl("http://120.78.173.15:20000/query")
+            .addHttpHeader("Authorization", "Bearer " + user.token!!)
+            .build()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUiInfo()
+    }
+
+    private fun updateUiInfo() {
+        creatorId = intent.getStringExtra("creatorId") ?: ""
+        if (!creatorId.equals("")) {
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = apolloclient.query(
+                    UserPageCreator_InitQuery(
+                        input = Optional.presentIfNotNull(
+                            FollowInfoInput(userID = AuthingUtils.user.id)
+                        ),
+                        listOf(creatorId),
+                        where = Optional.presentIfNotNull(
+                            FollowerWhereInput(
+                                userID = Optional.presentIfNotNull(creatorId),
+                                followerID = Optional.presentIfNotNull(user.id)
+                            )
+                        )
+                    )
+                ).execute()
+
+
+                runOnUiThread {
+                    binding.moneyText.text = response.data?.wallet?.balance.toString()
+                    binding.fansText.text = response.data?.followInfo?.followersCount.toString()
+                    val thisAuthingUserInfo = response.data?.authingUsersInfo?.get(0)
+                    binding.authorName.text = thisAuthingUserInfo?.nickname
+                    binding.authorId.text = thisAuthingUserInfo?.id
+                    binding.biography.text = thisAuthingUserInfo?.biography
+                    val blockChainAddress = AuthingUtils.user.id.getDigest("SHA-256")
+                    val displayAddress =
+                        "0x" + blockChainAddress.replaceRange(
+                            8,
+                            blockChainAddress.length - 8,
+                            "..."
+                        )
+                            .uppercase()
+                    binding.blockchainAddress.text = displayAddress
+                    if (response.data?.followers?.totalCount != 0) {
+                        is_follow = true
+                        binding.followBtn.text = "已关注"
+                        binding.followBtn.background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.bg_btn_unfollow, null)
+                    } else {
+                        is_follow = false
+                        binding.followBtn.text = "关注"
+                        binding.followBtn.background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.bg_btn_follow, null)
+                    }
+                    Glide.with(this@UserPageCreatorActivity).load(thisAuthingUserInfo?.photo)
+                        .into(binding.userAvatar)
+                }
+            }
+        } else {
+
+        }
     }
 
     fun onFans(view: View) {
@@ -43,7 +124,8 @@ class UserPageCreatorActivity : AppCompatActivity() {
 
     fun copyAddress(view: View) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("blockchainAddress", AuthingUtils.user.id.getDigest("SHA-256"))
+        val clipData =
+            ClipData.newPlainText("blockchainAddress", AuthingUtils.user.id.getDigest("SHA-256"))
         clipboardManager.setPrimaryClip(clipData)
         ToastUtils.toast("区块链地址复制成功")
     }
@@ -55,4 +137,67 @@ class UserPageCreatorActivity : AppCompatActivity() {
         clipboardManager.setPrimaryClip(clipData)
         ToastUtils.toast("用户ID复制成功")
     }
+
+    fun onFollowAction(view: View) {
+
+        if (System.currentTimeMillis() - lastTimeMillis < 1000) {
+            toast("操作过于频繁，请慢一点")
+            return
+        } else {
+            lastTimeMillis = System.currentTimeMillis()
+        }
+
+        when (is_follow) {
+            true -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val response = apolloclient.mutation(
+                        UnfollowUserMutation(creatorId)
+                    ).execute()
+                    runOnUiThread {
+                        if (response?.data != null) {
+
+                                is_follow = false
+                                binding.followBtn.text = "关注"
+                                binding.followBtn.background =
+                                    ResourcesCompat.getDrawable(
+                                        resources,
+                                        R.drawable.bg_btn_follow,
+                                        null
+                                    )
+
+                        } else {
+                            toast(response?.errors?.get(0)?.message ?: "取消关注失败")
+                        }
+                    }
+                }
+            }
+            else -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val response = apolloclient.mutation(
+                        FollowUserMutation(creatorId)
+                    ).execute()
+
+                    runOnUiThread {
+                        if (response?.data != null) {
+
+                            is_follow = true
+                            binding.followBtn.text = "已关注"
+                            binding.followBtn.background =
+                                ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.bg_btn_unfollow,
+                                    null
+                                )
+
+                        } else {
+                            toast(response?.errors?.get(0)?.message ?: "关注失败")
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+
 }

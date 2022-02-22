@@ -19,6 +19,7 @@ import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,7 @@ class HomePageActivity : AppCompatActivity() {
     lateinit var binding: ActivityHomePageBinding
 
     val fragmentList = mutableListOf(LiveFragment(), FollowFragment(), RecommendFragment())
+    var lastBackPressedTimeMillis = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +91,15 @@ class HomePageActivity : AppCompatActivity() {
             startActivity(Intent(this, UserActivity::class.java))
             overridePendingTransition(0, 0)
             finish()
+        }
+    }
+
+    override fun onBackPressed() {
+        if ( System.currentTimeMillis() - lastBackPressedTimeMillis < 2000){
+            super.onBackPressed()
+        }else{
+            toast("再按一次退出")
+            lastBackPressedTimeMillis = System.currentTimeMillis()
         }
     }
 

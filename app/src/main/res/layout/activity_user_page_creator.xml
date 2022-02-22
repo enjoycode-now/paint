@@ -118,7 +118,7 @@
                         android:text="粉丝"
                         android:textColor="#888888"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toTopOf="@+id/followingText"
+                        app:layout_constraintBottom_toTopOf="@+id/fansText"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toEndOf="@+id/splitLine"
@@ -140,7 +140,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/moneyNote" />
 
                     <TextView
-                        android:id="@+id/followingText"
+                        android:id="@+id/fansText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="onFans"
@@ -192,14 +192,13 @@
                         app:layout_constraintTop_toBottomOf="@+id/authorName" />
 
                     <Button
-                        android:id="@+id/editProfileButton"
+                        android:id="@+id/followBtn"
                         android:layout_width="65dp"
                         android:layout_height="30dp"
                         android:layout_marginEnd="24dp"
-                        android:enabled="false"
-                        android:onClick="editProfile"
+                        android:onClick="onFollowAction"
                         android:autoSizeMinTextSize="5sp"
-                        android:background="@drawable/btn_follow"
+                        android:background="@drawable/bg_btn_follow"
                         android:textSize="12sp"
                         android:textColor="@color/white"
                         android:text="关注"
