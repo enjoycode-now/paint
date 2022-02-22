@@ -27,7 +27,7 @@ class ItemRecommendFragment : Fragment() {
     lateinit var binding: FragmentItemRecommendBinding
 
     //这个页面的画师的id
-    val creatorId = "61e5378adc9e845d84b1ce95"
+    val creatorId = "61e6083930d0d5c19dcfa947"
 
     //关注状态位
     var followStatus = false

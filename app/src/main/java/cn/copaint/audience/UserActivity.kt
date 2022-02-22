@@ -32,6 +32,7 @@ class UserActivity : AppCompatActivity() {
 
     val sponsorList = mutableListOf<String>()
     private lateinit var binding: ActivityUserBinding
+    var lastBackPressedTimeMillis = 0L
     val adapter = SupportWorksAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,5 +147,14 @@ class UserActivity : AppCompatActivity() {
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
         toast("用户ID复制成功")
+    }
+
+    override fun onBackPressed() {
+        if ( System.currentTimeMillis() - lastBackPressedTimeMillis < 2000){
+            super.onBackPressed()
+        }else{
+            toast("再按一次退出")
+            lastBackPressedTimeMillis = System.currentTimeMillis()
+        }
     }
 }

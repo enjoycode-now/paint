@@ -664,6 +664,7 @@ type Mutation {
     """Follower"""
     followUser(userID: String!): Follower!
     unfollowUser(userID: String!): Int!
+    removeFollower(userID: String!): Int!
     """Wallet"""
     createTopUpOrder(amount: Float!): TopUpOrder!
 }

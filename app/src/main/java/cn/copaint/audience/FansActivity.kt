@@ -27,7 +27,7 @@ class FansActivity : AppCompatActivity() {
     val fansAdapter = FansAdapter(this)
     var cursor = Optional.Absent
     var first = 10
-    var where: FollowerWhereInput = FollowerWhereInput(
+    var where = FollowerWhereInput(
         userID = Optional.presentIfNotNull(
             AuthingUtils.user.id
         )
@@ -63,7 +63,7 @@ class FansActivity : AppCompatActivity() {
                 apolloClient.query(
                     GetFollowersListQuery(
                         cursor,
-                        first = Optional.presentIfNotNull(10),
+                        first = Optional.presentIfNotNull(first),
                         where = Optional.presentIfNotNull(where)
                     )
                 )
@@ -75,11 +75,15 @@ class FansActivity : AppCompatActivity() {
 
             Log.i("FollowActivity", response.toString())
 
+            // 获取全部粉丝的userid
             val userIdList = mutableListOf<String>()
             response?.followers?.edges?.forEach {
-                it?.node?.userID?.let { it1 -> userIdList.add(it1) }
+                it?.node?.followerID?.let { followerId -> userIdList.add(followerId) }
             }
+
             fansList.clear()
+
+            // 根据列表获取每一个粉丝的个人信息，然后添加到List去，最后notifyChange
             apolloClient.query(GetAuthingUsersInfoQuery(userIdList))
                 .execute().data?.authingUsersInfo?.forEach {
                     fansList.add(it)
