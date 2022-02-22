@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserActivity">
+    tools:context=".UserPageCreatorActivity">
+<!--注：该页面是之前创作端的旧页面，仅做归档保存-->
 
     <cn.copaint.audience.views.ParentNestedScrollView
+        android:id="@+id/parentNestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:isScrollContainer="true"
@@ -18,35 +20,40 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
             <ImageView
                 android:id="@+id/backgroundImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:contentDescription="@null"
                 app:layout_constraintDimensionRatio="15:7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/bg_user_center"
-                android:contentDescription="@null" />
+                app:srcCompat="@drawable/bg_user_center" />
 
             <ImageView
                 android:id="@+id/configButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/ic_more"
+                android:layout_width="72px"
+                android:layout_height="72px"
+                android:background="@drawable/ic_she"
+                android:contentDescription="@string/setting"
                 android:onClick="onSetting"
                 app:layout_constraintBottom_toTopOf="@+id/cardView"
                 app:layout_constraintEnd_toEndOf="@+id/cardView"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/setting" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/headerView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="5:1"
+                app:layout_constraintDimensionRatio="15:4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,7 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
-                android:padding="4dp"
+                android:padding="6dp"
                 app:cardCornerRadius="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +81,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="144dp"
                         android:layout_marginBottom="8dp"
-                        android:onClick="buyScallop"
                         android:text="@string/YuanBei"
                         android:textColor="#888888"
                         android:textSize="18sp"
@@ -84,19 +90,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/splitLine"
                         app:layout_constraintVertical_chainStyle="packed" />
-
-                    <View
-                        android:id="@+id/touch_moneyNote"
-                        android:layout_width="82dp"
-                        android:layout_height="68dp"
-                        android:layout_marginStart="144dp"
-                        android:layout_marginBottom="8dp"
-                        android:onClick="buyScallop"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/splitLine"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintTop_toTopOf="@+id/splitLine"
-                        />
 
                     <View
                         android:id="@+id/splitLine"
@@ -114,13 +107,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:onClick="onFollows"
-                        android:text="关注"
+                        android:onClick="onFans"
+                        android:text="@string/fan"
                         android:textColor="#888888"
                         android:textSize="18sp"
-                        app:layout_constraintBottom_toTopOf="@+id/followingText"
+                        app:layout_constraintBottom_toTopOf="@+id/fansText"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toEndOf="@+id/splitLine"
                         app:layout_constraintTop_toTopOf="@+id/splitLine"
                         app:layout_constraintVertical_chainStyle="packed" />
@@ -129,22 +121,22 @@
                         android:id="@+id/moneyText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="buyScallop"
-                        android:text="@string/loading"
+                        android:text="@string/initial_YuanBei_account"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
+                        android:onClick="buyScallop"
                         app:layout_constraintBottom_toBottomOf="@+id/splitLine"
                         app:layout_constraintEnd_toEndOf="@id/moneyNote"
                         app:layout_constraintStart_toStartOf="@id/moneyNote"
                         app:layout_constraintTop_toBottomOf="@+id/moneyNote" />
 
                     <TextView
-                        android:id="@+id/followingText"
+                        android:id="@+id/fansText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="onFollows"
-                        android:text="@string/loading"
+                        android:onClick="onFans"
+                        android:text="@string/initial_fan_num"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -154,17 +146,6 @@
                         app:layout_constraintStart_toStartOf="@+id/fansNote"
                         app:layout_constraintTop_toBottomOf="@+id/fansNote" />
 
-                    <View
-                        android:id="@+id/touch_fansNote"
-                        android:layout_width="82dp"
-                        android:layout_height="68dp"
-                        android:onClick="onFollows"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/splitLine"
-                        app:layout_constraintTop_toTopOf="@+id/splitLine"
-                        />
-
                     <TextView
                         android:id="@+id/authorName"
                         android:layout_width="wrap_content"
@@ -173,7 +154,7 @@
                         android:layout_marginTop="112dp"
                         android:text="@string/initial_author_name"
                         android:textColor="#cc000000"
-                        android:textSize="20sp"
+                        android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -185,24 +166,19 @@
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:onClick="copyId"
-                        android:text="@string/loading"
+                        android:text="@string/initial_author_id"
                         android:textColor="@color/black"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/authorName"
                         app:layout_constraintTop_toBottomOf="@+id/authorName" />
 
                     <Button
                         android:id="@+id/editProfileButton"
-                        android:layout_width="65dp"
-                        android:layout_height="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginEnd="24dp"
-                        android:enabled="false"
                         android:onClick="editProfile"
-                        android:autoSizeMinTextSize="5sp"
-                        android:background="@drawable/btn_follow"
-                        android:textSize="12sp"
-                        android:textColor="@color/white"
-                        android:text="关注"
+                        android:text="编辑资料"
                         app:layout_constraintBottom_toTopOf="@+id/lineView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/authorName" />
@@ -229,7 +205,7 @@
                         android:lineSpacingExtra="12px"
                         android:text="@string/initial_author_biography"
                         android:textColor="#cc000000"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         app:layout_constraintBottom_toTopOf="@+id/grayBackground"
                         app:layout_constraintEnd_toEndOf="@+id/lineView"
                         app:layout_constraintStart_toStartOf="@+id/lineView"
@@ -275,35 +251,215 @@
                 app:layout_constraintTop_toBottomOf="@+id/headerView"
                 app:layout_constraintWidth_percent="0.2" />
 
+            <LinearLayout
+                android:id="@+id/wordOrder"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/cardView">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/work_order" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:text="作品订单"
+                    android:textSize="16sp"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB" />
+            </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/wordOrder"
+                app:layout_constraintStart_toStartOf="@id/wordOrder"
+                app:layout_constraintEnd_toEndOf="@id/wordOrder"
+                android:background="#08000000"
+                />
+
+            <LinearLayout
+                android:id="@+id/servicegreement"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/wordOrder">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/service_agreement" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="服务协议"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
+            </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/servicegreement"
+                app:layout_constraintStart_toStartOf="@id/servicegreement"
+                app:layout_constraintEnd_toEndOf="@id/servicegreement"
+                android:background="#08000000"
+                />
+
+            <LinearLayout
+                android:id="@+id/privacyPolicy"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/servicegreement">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/privacy_policy" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="隐私政策"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/privacyPolicy"
+                app:layout_constraintStart_toStartOf="@id/privacyPolicy"
+                app:layout_constraintEnd_toEndOf="@id/privacyPolicy"
+                android:background="#08000000"
+                />
+
+            <LinearLayout
+                android:id="@+id/contactUs"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/privacyPolicy">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/contact_us" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="联系我们"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_next_dark"
+                    app:tint="#CBCBCB"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/contactUs"
+                app:layout_constraintStart_toStartOf="@id/contactUs"
+                app:layout_constraintEnd_toEndOf="@id/contactUs"
+                android:background="#08000000"
+                />
+
+            <LinearLayout
+                android:id="@+id/versionCodeLayout"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/contactUs">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/version_code" />
+
+                <TextView
+                    android:id="@+id/versionCode"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:textSize="16sp"
+                    android:text="版本号：v1.0.0"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/versionCodeLayout"
+                app:layout_constraintStart_toStartOf="@id/versionCodeLayout"
+                app:layout_constraintEnd_toEndOf="@id/versionCodeLayout"
+                android:background="#08000000"
+                />
 
             <TextView
-                android:id="@+id/supportWorks"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="36dp"
-                android:background="#FAFBFF"
+                android:layout_height="24dp"
                 android:gravity="center"
-                android:text="Ta 的作品"
-                android:textColor="#333333"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardView" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/supportWorksRecyclerView"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:nestedScrollingEnabled="true"
-                android:overScrollMode="never"
+                android:layout_marginTop="48dp"
+                android:textColor="#AFAFAF"
+                android:textSize="12sp"
+                android:text="关注官方公众号【XXXX】，最新资讯尽在掌握"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/supportWorks" />
+                app:layout_constraintTop_toBottomOf="@+id/versionCodeLayout"
+                app:layout_constraintVertical_bias="1" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </cn.copaint.audience.views.ParentNestedScrollView>
+
+
 
 
 
