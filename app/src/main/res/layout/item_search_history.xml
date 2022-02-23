@@ -9,7 +9,8 @@
         android:id="@+id/history_im"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:src="@color/white"
+        android:padding="5dp"
+        android:src="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,6 +21,7 @@
         android:layout_height="25dp"
         android:layout_marginStart="20dp"
         android:text="@string/loading"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/history_delete"
         app:layout_constraintStart_toEndOf="@+id/history_im"

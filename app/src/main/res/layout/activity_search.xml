@@ -130,7 +130,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/guessYourWantNote"
         app:layout_constraintEnd_toStartOf="@+id/changeRecommend"
         app:layout_constraintTop_toTopOf="@+id/guessYourWantNote"
-        app:srcCompat="@drawable/avatar_sample" />
+        app:srcCompat="@drawable/ic_change" />
 
     <TextView
         android:id="@+id/changeRecommend"

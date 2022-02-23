@@ -126,7 +126,7 @@ class HomePageActivity : AppCompatActivity() {
         val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
 
         // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, 500.dp, 450.dp, true)
+        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 250.dp, true)
         layerDetailWindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗
@@ -147,9 +147,11 @@ class HomePageActivity : AppCompatActivity() {
 
         popBind.uploadWorkBtn.setOnClickListener{
 //            startActivity(Intent(this,UpLoadWorkActivity::class.java))
+            layerDetailWindow.dismiss()
         }
         popBind.publishRequirementBtn.setOnClickListener{
             startActivity(Intent(this,PublishRequirementActivity::class.java))
+            layerDetailWindow.dismiss()
         }
         popBind.closeBtn.setOnClickListener{
             layerDetailWindow.dismiss()

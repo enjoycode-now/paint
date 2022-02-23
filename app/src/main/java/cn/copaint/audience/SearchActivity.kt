@@ -16,6 +16,7 @@ import cn.copaint.audience.adapter.FlowAdapter
 import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
+import cn.copaint.audience.utils.StatusBarUtils
 
 
 class SearchActivity : AppCompatActivity() {
@@ -27,6 +28,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        StatusBarUtils.initSystemBar(window,"#FAFBFF",true)
 
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
