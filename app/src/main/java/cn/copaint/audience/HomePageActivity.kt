@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.OverScroller
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,15 +16,14 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
-import cn.copaint.audience.databinding.ItemToolsmenuBinding
 import cn.copaint.audience.fragment.FollowFragment
-import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.GrpcUtils.buildStub
+import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
@@ -38,7 +38,7 @@ class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityHomePageBinding
 
-    val fragmentList = mutableListOf(LiveFragment(), FollowFragment(), RecommendFragment())
+    val fragmentList = mutableListOf( FollowFragment(), RecommendFragment())
     var lastBackPressedTimeMillis = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,18 +48,19 @@ class HomePageActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
+        StatusBarUtils.initSystemBar(window,"#303030",true)
         buildStub()
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
-            setCurrentItem(2, false)
+            setCurrentItem(1, false)
+            getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
         }
 
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "直播"
-                1 -> tab.text = "关注"
-                2 -> tab.text = "推荐"
+                0 -> tab.text = "关注"
+                1 -> tab.text = "推荐"
             }
         }.attach()
 
@@ -88,10 +89,14 @@ class HomePageActivity : AppCompatActivity() {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.argb(80, 255, 255, 255))
-        binding.userPageBtn.setTextColor(Color.argb(80, 255, 255, 255))
+        binding.message.isSelected = false
+        binding.playground.isSelected = false
+        binding.homePageBtn.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.userPageBtn.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.playground.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.message.setTextColor(Color.parseColor("#B3B3B3"))
         view.isSelected = true
-        view.setTextColor(Color.argb(255, 255, 255, 255))
+        view.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
     fun onUserPage(view: View) {
@@ -115,7 +120,7 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     private inner class ScreenSlidePagerAdapter(fm: FragmentActivity) : FragmentStateAdapter(fm) {
-        override fun getItemCount() = 3
+        override fun getItemCount() = 2
 
         override fun createFragment(position: Int): Fragment {
             return fragmentList[position]
@@ -159,5 +164,12 @@ class HomePageActivity : AppCompatActivity() {
         popBind.root.setOnClickListener {
             layerDetailWindow.dismiss()
         }
+    }
+
+    fun onMessage(view: View) {
+        highLightBtn(view)
+    }
+    fun onPlayground(view: View) {
+        highLightBtn(view)
     }
 }

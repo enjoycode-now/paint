@@ -7,13 +7,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
+import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.biography
@@ -42,7 +46,7 @@ class UserActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-        hignLightBtn(binding.userPageBtn)
+        highLightBth(binding.userPageBtn)
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -100,14 +104,18 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    private fun hignLightBtn(view: View) {
+    private fun highLightBth(view: View) {
         view as TextView
         binding.homePageBtn.isSelected = false
         binding.userPageBtn.isSelected = false
-        binding.homePageBtn.setTextColor(Color.argb(0xcc, 179, 179, 179))
-        binding.userPageBtn.setTextColor(Color.argb(0xcc, 179, 179, 179))
+        binding.playground.isSelected = false
+        binding.message.isSelected = false
+        binding.homePageBtn.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.userPageBtn.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.playground.setTextColor(Color.parseColor("#B3B3B3"))
+        binding.message.setTextColor(Color.parseColor("#B3B3B3"))
         view.isSelected = true
-        view.setTextColor(Color.argb(255, 0, 0, 0))
+        view.setTextColor(Color.parseColor("#333333"))
     }
 
     fun editProfile(view: View) {
@@ -123,10 +131,17 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onHomePage(view: View) {
-        hignLightBtn(binding.homePageBtn)
+        highLightBth(binding.homePageBtn)
         startActivity(Intent(this, HomePageActivity::class.java))
         overridePendingTransition(0, 0)
         finish()
+    }
+
+    fun onMessage(view: View) {
+        highLightBth(view)
+    }
+    fun onPlayground(view: View) {
+        highLightBth(view)
     }
 
     fun buyScallop(view: View) {
@@ -155,6 +170,45 @@ class UserActivity : AppCompatActivity() {
         }else{
             toast("再按一次退出")
             lastBackPressedTimeMillis = System.currentTimeMillis()
+        }
+    }
+
+    fun onAddDialog(view: View) {
+        val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 250.dp, true)
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
+
+        popBind.uploadWorkBtn.setOnClickListener{
+//            startActivity(Intent(this,UpLoadWorkActivity::class.java))
+            layerDetailWindow.dismiss()
+        }
+        popBind.publishRequirementBtn.setOnClickListener{
+            startActivity(Intent(this,PublishRequirementActivity::class.java))
+            layerDetailWindow.dismiss()
+        }
+        popBind.closeBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        popBind.root.setOnClickListener {
+            layerDetailWindow.dismiss()
         }
     }
 }

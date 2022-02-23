@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/authorAvator"
+        android:id="@+id/authorAvatar"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:padding="8dp"
@@ -15,26 +15,24 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/followBtn"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="4dp"
         android:src="@mipmap/ic_follow"
-        android:layout_marginTop="56dp"
-        app:layout_constraintStart_toStartOf="@+id/authorAvator"
-        app:layout_constraintEnd_toEndOf="@id/authorAvator"
-        app:layout_constraintTop_toTopOf="@+id/authorAvator" />
+        android:layout_marginTop="52dp"
+        app:layout_constraintStart_toStartOf="@+id/authorAvatar"
+        app:layout_constraintEnd_toEndOf="@id/authorAvatar"
+        app:layout_constraintTop_toTopOf="@+id/authorAvatar" />
 
 
-    <com.like.LikeButton
+    <ImageView
         android:id="@+id/likeBtn"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_marginTop="36dp"
-        app:icon_type="heart"
-        android:elevation="10dp"
-        android:translationZ="10dp"
+        android:src="@mipmap/ic_heart"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authorAvator"
-        app:liked="false" />
+        app:layout_constraintTop_toBottomOf="@+id/authorAvatar" />
 
 
 

@@ -9,15 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.*
 import cn.copaint.audience.databinding.FragmentItemRecommendBinding
-import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.BitmapUtils.picQueue
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.like.LikeButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -43,17 +42,17 @@ class ItemRecommendFragment : Fragment() {
         binding = FragmentItemRecommendBinding.inflate(layoutInflater, container, false)
 
         binding.toolbar.likeBtn.setOnClickListener {
-            (it as LikeButton).isLiked = !binding.toolbar.likeBtn.isLiked
+            toast("点赞")
         }
 
-        binding.toolbar.authorAvator.setOnClickListener {
+        binding.toolbar.authorAvatar.setOnClickListener {
             val intent = Intent(context, UserPageCreatorActivity::class.java)
             intent.putExtra("creatorId", creatorId)
             startActivity(intent)
         }
 
         binding.toolbar.followBtn.setOnClickListener {
-            if(AuthingUtils.loginCheck()){
+            if (AuthingUtils.loginCheck()) {
                 if (!followStatus) {
                     followUser(creatorId)
                 } else {
@@ -113,11 +112,12 @@ class ItemRecommendFragment : Fragment() {
             val response = apolloClient.mutation(
                 UnfollowUserMutation(userid)
             ).execute()
-
-            if (response?.data != null) {
-                activity?.runOnUiThread {
+            activity?.runOnUiThread {
+                if (response.data != null) {
                     binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
                     followStatus = !followStatus
+                } else {
+                    toast(response.errors?.get(0)?.message.toString())
                 }
             }
         }
@@ -129,7 +129,7 @@ class ItemRecommendFragment : Fragment() {
     }
 
     fun updateInfo() {
-        if(AuthingUtils.user.id != "") {
+        if (AuthingUtils.user.id != "") {
             val apolloClient = ApolloClient.Builder()
                 .serverUrl("http://120.78.173.15:20000/query")
                 .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token)
