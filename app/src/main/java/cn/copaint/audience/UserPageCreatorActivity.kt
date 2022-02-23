@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class UserPageCreatorActivity : AppCompatActivity() {
     lateinit var creatorId: String
@@ -33,6 +34,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
     var lastTimeMillis = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Bugsnag.start(this)
         binding = ActivityUserPageCreatorBinding.inflate(layoutInflater)
         Bugsnag.start(this)
         setContentView(binding.root)
@@ -53,20 +55,25 @@ class UserPageCreatorActivity : AppCompatActivity() {
         if (!creatorId.equals("")) {
 
             CoroutineScope(Dispatchers.IO).launch {
-                val response = apolloclient.query(
-                    UserPageCreator_InitQuery(
-                        input = Optional.presentIfNotNull(
-                            FollowInfoInput(userID = AuthingUtils.user.id)
-                        ),
-                        listOf(creatorId),
-                        where = Optional.presentIfNotNull(
-                            FollowerWhereInput(
-                                userID = Optional.presentIfNotNull(creatorId),
-                                followerID = Optional.presentIfNotNull(user.id)
+                val response = try {
+                    apolloclient.query(
+                        UserPageCreator_InitQuery(
+                            input = Optional.presentIfNotNull(
+                                FollowInfoInput(userID = AuthingUtils.user.id)
+                            ),
+                            listOf(creatorId),
+                            where = Optional.presentIfNotNull(
+                                FollowerWhereInput(
+                                    userID = Optional.presentIfNotNull(creatorId),
+                                    followerID = Optional.presentIfNotNull(user.id)
+                                )
                             )
                         )
-                    )
-                ).execute()
+                    ).execute()
+                }catch (e: Exception){
+                    toast(e.toString())
+                    return@launch
+                }
 
 
                 runOnUiThread {
@@ -150,9 +157,14 @@ class UserPageCreatorActivity : AppCompatActivity() {
         when (is_follow) {
             true -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val response = apolloclient.mutation(
-                        UnfollowUserMutation(creatorId)
-                    ).execute()
+                    val response = try {
+                        apolloclient.mutation(
+                            UnfollowUserMutation(creatorId)
+                        ).execute()
+                    }catch (e: Exception){
+                        toast(e.toString())
+                        return@launch
+                    }
                     runOnUiThread {
                         if (response?.data != null) {
 

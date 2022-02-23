@@ -3,6 +3,7 @@ package cn.copaint.audience.fragment
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,15 @@ import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.tencent.mm.opensdk.channel.MMessageActV2.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class ItemRecommendFragment : Fragment() {
     lateinit var binding: FragmentItemRecommendBinding
@@ -40,7 +44,7 @@ class ItemRecommendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentItemRecommendBinding.inflate(layoutInflater, container, false)
-
+        context?.let { Bugsnag.start(it) }
         binding.toolbar.likeBtn.setOnClickListener {
             toast("点赞")
         }
@@ -90,9 +94,14 @@ class ItemRecommendFragment : Fragment() {
             .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
             .build()
         CoroutineScope(Dispatchers.IO).launch {
-            val response = apolloClient.mutation(
-                FollowUserMutation(userid)
-            ).execute()
+            val response = try {
+                apolloClient.mutation(
+                    FollowUserMutation(userid)
+                ).execute()
+            } catch (e: Exception) {
+                toast(e.toString())
+                return@launch
+            }
 
             if (response?.data != null) {
                 activity?.runOnUiThread {
@@ -109,9 +118,14 @@ class ItemRecommendFragment : Fragment() {
             .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
             .build()
         CoroutineScope(Dispatchers.IO).launch {
-            val response = apolloClient.mutation(
-                UnfollowUserMutation(userid)
-            ).execute()
+            val response = try {
+                apolloClient.mutation(
+                    UnfollowUserMutation(userid)
+                ).execute()
+            } catch (e: Exception) {
+                toast(e.toString())
+                return@launch
+            }
             activity?.runOnUiThread {
                 if (response.data != null) {
                     binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
@@ -136,17 +150,22 @@ class ItemRecommendFragment : Fragment() {
                 .build()
 
             CoroutineScope(Dispatchers.Default).launch {
-                val response = apolloClient.query(
-                    FindIsFollowQuery(
-                        where = Optional.presentIfNotNull(
-                            FollowerWhereInput(
-                                userID = Optional.presentIfNotNull(
-                                    creatorId
-                                ), followerID = Optional.presentIfNotNull(AuthingUtils.user.id)
+                val response = try {
+                    apolloClient.query(
+                        FindIsFollowQuery(
+                            where = Optional.presentIfNotNull(
+                                FollowerWhereInput(
+                                    userID = Optional.presentIfNotNull(
+                                        creatorId
+                                    ), followerID = Optional.presentIfNotNull(AuthingUtils.user.id)
+                                )
                             )
                         )
-                    )
-                ).execute()
+                    ).execute()
+                } catch (e: Exception) {
+                    toast(e.toString())
+                    return@launch
+                }
 
                 activity?.runOnUiThread {
                     followStatus = if (response?.data?.followers?.totalCount != 0) {

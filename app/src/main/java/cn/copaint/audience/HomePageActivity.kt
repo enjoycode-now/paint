@@ -45,10 +45,10 @@ class HomePageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityHomePageBinding.inflate(layoutInflater)
+        StatusBarUtils.initSystemBar(window,"#303030",true)
         setContentView(binding.root)
         app = this
 
-        StatusBarUtils.initSystemBar(window,"#303030",true)
         buildStub()
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {

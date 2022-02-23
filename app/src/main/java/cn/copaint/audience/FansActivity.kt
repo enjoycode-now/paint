@@ -1,5 +1,6 @@
 package cn.copaint.audience
 
+import android.accounts.NetworkErrorException
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import cn.copaint.audience.model.Follow
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
@@ -20,6 +22,7 @@ import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class FansActivity : AppCompatActivity() {
     lateinit var binding: ActivityFansBinding
@@ -69,7 +72,10 @@ class FansActivity : AppCompatActivity() {
                 )
                     .execute().data
             } catch (e: ApolloException) {
-                Log.d("PayActivity", "Failure", e)
+                Log.d("FansActivity", "Failure", e)
+                return@launch
+            } catch (e: Exception){
+                toast(e.toString())
                 return@launch
             }
 

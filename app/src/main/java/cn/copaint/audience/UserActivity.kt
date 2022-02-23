@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
@@ -31,6 +33,7 @@ import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
+import java.lang.Exception
 
 class UserActivity : AppCompatActivity() {
 
@@ -43,6 +46,7 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityUserBinding.inflate(layoutInflater)
+        StatusBarUtils.initSystemBar(window,"#dacdd8",false)
         setContentView(binding.root)
         app = this
 
@@ -58,6 +62,7 @@ class UserActivity : AppCompatActivity() {
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height =
             screenHeight - statusBarHeight - 96.dp
+
     }
 
 
@@ -82,12 +87,22 @@ class UserActivity : AppCompatActivity() {
                 .build()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val response = apolloclient.query(UserPage_InitQuery(input = Optional.presentIfNotNull(
-                    FollowInfoInput(userID = user.id)
-                ))).execute()
+                val response = try {
+                    apolloclient.query(
+                        UserPage_InitQuery(
+                            input = Optional.presentIfNotNull(
+                                FollowInfoInput(userID = user.id)
+                            )
+                        )
+                    ).execute()
+                } catch (e: Exception){
+                    toast(e.toString())
+                    return@launch
+                }
                 runOnUiThread {
                     binding.moneyText.text = response.data?.wallet?.balance.toString()
-                    binding.followingText.text = response.data?.followInfo?.followingCount.toString()
+                    binding.followingText.text =
+                        response.data?.followInfo?.followingCount.toString()
                 }
 
             }
@@ -140,6 +155,7 @@ class UserActivity : AppCompatActivity() {
     fun onMessage(view: View) {
         highLightBth(view)
     }
+
     fun onPlayground(view: View) {
         highLightBth(view)
     }
@@ -165,9 +181,9 @@ class UserActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if ( System.currentTimeMillis() - lastBackPressedTimeMillis < 2000){
+        if (System.currentTimeMillis() - lastBackPressedTimeMillis < 2000) {
             super.onBackPressed()
-        }else{
+        } else {
             toast("再按一次退出")
             lastBackPressedTimeMillis = System.currentTimeMillis()
         }
@@ -177,7 +193,8 @@ class UserActivity : AppCompatActivity() {
         val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
 
         // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 250.dp, true)
+        val layerDetailWindow =
+            PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 250.dp, true)
         layerDetailWindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗
@@ -196,15 +213,15 @@ class UserActivity : AppCompatActivity() {
 
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
 
-        popBind.uploadWorkBtn.setOnClickListener{
+        popBind.uploadWorkBtn.setOnClickListener {
 //            startActivity(Intent(this,UpLoadWorkActivity::class.java))
             layerDetailWindow.dismiss()
         }
-        popBind.publishRequirementBtn.setOnClickListener{
-            startActivity(Intent(this,PublishRequirementActivity::class.java))
+        popBind.publishRequirementBtn.setOnClickListener {
+            startActivity(Intent(this, PublishRequirementActivity::class.java))
             layerDetailWindow.dismiss()
         }
-        popBind.closeBtn.setOnClickListener{
+        popBind.closeBtn.setOnClickListener {
             layerDetailWindow.dismiss()
         }
         popBind.root.setOnClickListener {
