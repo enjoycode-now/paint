@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="150dp">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/uploadWorkBtn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/upload_work"
+        app:layout_constraintBottom_toTopOf="@id/closeBtn"
+        app:layout_constraintEnd_toStartOf="@+id/publishRequirementBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/publishRequirementBtn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/publish_requirement"
+        app:layout_constraintBottom_toBottomOf="@+id/uploadWorkBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/uploadWorkBtn"
+        app:layout_constraintTop_toTopOf="@+id/uploadWorkBtn" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/closeBtn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_close_version2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/publishRequirementBtn"
+        app:layout_constraintStart_toStartOf="@+id/uploadWorkBtn"
+        app:layout_constraintTop_toBottomOf="@+id/uploadWorkBtn" />
+</androidx.constraintlayout.widget.ConstraintLayout>

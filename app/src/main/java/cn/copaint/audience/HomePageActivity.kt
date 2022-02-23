@@ -3,13 +3,19 @@ package cn.copaint.audience
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import cn.copaint.audience.databinding.ActivityHomePageBinding
+import cn.copaint.audience.databinding.DialogHomepageAddBinding
+import cn.copaint.audience.databinding.ItemToolsmenuBinding
 import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.fragment.LiveFragment
 import cn.copaint.audience.fragment.RecommendFragment
@@ -20,6 +26,7 @@ import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.utils.dp
 import com.bugsnag.android.Bugsnag
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +76,10 @@ class HomePageActivity : AppCompatActivity() {
         if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
     }
 
+    fun onSearchActivity(view: View){
+        startActivity(Intent(this, SearchActivity::class.java))
+    }
+
     fun onMyWorksActivity(view: View) {
         if (loginCheck()) startActivity(Intent(this, MyWorksActivity::class.java))
     }
@@ -108,6 +119,43 @@ class HomePageActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return fragmentList[position]
+        }
+    }
+
+    fun onAddDialog(view: View) {
+        val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(popBind.root, 500.dp, 450.dp, true)
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
+
+        popBind.uploadWorkBtn.setOnClickListener{
+//            startActivity(Intent(this,UpLoadWorkActivity::class.java))
+        }
+        popBind.publishRequirementBtn.setOnClickListener{
+            startActivity(Intent(this,PublishRequirementActivity::class.java))
+        }
+        popBind.closeBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        popBind.root.setOnClickListener {
+            layerDetailWindow.dismiss()
         }
     }
 }

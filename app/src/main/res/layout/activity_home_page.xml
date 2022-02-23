@@ -43,6 +43,18 @@
 
     <ImageView
         android:id="@+id/createrUserPageButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@string/search"
+        android:fitsSystemWindows="true"
+        android:onClick="onMyWorksActivity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="@color/white" />
+
+    <View
+        android:id="@+id/createrUserPageButtonView"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:contentDescription="@string/search"
@@ -55,11 +67,22 @@
 
     <ImageView
         android:id="@+id/searchButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@string/search"
+        android:fitsSystemWindows="true"
+        android:onClick="onSearchActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_search" />
+
+    <View
+        android:id="@+id/searchButtonView"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:contentDescription="@string/search"
         android:fitsSystemWindows="true"
-        android:onClick="onDrawActivity"
+        android:onClick="onSearchActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_search" />
@@ -84,6 +107,15 @@
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_add"
+        android:onClick="onAddDialog"
+        app:layout_constraintStart_toEndOf="@+id/homePageBtn"
+        app:layout_constraintEnd_toStartOf="@+id/userPageBtn"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="@+id/view"/>
 
     <TextView
         android:id="@+id/userPageBtn"
