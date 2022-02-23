@@ -143,10 +143,10 @@
         app:layout_constraintEnd_toEndOf="@+id/searchView"
         app:layout_constraintTop_toTopOf="@+id/changeRecommend_im" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <cn.copaint.audience.views.FlowLayout
         android:id="@+id/recommendRecyclerView"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="170dp"
         android:layout_marginTop="15dp"
         android:overScrollMode="never"
         app:layout_constraintEnd_toEndOf="@+id/changeRecommend"
@@ -154,11 +154,4 @@
         app:layout_constraintTop_toBottomOf="@+id/guessYourWantNote" />
 
 
-    <androidx.constraintlayout.helper.widget.Flow
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintEnd_toEndOf="@+id/changeRecommend"
-        app:layout_constraintStart_toStartOf="@+id/guessYourWantNote"
-        app:layout_constraintTop_toBottomOf="@+id/guessYourWantNote"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>
