@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/copyLink"
         app:layout_constraintTop_toTopOf="@+id/copyLink"
-        app:srcCompat="@drawable/ic_copy_link" />
+        app:srcCompat="@drawable/ic_blockout" />
 
     <TextView
         android:id="@+id/relativeCircleText"

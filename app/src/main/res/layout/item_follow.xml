@@ -24,6 +24,7 @@
         android:layout_marginStart="16dp"
         android:textSize="16sp"
         android:text="昵称"
+        android:textColor="#323233"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,15 +32,24 @@
     <TextView
         android:id="@+id/unsubscribe"
         android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_height="20dp"
         android:layout_marginEnd="2dp"
-        android:background="@drawable/follow_text_bg"
         android:gravity="center"
-        android:textColor="#8767E2"
-        android:textSize="14sp"
+        android:textColor="#A9A9A9"
+        android:textSize="12sp"
         android:text="已关注"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/unsubscribeTouchHelpView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

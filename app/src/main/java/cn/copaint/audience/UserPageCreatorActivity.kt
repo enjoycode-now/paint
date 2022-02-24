@@ -242,5 +242,9 @@ class UserPageCreatorActivity : AppCompatActivity() {
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
     }
 
+    fun onBackBtn(view: View) {
+        finish()
+    }
+
 
 }

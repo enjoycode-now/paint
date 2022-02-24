@@ -45,7 +45,7 @@ class HomePageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityHomePageBinding.inflate(layoutInflater)
-        StatusBarUtils.initSystemBar(window,"#303030",true)
+        StatusBarUtils.initSystemBar(window,"#303030",false)
         setContentView(binding.root)
         app = this
 
@@ -81,9 +81,6 @@ class HomePageActivity : AppCompatActivity() {
         startActivity(Intent(this, SearchActivity::class.java))
     }
 
-    fun onMyWorksActivity(view: View) {
-        if (loginCheck()) startActivity(Intent(this, MyWorksActivity::class.java))
-    }
 
     private fun highLightBtn(view: View) {
         view as TextView
@@ -151,7 +148,7 @@ class HomePageActivity : AppCompatActivity() {
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
 
         popBind.uploadWorkBtn.setOnClickListener{
-//            startActivity(Intent(this,UpLoadWorkActivity::class.java))
+            if (loginCheck()) startActivity(Intent(this, PublishedWorkActivity::class.java))
             layerDetailWindow.dismiss()
         }
         popBind.publishRequirementBtn.setOnClickListener{

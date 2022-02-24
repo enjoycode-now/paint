@@ -2,8 +2,10 @@ package cn.copaint.audience.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.FollowsActivity
 import cn.copaint.audience.GetAuthingUsersInfoQuery
@@ -33,15 +35,20 @@ class FollowAdapter(private val activity: FollowsActivity) :
             } else {
                 Glide.with(activity).load(follow.photo).into(itemBind.avatar)
             }
-            itemBind.unsubscribe.setOnClickListener {
-                if ((it as TextView).text.equals("已关注")) {
-                    it.text = "关注"
-                    it.setTextColor(Color.parseColor("#bb3d34"))
+
+            itemBind.unsubscribeTouchHelpView.setOnClickListener{
+                if (itemBind.unsubscribe.text.equals("已关注")) {
+                    itemBind.unsubscribe.text = "关注"
+                    itemBind.unsubscribe.setTextColor(Color.parseColor("#8767E2"))
+                    itemBind.unsubscribe.background = activity.getDrawable(R.drawable.btn_edit)
                 }else{
-                    it.text = "已关注"
-                    it.setTextColor(Color.parseColor("#8767E2"))
+                    itemBind.unsubscribe.text = "已关注"
+                    itemBind.unsubscribe.setTextColor(Color.parseColor("#A9A9A9"))
+                    itemBind.unsubscribe.background = null
                 }
             }
         }
     }
+
+
 }

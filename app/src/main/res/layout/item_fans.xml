@@ -28,12 +28,27 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="回关"
+        android:textColor="#8767E2"
+        android:textSize="13sp"
+        android:layout_marginEnd="6dp"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/unsubscribe"
+        app:layout_constraintEnd_toStartOf="@+id/unsubscribe"
+        app:layout_constraintTop_toTopOf="@+id/unsubscribe" />
+
     <ImageView
         android:id="@+id/unsubscribe"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="2dp"
         app:srcCompat="@drawable/ic_delete"
+        android:padding="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -42,29 +42,6 @@
         app:tabRippleColor = "@android:color/transparent"
         app:tabTextColor="#80FFFFFF" />
 
-    <ImageView
-        android:id="@+id/createrUserPageButton"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:contentDescription="@string/search"
-        android:fitsSystemWindows="true"
-        android:onClick="onMyWorksActivity"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_add"
-        app:tint="@color/white" />
-
-    <View
-        android:id="@+id/createrUserPageButtonView"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:contentDescription="@string/search"
-        android:fitsSystemWindows="true"
-        android:onClick="onMyWorksActivity"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_add"
-        app:tint="@color/white" />
 
     <ImageView
         android:id="@+id/searchButton"
@@ -74,6 +51,7 @@
         android:fitsSystemWindows="true"
         android:layout_marginEnd="10dp"
         android:onClick="onSearchActivity"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_search" />
