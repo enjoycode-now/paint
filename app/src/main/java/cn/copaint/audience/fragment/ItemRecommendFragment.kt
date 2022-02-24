@@ -1,25 +1,24 @@
 package cn.copaint.audience.fragment
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.*
+import cn.copaint.audience.databinding.DialogHomepageAddBinding
+import cn.copaint.audience.databinding.DialogSharepageMoreBinding
 import cn.copaint.audience.databinding.FragmentItemRecommendBinding
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.utils.dp
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.tencent.mm.opensdk.channel.MMessageActV2.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -63,8 +62,9 @@ class ItemRecommendFragment : Fragment() {
                     unFollowUser(creatorId)
                 }
             }
-
         }
+
+        binding.toolbar.shareBtn.setOnClickListener{ activity?.let { it -> popupShareDialog(it.window) } }
 
         CoroutineScope(Dispatchers.Default).launch {
             var url = picQueue.removeLastOrNull()
@@ -85,6 +85,30 @@ class ItemRecommendFragment : Fragment() {
             }
         }
         return binding.root
+    }
+
+    private fun popupShareDialog(window: Window) {
+        val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(activity))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 120.dp, true)
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
     }
 
 

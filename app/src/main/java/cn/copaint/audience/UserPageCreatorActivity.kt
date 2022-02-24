@@ -5,10 +5,16 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
+import cn.copaint.audience.databinding.DialogCreatorMoreBinding
+import cn.copaint.audience.databinding.DialogSharepageMoreBinding
 import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
@@ -16,6 +22,7 @@ import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.utils.dp
 import cn.copaint.audience.utils.getDigest
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
@@ -209,6 +216,30 @@ class UserPageCreatorActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun onMoreBtn(view: View) {
+        val popBind = DialogCreatorMoreBinding.inflate(LayoutInflater.from(this@UserPageCreatorActivity))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 120.dp, true)
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
     }
 
 
