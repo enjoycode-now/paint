@@ -17,24 +17,30 @@ import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.StatusBarUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class SearchActivity : AppCompatActivity() {
     lateinit var binding: ActivitySearchBinding
-    val searchHistoryList  = mutableListOf<String>("EVA剧场","新世纪福音战士","新世纪福音战士","新世纪福音战士","新世纪福音战士")
-    val recommendList = mutableListOf<String>("一号机","机甲","绝对领域","绝对领域剧场初雪","最终机","机甲格斗","AOE","无限世界拳击")
-    val searchHistoryAdapter =  SearchHistoryAdapter(this)
+    val searchHistoryList =
+        mutableListOf<String>("EVA剧场", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士")
+    val recommendList =
+        mutableListOf<String>("一号机", "机甲", "绝对领域", "绝对领域剧场初雪", "最终机", "机甲格斗", "AOE", "无限世界拳击")
+    val searchHistoryAdapter = SearchHistoryAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        StatusBarUtils.initSystemBar(window,"#FAFBFF",true)
+        StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
 
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchHistoryRecyclerView.adapter = searchHistoryAdapter
-        binding.recommendRecyclerView.setAdapter(object :FlowAdapter(){
+        binding.recommendRecyclerView.setAdapter(object : FlowAdapter() {
             override val count: Int
                 get() = recommendList.size
 
@@ -59,11 +65,27 @@ class SearchActivity : AppCompatActivity() {
             }
             false;
         }
+        binding.changeRecommendIm.setOnClickListener { refreshRecommend() }
+        binding.changeRecommend.setOnClickListener { refreshRecommend() }
     }
 
 
     fun onBackPress(view: View) {
         finish()
+    }
+
+    fun refreshRecommend() {
+        CoroutineScope(Dispatchers.Default).launch {
+            for (i in 0..36) {
+                runOnUiThread {
+                    binding.changeRecommendIm.rotation += 20
+                    binding.changeRecommendIm.invalidate()
+                }
+                delay(50)
+            }
+        }
+
+        // TODO 对接更新推荐内容的后端接口
     }
 
 }
