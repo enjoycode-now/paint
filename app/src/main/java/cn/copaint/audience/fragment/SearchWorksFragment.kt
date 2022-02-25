@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import cn.copaint.audience.R
 
-
-class ItemSearchFilterFragment : Fragment() {
+class SearchWorksFragment : Fragment() {
 
 
     override fun onCreateView(
@@ -16,7 +15,7 @@ class ItemSearchFilterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_item_search_filter, container, false)
+        return inflater.inflate(R.layout.fragment_item_search_works, container, false)
     }
 
 }
