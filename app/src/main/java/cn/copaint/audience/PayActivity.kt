@@ -17,6 +17,7 @@ import cn.copaint.audience.repo.api
 import cn.copaint.audience.type.TopUpOrderPaymentMethod
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
+import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.alipay.sdk.app.EnvUtils
@@ -42,6 +43,7 @@ class PayActivity : AppCompatActivity() {
         EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX)
         super.onCreate(savedInstanceState)
         binding = ActivityPayBinding.inflate(layoutInflater)
+        StatusBarUtils.initSystemBar(window,"#FAFBFF",true)
         setContentView(binding.root)
         app = this
         initView()

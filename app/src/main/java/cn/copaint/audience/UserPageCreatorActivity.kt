@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
-import cn.copaint.audience.databinding.DialogSharepageMoreBinding
 import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils

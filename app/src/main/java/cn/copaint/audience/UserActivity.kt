@@ -38,7 +38,7 @@ import java.lang.Exception
 class UserActivity : AppCompatActivity() {
 
     val sponsorList = mutableListOf<String>()
-    private lateinit var binding: ActivityUserBinding
+    lateinit var binding: ActivityUserBinding
     var lastBackPressedTimeMillis = 0L
     val adapter = SupportWorksAdapter(this)
 
@@ -69,14 +69,23 @@ class UserActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateUiInfo()
-        // 应援记录数据
+        // 模拟用户的作品数据
         CoroutineScope(Dispatchers.Default).launch {
-            for (i in 0..31) {
-                sponsorList.add("https://api.ghser.com/random/pe.php")
-                delay(125)
-                runOnUiThread { adapter.notifyItemChanged(i) }
+//            for (i in 0..31) {
+//                sponsorList.add("https://api.ghser.com/random/pe.php")
+//                delay(125)
+//                runOnUiThread { adapter.notifyItemChanged(i) }
+//            }
+            if(sponsorList.size == 0){
+                binding.supportWorksRecyclerView.visibility = View.GONE
+                binding.emptyView.emptyLayout.visibility = View.VISIBLE
+            }else{
+                binding.supportWorksRecyclerView.visibility = View.VISIBLE
+                binding.emptyView.emptyLayout.visibility = View.GONE
             }
         }
+
+
     }
 
     private fun updateUiInfo() {

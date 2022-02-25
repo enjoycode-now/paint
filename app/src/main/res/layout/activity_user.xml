@@ -376,10 +376,21 @@
                 android:layout_marginBottom="1dp"
                 android:nestedScrollingEnabled="true"
                 android:overScrollMode="never"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/supportWorks" />
+            <include
+                android:id="@+id/emptyView"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                layout="@layout/item_userpage_empty_view"
+                app:layout_constraintTop_toBottomOf="@+id/supportWorksRecyclerView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </cn.copaint.audience.views.ParentNestedScrollView>
