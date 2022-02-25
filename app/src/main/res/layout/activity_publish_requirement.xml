@@ -71,8 +71,9 @@
             <EditText
                 android:id="@+id/editTextTextPersonName"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="12dp"
+                android:background="@drawable/bg_multiline_edit"
                 android:hint="请输入标题（25 字以内）"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,13 +83,19 @@
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:layout_marginTop="10dp"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
+                android:minLines="8"
+                android:maxLines="11"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_multiline_edit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
+                android:padding="4dp"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 

@@ -52,7 +52,7 @@
         android:layout_height="62dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="12dp"
-        android:padding="12dp"
+        android:padding="8dp"
         android:elevation="12dp"
         android:src="@drawable/ic_share"
         android:contentDescription="@string/share"
