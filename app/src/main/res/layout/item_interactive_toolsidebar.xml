@@ -6,8 +6,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/authorAvatar"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
         android:padding="8dp"
         android:src="@drawable/avatar_sample"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +19,7 @@
         android:layout_height="30dp"
         android:padding="4dp"
         android:src="@mipmap/ic_follow"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="42dp"
         app:layout_constraintStart_toStartOf="@+id/authorAvatar"
         app:layout_constraintEnd_toEndOf="@id/authorAvatar"
         app:layout_constraintTop_toTopOf="@+id/authorAvatar" />
@@ -27,28 +27,38 @@
 
     <ImageView
         android:id="@+id/likeBtn"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="36dp"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="20dp"
+        android:padding="8dp"
         android:src="@mipmap/ic_heart"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/authorAvatar" />
 
 
+    <ImageView
+        android:id="@+id/sponsorBtn"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="20dp"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_sponsor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/likeBtn"/>
 
     <ImageView
         android:id="@+id/shareBtn"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginBottom="72dp"
-        android:padding="16dp"
-        android:elevation="10dp"
-        android:translationZ="10dp"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp"
+        android:elevation="12dp"
         android:src="@drawable/ic_share"
         android:contentDescription="@string/share"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/likeBtn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sponsorBtn"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import cn.copaint.audience.databinding.ActivityHomePageBinding
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.fragment.FollowFragment
@@ -40,6 +41,7 @@ class HomePageActivity : AppCompatActivity() {
 
     val fragmentList = mutableListOf( FollowFragment(), RecommendFragment())
     var lastBackPressedTimeMillis = 0L
+    var myCurrentItem = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +55,15 @@ class HomePageActivity : AppCompatActivity() {
         highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
-            setCurrentItem(1, false)
+            setCurrentItem(myCurrentItem, false)
             getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
+            this.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    myCurrentItem = position
+                }
+            })
         }
+
 
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
             when (position) {
@@ -71,6 +79,10 @@ class HomePageActivity : AppCompatActivity() {
                 delay(125)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     fun onDrawActivity(view: View) {

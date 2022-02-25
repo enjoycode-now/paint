@@ -225,7 +225,7 @@
                         android:id="@+id/authorName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="72dp"
                         android:text="@string/initial_author_name"
                         android:textColor="#cc000000"
@@ -331,7 +331,7 @@
 
 
             <View
-                android:id="@+id/view2"
+                android:id="@+id/backgroundView"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="28dp"
@@ -349,9 +349,9 @@
                 android:textColor="#FF333333"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view2"
+                app:layout_constraintBottom_toBottomOf="@+id/backgroundView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view2"
+                app:layout_constraintTop_toTopOf="@+id/backgroundView"
                 app:layout_constraintWidth_percent="0.5" />
 
             <TextView
@@ -364,9 +364,9 @@
                 android:textColor="#80333333"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view2"
+                app:layout_constraintBottom_toBottomOf="@+id/backgroundView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view2"
+                app:layout_constraintTop_toTopOf="@+id/backgroundView"
                 app:layout_constraintWidth_percent="0.5" />
 
             <androidx.recyclerview.widget.RecyclerView

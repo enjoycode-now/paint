@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity
+            android:name=".SearchResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".PublishRequirementActivity"
             android:exported="false" />
         <activity

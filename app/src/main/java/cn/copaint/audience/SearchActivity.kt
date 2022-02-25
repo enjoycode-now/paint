@@ -2,6 +2,7 @@ package cn.copaint.audience
 
 import android.R
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -61,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-                Log.i("chenlin", "搜索操作执行")
+                startActivity(Intent(this, SearchResultActivity::class.java))
             }
             false;
         }

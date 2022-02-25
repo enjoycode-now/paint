@@ -16,13 +16,10 @@ import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
 import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.type.FollowerWhereInput
-import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.user
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.dp
-import cn.copaint.audience.utils.getDigest
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
@@ -43,6 +40,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
         Bugsnag.start(this)
         binding = ActivityUserPageCreatorBinding.inflate(layoutInflater)
         Bugsnag.start(this)
+        StatusBarUtils.initSystemBar(window,"#dacdd8",true)
         setContentView(binding.root)
         app = this
         apolloclient = ApolloClient.Builder()

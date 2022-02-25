@@ -238,7 +238,7 @@
                         android:id="@+id/authorName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="72dp"
                         android:text="@string/initial_author_name"
                         android:textColor="#cc000000"
@@ -343,7 +343,7 @@
 
 
             <View
-                android:id="@+id/view2"
+                android:id="@+id/backgroundView"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="28dp"
@@ -361,10 +361,11 @@
                 android:textColor="#FF333333"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view2"
+                app:layout_constraintBottom_toBottomOf="@+id/backgroundView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view2"
-                app:layout_constraintWidth_percent="0.5" />
+                app:layout_constraintTop_toTopOf="@+id/backgroundView"
+                app:layout_constraintEnd_toStartOf="@+id/supportWorks"
+                 />
 
             <TextView
                 android:id="@+id/supportWorks"
@@ -376,10 +377,25 @@
                 android:textColor="#80333333"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view2"
-                app:layout_constraintWidth_percent="0.5" />
+                app:layout_constraintBottom_toBottomOf="@+id/backgroundView"
+                app:layout_constraintStart_toEndOf="@+id/Works"
+                app:layout_constraintTop_toTopOf="@+id/backgroundView"
+                app:layout_constraintEnd_toStartOf="@id/appointmentsWorks" />
+
+            <TextView
+                android:id="@+id/appointmentsWorks"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="#FAFBFF"
+                android:gravity="center"
+                android:text="约稿 0"
+                android:textColor="#80333333"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/backgroundView"
+                app:layout_constraintEnd_toEndOf="@+id/backgroundView"
+                app:layout_constraintStart_toEndOf="@+id/supportWorks"
+                app:layout_constraintTop_toTopOf="@+id/backgroundView"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/supportWorksRecyclerView"
@@ -394,17 +410,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/supportWorks" />
 
-            <ImageView
+            <include
                 android:id="@+id/emptyView"
-                android:layout_width="162dp"
-                android:layout_height="180dp"
-                android:padding="10dp"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                layout="@layout/item_userpage_empty_view"
                 app:layout_constraintTop_toBottomOf="@+id/supportWorksRecyclerView"
-                app:srcCompat="@drawable/ic_userpage_empty_view" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </cn.copaint.audience.views.ParentNestedScrollView>

@@ -34,6 +34,8 @@ import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Exception
+import kotlin.math.abs
+import kotlin.random.Random
 
 class UserActivity : AppCompatActivity() {
 
@@ -71,11 +73,12 @@ class UserActivity : AppCompatActivity() {
         updateUiInfo()
         // 模拟用户的作品数据
         CoroutineScope(Dispatchers.Default).launch {
-//            for (i in 0..31) {
-//                sponsorList.add("https://api.ghser.com/random/pe.php")
-//                delay(125)
-//                runOnUiThread { adapter.notifyItemChanged(i) }
-//            }
+            val count: Int = abs(Random(System.currentTimeMillis()).nextInt())%10
+            for (i in 0..count) {
+                sponsorList.add("https://api.ghser.com/random/pe.php")
+                delay(125)
+                runOnUiThread { adapter.notifyItemChanged(i) }
+            }
             if(sponsorList.size == 0){
                 binding.supportWorksRecyclerView.visibility = View.GONE
                 binding.emptyView.emptyLayout.visibility = View.VISIBLE
