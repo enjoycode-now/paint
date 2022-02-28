@@ -2,15 +2,13 @@ package cn.copaint.audience.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.PayActivity
 import cn.copaint.audience.R
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import com.bumptech.glide.Glide
 
-class ItemSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<ItemSearchAppointmentsAdapter.ViewHolder>() {
+class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<FragmentSearchAppointmentsAdapter.ViewHolder>() {
     class ViewHolder(val binding: FragmentItemSearchAppointmentsBinding):RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, fragment: SearchAppointmentFragment) {
             binding.title.text = fragment.data[position]

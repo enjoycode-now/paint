@@ -14,11 +14,11 @@ import cn.copaint.audience.fragment.SearchFilterFragment
 import cn.copaint.audience.fragment.SearchUsersFragment
 import cn.copaint.audience.fragment.SearchWorksFragment
 import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
 
 class SearchResultActivity : AppCompatActivity() {
     lateinit var binding: ActivitySearchResultBinding
-    var isFilterBtnSelected = false
     val fragmentList = mutableListOf<Fragment>(SearchWorksFragment(),SearchAppointmentFragment(),SearchUsersFragment())
     var currentFragment = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,17 +27,18 @@ class SearchResultActivity : AppCompatActivity() {
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         setContentView(binding.root)
+        app = this
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-        //默认页为约稿页
-        replaceFragment(SearchAppointmentFragment())
+        //默认页为作品页
+        replaceFragment(fragmentList[currentFragment])
+        binding.searchEdit.setText(intent.getStringExtra("SearchContent"))
     }
 
+
     private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.frameLayout, fragment)
-        transaction.commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment).commit()
     }
 
     fun onBackPress(view: View) {

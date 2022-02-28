@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_sharepage_more_bg"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:alpha="0.8"
+        android:gravity="center"
+        android:text="当前元贝不足"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/dialogTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dialogTitle"
+        app:srcCompat="@drawable/ic_delete" />
+
+
+    <TextView
+        android:id="@+id/remainYuanbeiNote"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:layout_marginTop="27dp"
+        android:text="元贝余额："
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@+id/firstGear"
+        app:layout_constraintTop_toBottomOf="@+id/dialogTitle" />
+
+    <TextView
+        android:id="@+id/remainYuanbeiText"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:text="loading"
+        android:textColor="#939393"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/remainYuanbeiNote"
+        app:layout_constraintStart_toEndOf="@+id/remainYuanbeiNote"
+        app:layout_constraintTop_toTopOf="@+id/remainYuanbeiNote" />
+
+    <TextView
+        android:id="@+id/requireYuanbei"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginVertical="1dp"
+        android:layout_marginStart="10dp"
+        android:alpha="0.8"
+        android:gravity="center"
+        android:text="还差 10元贝"
+        android:textColor="#BDBDBD"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/remainYuanbeiText"
+        app:layout_constraintEnd_toEndOf="@+id/ThirdGear"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/remainYuanbeiText"
+        app:layout_constraintTop_toTopOf="@+id/remainYuanbeiText" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/firstGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toStartOf="@+id/SecondGear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/remainYuanbeiNote"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/firstGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="10元贝"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="1元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/SecondGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/firstGear"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toStartOf="@+id/ThirdGear"
+        app:layout_constraintStart_toEndOf="@+id/firstGear"
+        app:layout_constraintTop_toTopOf="@id/firstGear"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/SecondGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="60元贝"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="6元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/ThirdGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/SecondGear"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/SecondGear"
+        app:layout_constraintTop_toTopOf="@id/SecondGear"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ThirdGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="300元贝"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="30元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fourthGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toStartOf="@+id/fifthGear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/firstGear"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fourthGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="980元贝"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="98元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fifthGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/cardview_unchecked_paypage"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fourthGear"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toStartOf="@+id/LastGear"
+        app:layout_constraintStart_toEndOf="@id/fourthGear"
+        app:layout_constraintTop_toTopOf="@id/fourthGear"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fifthGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="9800元贝"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="980元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/LastGear"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/cardview_unchecked_paypage"
+        android:onClick="onSelectNum"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fifthGear"
+        app:layout_constraintDimensionRatio="5:3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fifthGear"
+        app:layout_constraintTop_toTopOf="@id/fifthGear"
+        app:layout_constraintWidth_percent="0.28">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/LastGearNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="输入金额"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="最低1元"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/agreementNote"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:text="购买即代表已阅读并同意"
+        android:layout_marginTop="32dp"
+        android:gravity="end"
+        android:textSize="11sp"
+        app:layout_constraintWidth_percent="0.53"
+        app:layout_constraintTop_toBottomOf="@id/fourthGear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/yuanbeiPurchaseAgreement"
+        />
+    <TextView
+        android:id="@+id/yuanbeiPurchaseAgreement"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:text="《元贝购买协议》"
+        android:layout_marginTop="32dp"
+        android:gravity="start"
+        android:textColor="#8767E2"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/agreementNote"
+        app:layout_constraintTop_toBottomOf="@id/fourthGear"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="立即购买"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_rectangle_purple_top_radius5"
+        app:layout_constraintTop_toBottomOf="@id/yuanbeiPurchaseAgreement"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

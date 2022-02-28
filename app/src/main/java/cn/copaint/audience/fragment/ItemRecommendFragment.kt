@@ -6,9 +6,7 @@ import android.view.*
 import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.*
-import cn.copaint.audience.databinding.DialogHomepageAddBinding
-import cn.copaint.audience.databinding.DialogSharepageMoreBinding
-import cn.copaint.audience.databinding.FragmentItemRecommendBinding
+import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.BitmapUtils.picQueue
@@ -89,9 +87,8 @@ class ItemRecommendFragment : Fragment() {
 
     private fun popupShareDialog(window: Window) {
         val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(activity))
-
         // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 120.dp, true)
+        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true)
         layerDetailWindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_sharepage_more_bg">
+
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:alpha="0.8"
+        android:gravity="center"
+        android:text="确认份额"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/dialogTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dialogTitle"
+        app:srcCompat="@drawable/ic_delete" />
+
+    <TextView
+        android:id="@+id/purchaseShareNote"
+        android:layout_width="72dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="32dp"
+        android:alpha="0.8"
+        android:gravity="center|left"
+        android:text="买入份额："
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialogTitle" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="最大可买 0%"
+        android:textColor="#939393"
+        android:textSize="11sp"
+        android:alpha="0.8"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/purchaseShareNote"
+        app:layout_constraintTop_toBottomOf="@+id/purchaseShareNote" />
+
+
+    <ImageView
+        android:id="@+id/shareMinusBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        app:srcCompat="@drawable/ic_minus_grey_circle"
+        app:layout_constraintEnd_toStartOf="@id/shareEditText"
+        app:layout_constraintTop_toTopOf="@+id/shareEditText"
+        app:layout_constraintBottom_toBottomOf="@id/shareEditText"/>
+
+    <TextView
+        android:id="@+id/shareEditText"
+        android:layout_width="72dp"
+        android:layout_height="40dp"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:alpha="0.8"
+        android:textColor="@color/black"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="7sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:text="100%"
+        app:layout_constraintTop_toTopOf="@+id/purchaseShareNote"
+        app:layout_constraintBottom_toBottomOf="@id/textView9"
+        app:layout_constraintEnd_toStartOf="@id/shareAddBtn"/>
+
+    <ImageView
+        android:id="@+id/shareAddBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:layout_marginEnd="8dp"
+        app:srcCompat="@drawable/ic_add_purple_circle"
+        app:layout_constraintTop_toTopOf="@+id/shareEditText"
+        app:layout_constraintBottom_toBottomOf="@id/shareEditText"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:alpha="0.8"
+        android:text="每 1% 份额价格："
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/purchaseShareNote"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:alpha="0.8"
+        android:text="单位（元贝）"
+        android:textColor="#939393"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <ImageView
+        android:id="@+id/priceMinusBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        app:srcCompat="@drawable/ic_minus_grey_circle"
+        app:layout_constraintEnd_toStartOf="@id/priceEditText"
+        app:layout_constraintTop_toTopOf="@+id/priceEditText"
+        app:layout_constraintBottom_toBottomOf="@id/priceEditText"/>
+
+    <TextView
+        android:id="@+id/priceEditText"
+        android:layout_width="72dp"
+        android:layout_height="40dp"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:alpha="0.8"
+        android:textColor="@color/black"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="7sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:text="1000000"
+        app:layout_constraintTop_toTopOf="@+id/textView10"
+        app:layout_constraintBottom_toBottomOf="@id/textView24"
+        app:layout_constraintEnd_toStartOf="@id/priceAddBtn"/>
+
+    <ImageView
+        android:id="@+id/priceAddBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:layout_marginEnd="8dp"
+        app:srcCompat="@drawable/ic_add_purple_circle"
+        app:layout_constraintTop_toTopOf="@+id/priceEditText"
+        app:layout_constraintBottom_toBottomOf="@id/priceEditText"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="52dp"
+        android:text="总价："
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="0 元贝"
+        android:textColor="#F8566A"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView25"
+        app:layout_constraintStart_toEndOf="@+id/textView25"
+        app:layout_constraintTop_toTopOf="@+id/textView25" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="元贝余额：0"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:textSize="11sp"
+        android:alpha="0.8"
+        android:textColor="#BDBDBD"
+        app:layout_constraintBottom_toBottomOf="@+id/textView26"
+        app:layout_constraintStart_toEndOf="@id/textView26"
+        app:layout_constraintTop_toTopOf="@+id/textView26" />
+
+
+
+    <TextView
+        android:id="@+id/cancelBtn"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_rectangle_grey_left_top_radius5"
+        android:gravity="center"
+        android:text="取消"
+        android:textSize="16sp"
+        android:textColor="#F58F8F8F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/submitBtn"
+        app:layout_constraintTop_toBottomOf="@id/textView25"/>
+
+    <TextView
+        android:id="@+id/submitBtn"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_rectangle_purple_right_top_radius5"
+        android:gravity="center"
+        android:text="确定"
+        android:textSize="16sp"
+        android:textColor="#F5FFFFFF"
+        app:layout_constraintStart_toEndOf="@id/cancelBtn"
+        app:layout_constraintTop_toBottomOf="@id/textView25"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

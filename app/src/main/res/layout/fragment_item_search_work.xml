@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_avatar_sample" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/loading"
+        app:layout_constraintStart_toEndOf="@+id/userAvatar"
+        app:layout_constraintTop_toTopOf="@+id/userAvatar" />
+
+    <TextView
+        android:id="@+id/fansCount"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="粉丝: 100"
+        app:layout_constraintBottom_toBottomOf="@+id/userAvatar"
+        app:layout_constraintStart_toStartOf="@+id/userName"
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+
+    <TextView
+        android:id="@+id/followBtn"
+        android:layout_width="72dp"
+        android:layout_height="25dp"
+        android:text="关注"
+        android:gravity="center"
+        android:background="@drawable/btn_purple_rectangle_radius15"
+        app:layout_constraintBottom_toBottomOf="@+id/userAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/userAvatar" />
+
+    <TextView
+        android:id="@+id/biography"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="现代插画《爱·籽·花》系列太独特啦，
+已收入画册：两三事、 vintagemuse ⭐️⭐️⭐️"
+        app:layout_constraintTop_toBottomOf="@+id/userAvatar"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/personalWorksRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginHorizontal="6dp"
+        app:layout_constraintTop_toBottomOf="@id/biography"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/dividingLine"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/personalWorksRecyclerView"
+        android:layout_marginHorizontal="3dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

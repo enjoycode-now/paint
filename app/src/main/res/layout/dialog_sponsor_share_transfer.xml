@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_sharepage_more_bg">
+
+
+    <TextView
+        android:id="@+id/sponsorTitle"
+        android:layout_width="60dp"
+        android:layout_height="22dp"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="撤单确认"
+        android:background="@drawable/bg_purple_btn"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toStartOf="@id/rankTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
+
+
+    <TextView
+        android:id="@+id/rankTitle"
+        android:layout_width="60dp"
+        android:layout_height="22dp"
+        android:text="排名"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sponsorTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sponsorTitle"
+        app:layout_constraintTop_toTopOf="@+id/sponsorTitle" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sponsorTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/sponsorTitle"
+        app:srcCompat="@drawable/ic_delete" />
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_multiline_rectangle"
+        app:layout_constraintTop_toBottomOf="@id/sponsorTitle"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="购买作品份额后，即可为本作品应援～"
+        android:textSize="11sp"
+        android:textColor="#8767E2"
+        android:layout_marginStart="13dp"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="@id/view"
+        app:layout_constraintTop_toTopOf="@id/view"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="查看特权"
+        android:textSize="12sp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="@id/view"
+        app:layout_constraintTop_toTopOf="@id/view"
+        app:layout_constraintBottom_toBottomOf="@+id/view"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintTop_toBottomOf="@id/view"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

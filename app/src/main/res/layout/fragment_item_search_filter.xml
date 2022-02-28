@@ -61,10 +61,12 @@
         android:text="不限"
         android:textColor="#8C6DE3"
         android:background="@drawable/bg_purple_border_btn"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginEnd="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textView17"
         app:layout_constraintTop_toBottomOf="@+id/textView15"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+        app:layout_constraintHorizontal_chainStyle="packed"/>
 
     <TextView
         android:id="@+id/textView17"
@@ -73,7 +75,7 @@
         android:gravity="center"
         android:text="一天内"
         android:background="@drawable/bg_grey_btn"
-        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView16"
         app:layout_constraintStart_toEndOf="@+id/textView16"
         app:layout_constraintEnd_toStartOf="@id/textView18"
@@ -86,7 +88,7 @@
         android:gravity="center"
         android:text="一周内"
         android:background="@drawable/bg_grey_btn"
-        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView17"
         app:layout_constraintEnd_toStartOf="@+id/textView19"
         app:layout_constraintStart_toEndOf="@+id/textView17"
@@ -96,10 +98,10 @@
         android:id="@+id/textView19"
         android:layout_width="72dp"
         android:layout_height="30dp"
-        android:layout_marginStart="12dp"
         android:background="@drawable/bg_grey_btn"
         android:gravity="center"
         android:text="半年内"
+        android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView18"

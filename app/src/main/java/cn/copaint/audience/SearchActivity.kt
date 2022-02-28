@@ -18,6 +18,8 @@ import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,6 +37,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        app = this
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
 
         //防止弹出软键盘时将屏幕顶上去
@@ -50,7 +53,9 @@ class SearchActivity : AppCompatActivity() {
                 val s: String = recommendList[position]
                 itemBinding.itemTextview.text = s
                 itemBinding.root.setOnClickListener {
-                    Toast.makeText(this@SearchActivity, s, Toast.LENGTH_LONG).show()
+                    toast(s)
+                    searchHistoryList.add(0,s)
+                    startActivity(Intent(this@SearchActivity, SearchResultActivity::class.java).putExtra("SearchContent",s))
                 }
                 return itemBinding.root
             }
@@ -58,11 +63,16 @@ class SearchActivity : AppCompatActivity() {
         })
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if(textview.text.toString() == ""){
+                    toast("搜索内容不得为空")
+                    return@setOnEditorActionListener false
+                }
                 val imm: InputMethodManager =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-                startActivity(Intent(this, SearchResultActivity::class.java))
+                searchHistoryList.add(0,textview.text.toString())
+                startActivity(Intent(this, SearchResultActivity::class.java).putExtra("SearchContent",textview.text.toString()))
             }
             false;
         }
@@ -73,6 +83,11 @@ class SearchActivity : AppCompatActivity() {
 
     fun onBackPress(view: View) {
         finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        searchHistoryAdapter.notifyDataSetChanged()
     }
 
     fun refreshRecommend() {
