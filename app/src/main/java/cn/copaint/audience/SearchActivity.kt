@@ -18,6 +18,7 @@ import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
@@ -44,23 +45,7 @@ class SearchActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchHistoryRecyclerView.adapter = searchHistoryAdapter
-        binding.recommendRecyclerView.setAdapter(object : FlowAdapter() {
-            override val count: Int
-                get() = recommendList.size
-
-            override fun getView(position: Int, parent: ViewGroup?): View? {
-                val itemBinding = ItemSearchRecommendBinding.inflate(layoutInflater)
-                val s: String = recommendList[position]
-                itemBinding.itemTextview.text = s
-                itemBinding.root.setOnClickListener {
-                    toast(s)
-                    searchHistoryList.add(0,s)
-                    startActivity(Intent(this@SearchActivity, SearchResultActivity::class.java).putExtra("SearchContent",s))
-                }
-                return itemBinding.root
-            }
-
-        })
+        binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if(textview.text.toString() == ""){
@@ -102,6 +87,20 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // TODO 对接更新推荐内容的后端接口
+    }
+
+    inner class MyFlowAdapter :FlowAdapter(){
+        override val count: Int = recommendList.size
+
+        override fun getView(position: Int, parent: ViewGroup?): View {
+            val itemBinding = ItemSearchRecommendBinding.inflate(layoutInflater)
+            val s: String = recommendList[position]
+            itemBinding.itemTextview.text = s
+            itemBinding.root.setOnClickListener {
+                ToastUtils.toast(s)
+            }
+            return itemBinding.root
+        }
     }
 
 }

@@ -142,5 +142,6 @@ dependencies {
     // simple camerax library (Not necessary)
     implementation 'io.github.lucksiege:camerax:v3.0.5'
 
+    // 高斯模糊
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
 }

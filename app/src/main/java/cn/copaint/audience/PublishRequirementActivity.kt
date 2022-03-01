@@ -89,7 +89,6 @@ class PublishRequirementActivity : AppCompatActivity() {
             override fun openPicture() {
                 val mode: Boolean = true
                 if (mode) {
-
                     // 进入相册
                     val selectionModel: PictureSelectionModel =
                         PictureSelector.create(this@PublishRequirementActivity)
@@ -124,10 +123,6 @@ class PublishRequirementActivity : AppCompatActivity() {
 //        clearCache()
 
     }
-
-
-
-
 
 
     /**
@@ -209,11 +204,16 @@ class PublishRequirementActivity : AppCompatActivity() {
             .setSelectionMode(1)
             .forResult(object : OnResultCallbackListener<LocalMedia?> {
                 override fun onResult(result: ArrayList<LocalMedia?>?) {
-                    GlideEngine.loadGridImage(this@PublishRequirementActivity, result?.get(0)?.realPath.toString(),binding.imageView10)
+                    GlideEngine.loadGridImage(
+                        this@PublishRequirementActivity,
+                        result?.get(0)?.realPath.toString(),
+                        binding.imageView10
+                    )
                     val inputStream = result?.get(0)?.path?.toUri()
                         ?.let { contentResolver.openInputStream(it) }
                     uploadAvatar(inputStream?.readBytes()!!)
                 }
+
                 override fun onCancel() {
                     toast("你已经退出")
                 }
@@ -225,6 +225,10 @@ class PublishRequirementActivity : AppCompatActivity() {
      * 上传图片
      */
     fun uploadAvatar(byteArray: ByteArray) {
+        if (byteArray.size > 5242880) {
+            toast("图片超过5MB,请更换一张")
+            return
+        }
         var client = OkHttpClient().newBuilder()
             .build()
         var mediaType: MediaType = "image/*".toMediaType()
@@ -233,20 +237,19 @@ class PublishRequirementActivity : AppCompatActivity() {
             .url("http://120.78.173.15:20000/upload")
             .method("POST", body)
             .addHeader("x-file-size", byteArray.size.toString())
-            .addHeader("x-file-type","image")
+            .addHeader("x-file-type", "image")
             .addHeader("Content-Type", "image/*")
             .build()
-        // TODO 图片5MB 视频200MB 检查大小
         CoroutineScope(Dispatchers.IO).launch {
-            var response : Response= try {
+            var response: Response = try {
                 client.newCall(request).execute()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 toast(e.toString())
                 return@launch
             }
 
             val url = response.body?.string() ?: ""
-            runOnUiThread{
+            runOnUiThread {
                 toast(url)
                 Log.i(TAG, url)
             }

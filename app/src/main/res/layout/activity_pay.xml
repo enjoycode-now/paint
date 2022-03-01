@@ -10,19 +10,24 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="44dp"
         android:background="#FAFBFF"
-        app:layout_constraintHeight_percent="0.08"
+        app:contentInsetStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
             android:id="@+id/onBackButton"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
+            android:layout_width="18dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
             android:onClick="onBackBtn"
-            android:paddingVertical="5dp"
-            android:src="@drawable/ic_back_deep_gray" />
+            android:src="@drawable/ic_back_deep_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#999999" />
 
         <TextView
             android:id="@+id/titleNote"
