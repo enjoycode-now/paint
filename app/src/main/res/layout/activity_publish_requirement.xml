@@ -105,6 +105,17 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_height="100dp"
                 android:src="@drawable/add_example_pic"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
+                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_height="100dp"
+                android:onClick="onclick"
+                android:src="@drawable/add_example_pic"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
 
@@ -117,8 +128,8 @@
                 android:text="每张5M 以内，最多 10 张"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/imageView8"
-                app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+                app:layout_constraintStart_toStartOf="@+id/imageView10"
+                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
             <LinearLayout
                 android:id="@+id/requirementType"

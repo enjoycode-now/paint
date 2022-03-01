@@ -1,22 +1,22 @@
 package cn.copaint.audience
 
-import android.Manifest
+import android.content.ContentResolver
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.GridImageAdapter
 import cn.copaint.audience.databinding.ActivityPublishRequirementBinding
 import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.luck.picture.lib.app.PictureAppMaster
 import com.luck.picture.lib.basic.PictureSelectionModel
@@ -29,6 +29,14 @@ import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.MediaUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.File
 
 
 class PublishRequirementActivity : AppCompatActivity() {
@@ -38,16 +46,13 @@ class PublishRequirementActivity : AppCompatActivity() {
     lateinit var mAdapter: GridImageAdapter
     val maxSelectNum = 10
     lateinit var launcherResult: ActivityResultLauncher<Intent>
-    val permissionList = arrayListOf(
-        "android.permission.MOUNT_UNMOUNT_FILESYSTEMS",
-        "android.permission.WRITE_SETTINGS",
-        "android.permission.WRITE_MEDIA_STORAGE"
-    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPublishRequirementBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        app = this
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         selectorStyle = PictureSelectorStyle()
         // 注册需要写在onCreate或Fragment onAttach里，否则会报java.lang.IllegalStateException异常
@@ -200,20 +205,43 @@ class PublishRequirementActivity : AppCompatActivity() {
         PictureSelector.create(this)
             .openGallery(SelectMimeType.ofImage())
             .setImageEngine(GlideEngine)
+            .setSelectionMode(1)
             .forResult(object : OnResultCallbackListener<LocalMedia?> {
                 override fun onResult(result: ArrayList<LocalMedia?>?) {
-                    result?.forEach {
-                        if (it != null) {
-                            photoList.add(it)
-                        }
-                    }
+                    GlideEngine.loadGridImage(this@PublishRequirementActivity, result?.get(0)?.realPath.toString(),binding.imageView10)
+                    val inputStream = result?.get(0)?.path?.toUri()
+                        ?.let { contentResolver.openInputStream(it) }
+                    uploadAvatar(inputStream?.readBytes()!!)
                 }
-
                 override fun onCancel() {
                     toast("你已经退出")
                 }
             })
     }
 
+
+    /**
+     * 上传图片
+     */
+    fun uploadAvatar(byteArray: ByteArray) {
+        var client = OkHttpClient().newBuilder()
+            .build()
+        var mediaType: MediaType = "image/*".toMediaType()
+        var body: RequestBody = byteArray.toRequestBody(mediaType)
+        var request: Request = Request.Builder()
+            .url("http://120.78.173.15:20000/upload")
+            .method("POST", body)
+            .addHeader("x-file-size", byteArray.size.toString())
+            .addHeader("Content-Type", "image/*")
+            .build()
+        CoroutineScope(Dispatchers.IO).launch {
+            var response = client.newCall(request).execute()
+            val url = response.body?.string() ?: ""
+            runOnUiThread{
+                toast(url)
+                Log.i(TAG, url)
+            }
+        }
+    }
 
 }
