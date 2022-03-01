@@ -99,9 +99,10 @@
                 app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
-            <ImageView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imageView8"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
                 android:layout_height="100dp"
                 android:src="@drawable/add_example_pic"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
@@ -112,6 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:onClick="onclick"
                 android:text="每张5M 以内，最多 10 张"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
@@ -129,6 +131,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView12">
 
                 <ImageView
+                    android:id="@+id/myim"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:padding="5dp"
