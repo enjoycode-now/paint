@@ -3,36 +3,93 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:layout_height="match_parent">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.github.mmin18.widget.RealtimeBlurView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:realtimeBlurRadius="20dp"
+        app:realtimeOverlayColor="#8000"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/uploadWorkBtn"
-        android:layout_width="60dp"
+        android:layout_width="160dp"
         android:layout_height="60dp"
-        android:src="@drawable/upload_work"
+        android:background="@drawable/bg_homepage_diolog_btn"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/closeBtn"
         app:layout_constraintEnd_toStartOf="@+id/publishRequirementBtn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" >
+        <ImageView
+            android:id="@+id/uploadWorkIm"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_png"
+            app:layout_constraintEnd_toStartOf="@+id/uploadWorkText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
+        <TextView
+            android:id="@+id/uploadWorkText"
+            android:layout_width="84dp"
+            android:layout_height="25dp"
+            android:gravity="center|start"
+            android:text="上传作品"
+            android:textColor="#B3B3B3"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/uploadWorkIm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/uploadWorkIm"
+            app:layout_constraintTop_toTopOf="@id/uploadWorkIm" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/publishRequirementBtn"
-        android:layout_width="60dp"
+        android:layout_width="160dp"
         android:layout_height="60dp"
-        android:src="@drawable/publish_requirement"
+        android:background="@drawable/bg_homepage_diolog_btn"
         app:layout_constraintBottom_toBottomOf="@+id/uploadWorkBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/uploadWorkBtn"
-        app:layout_constraintTop_toTopOf="@+id/uploadWorkBtn" />
+        app:layout_constraintTop_toTopOf="@+id/uploadWorkBtn" >
+        <ImageView
+            android:id="@+id/publishRequirementIm"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:srcCompat="@drawable/ic_pen"
+            app:layout_constraintEnd_toStartOf="@+id/publishRequirementText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
+        <TextView
+            android:id="@+id/publishRequirementText"
+            android:layout_width="84dp"
+            android:layout_height="25dp"
+            android:gravity="center|start"
+            android:text="发布约稿"
+            android:textColor="#B3B3B3"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/publishRequirementIm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/publishRequirementIm"
+            app:layout_constraintTop_toTopOf="@id/publishRequirementIm" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
         android:id="@+id/closeBtn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_close_version2"
+        android:layout_width="72dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="17dp"
+        app:srcCompat="@drawable/ic_btn_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/publishRequirementBtn"
-        app:layout_constraintStart_toStartOf="@+id/uploadWorkBtn"
-        app:layout_constraintTop_toBottomOf="@+id/uploadWorkBtn" />
+        app:layout_constraintStart_toStartOf="@+id/uploadWorkBtn" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

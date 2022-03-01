@@ -37,6 +37,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File
+import java.lang.Exception
 
 
 class PublishRequirementActivity : AppCompatActivity() {
@@ -232,10 +233,18 @@ class PublishRequirementActivity : AppCompatActivity() {
             .url("http://120.78.173.15:20000/upload")
             .method("POST", body)
             .addHeader("x-file-size", byteArray.size.toString())
+            .addHeader("x-file-type","image")
             .addHeader("Content-Type", "image/*")
             .build()
+        // TODO 图片5MB 视频200MB 检查大小
         CoroutineScope(Dispatchers.IO).launch {
-            var response = client.newCall(request).execute()
+            var response : Response= try {
+                client.newCall(request).execute()
+            }catch (e: Exception){
+                toast(e.toString())
+                return@launch
+            }
+
             val url = response.body?.string() ?: ""
             runOnUiThread{
                 toast(url)
