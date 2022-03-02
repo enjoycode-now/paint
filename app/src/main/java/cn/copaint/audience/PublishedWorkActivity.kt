@@ -51,6 +51,7 @@ class PublishedWorkActivity : AppCompatActivity() {
             .openGallery(SelectMimeType.ofImage())
             .setImageEngine(GlideEngine)
             .setSelectionMode(1)
+            .setFilterMaxFileSize(5120)//最大5MB
             .forResult(object : OnResultCallbackListener<LocalMedia?> {
                 override fun onResult(result: ArrayList<LocalMedia?>?) {
                     if (result != null && result.size > 0) {
@@ -71,6 +72,8 @@ class PublishedWorkActivity : AppCompatActivity() {
             .openGallery(SelectMimeType.ofVideo())
             .setImageEngine(GlideEngine)
             .setSelectionMode(1)
+            .setSelectMaxFileSize(204800)//200MB以内
+            .setFilterVideoMaxSecond(120)//2min以内
             .forResult(object : OnResultCallbackListener<LocalMedia?> {
                 override fun onResult(result: ArrayList<LocalMedia?>?) {
                     if (result != null && result.size > 0) {
