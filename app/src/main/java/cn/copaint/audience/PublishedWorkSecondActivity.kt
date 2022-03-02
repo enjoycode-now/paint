@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import cn.copaint.audience.databinding.ActivityPublishedWorkSecondBinding
 import kotlinx.coroutines.*
 
-
+/**
+ * 上传作品-第二步页
+ */
 class PublishedWorkSecondActivity : AppCompatActivity() {
     lateinit var bind: ActivityPublishedWorkSecondBinding
 

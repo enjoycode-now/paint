@@ -36,6 +36,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="@drawable/ic_more"
+                android:elevation="5dp"
                 android:contentDescription="@string/setting"
                 android:onClick="onSetting"
                 app:layout_constraintBottom_toTopOf="@+id/cardView"
@@ -114,8 +115,8 @@
                         android:layout_height="0dp"
                         android:onClick="buyScallop"
                         app:layout_constraintBottom_toBottomOf="@+id/moneyText"
-                        app:layout_constraintEnd_toEndOf="@+id/moneyText"
-                        app:layout_constraintStart_toStartOf="@+id/moneyText"
+                        app:layout_constraintEnd_toEndOf="@+id/splitLine"
+                        app:layout_constraintStart_toStartOf="@+id/guideline"
                         app:layout_constraintTop_toTopOf="@+id/moneyNote" />
 
                     <View
@@ -165,8 +166,8 @@
                         android:layout_height="0dp"
                         android:onClick="onFollows"
                         app:layout_constraintBottom_toBottomOf="@+id/followingText"
-                        app:layout_constraintEnd_toEndOf="@+id/followingText"
-                        app:layout_constraintStart_toStartOf="@+id/followingText"
+                        app:layout_constraintEnd_toEndOf="@+id/splitLine2"
+                        app:layout_constraintStart_toStartOf="@+id/splitLine"
                         app:layout_constraintTop_toTopOf="@+id/fansNote" />
 
 
@@ -218,7 +219,7 @@
                         android:onClick="onFollows"
                         app:layout_constraintBottom_toBottomOf="@+id/likesText"
                         app:layout_constraintEnd_toEndOf="@+id/likesText"
-                        app:layout_constraintStart_toStartOf="@+id/likesText"
+                        app:layout_constraintStart_toStartOf="@+id/splitLine2"
                         app:layout_constraintTop_toTopOf="@+id/likesNote" />
 
                     <TextView

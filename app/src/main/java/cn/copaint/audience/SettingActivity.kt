@@ -9,6 +9,7 @@ import cn.authing.core.types.User
 import cn.copaint.audience.databinding.ActivitySettingBinding
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 
@@ -19,10 +20,10 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
     }
 
-    fun onFinish(view: View) = onBackPressed()
 
     fun onLogout(view: View) {
         val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
@@ -31,6 +32,10 @@ class SettingActivity : AppCompatActivity() {
         biography = "这个人没有填简介啊"
         toast("退出登录成功")
         startActivity(Intent(this, HomePageActivity::class.java))
+        finish()
+    }
+
+    fun onBackPress(view: View) {
         finish()
     }
 }

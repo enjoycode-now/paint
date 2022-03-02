@@ -47,7 +47,8 @@
                 android:id="@+id/configButton"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/ic_more"
+                app:srcCompat="@drawable/ic_more"
+                android:elevation="5dp"
                 android:contentDescription="@string/setting"
                 android:onClick="onMoreBtn"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView6"
@@ -127,8 +128,8 @@
                         android:layout_height="0dp"
                         android:onClick="buyScallop"
                         app:layout_constraintBottom_toBottomOf="@+id/moneyText"
-                        app:layout_constraintEnd_toEndOf="@+id/moneyText"
-                        app:layout_constraintStart_toStartOf="@+id/moneyText"
+                        app:layout_constraintEnd_toEndOf="@+id/splitLine"
+                        app:layout_constraintStart_toStartOf="@+id/guideline"
                         app:layout_constraintTop_toTopOf="@+id/moneyNote" />
 
                     <View
@@ -178,8 +179,8 @@
                         android:layout_height="0dp"
                         android:onClick="onFans"
                         app:layout_constraintBottom_toBottomOf="@+id/fansText"
-                        app:layout_constraintEnd_toEndOf="@+id/fansText"
-                        app:layout_constraintStart_toStartOf="@+id/fansText"
+                        app:layout_constraintEnd_toEndOf="@+id/splitLine2"
+                        app:layout_constraintStart_toStartOf="@+id/splitLine"
                         app:layout_constraintTop_toTopOf="@+id/fansNote" />
 
 
@@ -229,7 +230,7 @@
                         android:layout_height="0dp"
                         app:layout_constraintBottom_toBottomOf="@+id/likesText"
                         app:layout_constraintEnd_toEndOf="@+id/likesText"
-                        app:layout_constraintStart_toStartOf="@+id/likesText"
+                        app:layout_constraintStart_toStartOf="@+id/splitLine2"
                         app:layout_constraintTop_toTopOf="@+id/likesNote" />
 
                     <TextView

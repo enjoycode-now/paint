@@ -20,7 +20,9 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 
-
+/**
+ * 上传作品页
+ */
 class PublishedWorkActivity : AppCompatActivity() {
     lateinit var binding: ActivityPublishedWorkBinding
     val recommendList =

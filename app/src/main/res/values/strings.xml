@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">元绘</string>
     <string name="sdk_name">WILL SDK for ink (Android)</string>
-    <string name="sdk_version">v3.0.0</string>
+    <string name="sdk_version">版本号：v 1.0.0</string>
     <string name="raster_eraser">Raster eraser</string>
 
     <declare-styleable name="VerificationCodeInputView">
@@ -68,7 +68,7 @@
     <string name="YuanBei_Purchase_Agreement">《元贝购买协议》</string>
     <string name="purchaseNow">立即购买</string>
     <string name="logout">退出登录</string>
-    <string name="logoutPage_Btn_tip">关注官方公众号【XXX】，最新资讯尽在掌握</string>
+    <string name="logoutPage_Btn_tip">遇到问题？请加qq：1123456789</string>
     <string name="setting">设置</string>
     <string name="YuanBei">元贝</string>
     <string name="fan">粉丝</string>
