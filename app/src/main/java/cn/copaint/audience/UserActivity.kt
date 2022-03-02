@@ -1,5 +1,6 @@
 package cn.copaint.audience
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,10 +9,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.widget.EditText
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +43,7 @@ class UserActivity : AppCompatActivity() {
     var lastBackPressedTimeMillis = 0L
     val adapter = SupportWorksAdapter(this)
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
@@ -65,8 +65,20 @@ class UserActivity : AppCompatActivity() {
         binding.supportWorksRecyclerView.layoutParams.height =
             screenHeight - statusBarHeight - 96.dp
 
-    }
+        // 解决嵌套滑动冲突
+        // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
+        binding.biography.setOnTouchListener { v, event ->
+            if(v == binding.biography && canVerticalScroll(v as EditText)){
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                // 否则将事件交由其父类处理
+                if (event.action == MotionEvent.ACTION_UP) {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
 
+    }
 
     override fun onResume() {
         super.onResume()
@@ -90,6 +102,8 @@ class UserActivity : AppCompatActivity() {
 
 
     }
+
+
 
     private fun updateUiInfo() {
         runOnUiThread {
@@ -125,7 +139,7 @@ class UserActivity : AppCompatActivity() {
                 "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...")
                     .uppercase()
             binding.blockchainAddress.text = displayAddress
-            binding.biography.text = biography
+            binding.biography.setText(biography)
             Glide.with(this@UserActivity).load(user.photo).into(binding.userAvatar)
             binding.editProfileButton.isEnabled = true
         }
@@ -239,5 +253,10 @@ class UserActivity : AppCompatActivity() {
         popBind.root.setOnClickListener {
             layerDetailWindow.dismiss()
         }
+    }
+
+    // 判断当前EditText是否可滚动
+    private fun canVerticalScroll(text: EditText): Boolean {
+        return text.lineCount > text.maxLines
     }
 }

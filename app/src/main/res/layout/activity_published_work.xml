@@ -163,24 +163,86 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="28dp"
+        android:background="#FAFBFF"
         app:layout_constraintWidth_percent="0.4"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintEnd_toStartOf="@id/uploadVideo"
         app:layout_constraintStart_toStartOf="@+id/view3"
         app:layout_constraintTop_toBottomOf="@+id/recommendRecyclerView" />
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/uploadCoverImageMask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/uploadCoverImage"
+        app:layout_constraintEnd_toEndOf="@id/uploadCoverImage"
+        app:layout_constraintTop_toTopOf="@id/uploadCoverImage"
+        app:layout_constraintBottom_toBottomOf="@id/uploadCoverImage">
+
+        <ImageView
+            android:id="@+id/addLogo"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:srcCompat="@drawable/ic_add_weight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="上传封面"
+            android:textSize="13sp"
+            android:textColor="#EAEEF6"
+            app:layout_constraintEnd_toEndOf="@+id/addLogo"
+            app:layout_constraintStart_toStartOf="@+id/addLogo"
+            app:layout_constraintTop_toBottomOf="@id/addLogo" />
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <ImageView
         android:id="@+id/uploadVideo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#FAFBFF"
         app:layout_constraintWidth_percent="0.4"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="@+id/uploadCoverImage"
         app:layout_constraintEnd_toEndOf="@+id/view3"
         app:layout_constraintStart_toEndOf="@+id/uploadCoverImage"
         app:layout_constraintTop_toTopOf="@+id/uploadCoverImage" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/uploadCoverVideoMask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/uploadVideo"
+        app:layout_constraintEnd_toEndOf="@id/uploadVideo"
+        app:layout_constraintTop_toTopOf="@id/uploadVideo"
+        app:layout_constraintBottom_toBottomOf="@id/uploadVideo">
+        <ImageView
+            android:id="@+id/addLogo2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:srcCompat="@drawable/ic_add_weight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="上传视频"
+            android:textSize="13sp"
+            android:textColor="#EAEEF6"
+            app:layout_constraintEnd_toEndOf="@+id/addLogo2"
+            app:layout_constraintStart_toStartOf="@+id/addLogo2"
+            app:layout_constraintTop_toBottomOf="@id/addLogo2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/videoLogo"

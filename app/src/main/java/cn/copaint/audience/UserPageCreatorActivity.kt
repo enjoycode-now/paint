@@ -1,15 +1,15 @@
 package cn.copaint.audience
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.widget.EditText
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
@@ -27,7 +27,7 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
+
 
 class UserPageCreatorActivity : AppCompatActivity() {
     lateinit var creatorId: String
@@ -35,18 +35,33 @@ class UserPageCreatorActivity : AppCompatActivity() {
     lateinit var apolloclient: ApolloClient
     lateinit var binding: ActivityUserPageCreatorBinding
     var lastTimeMillis = 0L
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityUserPageCreatorBinding.inflate(layoutInflater)
         Bugsnag.start(this)
-        StatusBarUtils.initSystemBar(window,"#dacdd8",true)
+        StatusBarUtils.initSystemBar(window, "#dacdd8", true)
         setContentView(binding.root)
         app = this
         apolloclient = ApolloClient.Builder()
             .serverUrl("http://120.78.173.15:20000/query")
             .addHttpHeader("Authorization", "Bearer " + user.token!!)
             .build()
+        // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
+        binding.biography.setOnTouchListener { v, event ->
+            if(v == binding.biography && canVerticalScroll(v as EditText)){
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                // 否则将事件交由其父类处理
+                if (event.action == MotionEvent.ACTION_UP) {
+                    v.parent.requestDisallowInterceptTouchEvent(false);
+                }
+            }
+            false
+         }
+
+
     }
 
     override fun onResume() {
@@ -74,7 +89,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
                             )
                         )
                     ).execute()
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     toast(e.toString())
                     return@launch
                 }
@@ -86,15 +101,14 @@ class UserPageCreatorActivity : AppCompatActivity() {
                     val thisAuthingUserInfo = response.data?.authingUsersInfo?.get(0)
                     binding.authorName.text = thisAuthingUserInfo?.nickname
                     binding.authorId.text = thisAuthingUserInfo?.id
-                    binding.biography.text = thisAuthingUserInfo?.biography
+                    binding.biography.setText(thisAuthingUserInfo?.biography)
                     val blockChainAddress = AuthingUtils.user.id.getDigest("SHA-256")
                     val displayAddress =
                         "0x" + blockChainAddress.replaceRange(
                             8,
                             blockChainAddress.length - 8,
                             "..."
-                        )
-                            .uppercase()
+                        ).uppercase()
                     binding.blockchainAddress.text = displayAddress
                     if (response.data?.followers?.totalCount != 0) {
                         is_follow = true
@@ -165,21 +179,21 @@ class UserPageCreatorActivity : AppCompatActivity() {
                         apolloclient.mutation(
                             UnfollowUserMutation(creatorId)
                         ).execute()
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         toast(e.toString())
                         return@launch
                     }
                     runOnUiThread {
                         if (response?.data != null) {
 
-                                is_follow = false
-                                binding.followBtn.text = "关注"
-                                binding.followBtn.background =
-                                    ResourcesCompat.getDrawable(
-                                        resources,
-                                        R.drawable.bg_btn_follow,
-                                        null
-                                    )
+                            is_follow = false
+                            binding.followBtn.text = "关注"
+                            binding.followBtn.background =
+                                ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.bg_btn_follow,
+                                    null
+                                )
 
                         } else {
                             toast(response?.errors?.get(0)?.message ?: "取消关注失败")
@@ -216,10 +230,12 @@ class UserPageCreatorActivity : AppCompatActivity() {
     }
 
     fun onMoreBtn(view: View) {
-        val popBind = DialogCreatorMoreBinding.inflate(LayoutInflater.from(this@UserPageCreatorActivity))
+        val popBind =
+            DialogCreatorMoreBinding.inflate(LayoutInflater.from(this@UserPageCreatorActivity))
 
         // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 120.dp, true)
+        val layerDetailWindow =
+            PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 120.dp, true)
         layerDetailWindow.isOutsideTouchable = true
 
         // 设置弹窗时背景变暗
@@ -243,5 +259,10 @@ class UserPageCreatorActivity : AppCompatActivity() {
         finish()
     }
 
+
+    // 判断当前EditText是否可滚动
+    private fun canVerticalScroll(text: EditText): Boolean {
+        return text.lineCount > text.maxLines
+    }
 
 }
