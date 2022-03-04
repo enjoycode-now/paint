@@ -5,9 +5,6 @@ query Paintings {
                 id
                 creator
                 name
-                description
-                historySize
-                createdAt
                 updatedAt
             }
             cursor

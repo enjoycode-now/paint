@@ -110,6 +110,10 @@ class ItemRecommendFragment : Fragment() {
 
 
     fun followUser(userid: String) {
+        if (userid == AuthingUtils.user.id){
+            toast("不能关注自己")
+            return
+        }
         val apolloClient = ApolloClient.Builder()
             .serverUrl("http://120.78.173.15:20000/query")
             .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)

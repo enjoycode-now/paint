@@ -1,6 +1,7 @@
 package cn.copaint.audience.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.PayActivity
@@ -50,15 +51,22 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
             when (list[position].balanceRecordAction) {
                 BalanceRecordAction.TOP_UP -> {
                     binding.purchasedWorkName.text = "元贝充值"
-                    binding.purchasedWorkShare.text = ""
+                    binding.purchasedWorkShareText.text = ""
+                    binding.purchasedWorkShareNote.visibility = View.GONE
                 }
                 BalanceRecordAction.TRANSACTION -> {
                     binding.purchasedWorkName.text = "交易所得"
-                    binding.purchasedWorkShare.text = "份额xx%"
+                    binding.purchasedWorkShareText.text = "xx%"
+                }
+                BalanceRecordAction.PROPOSAL ->{
+                    binding.purchasedWorkName.text = "约稿"
+                    binding.purchasedWorkShareText.text = ""
+                    binding.purchasedWorkShareNote.visibility = View.GONE
                 }
                 else -> {
                     binding.purchasedWorkName.text = "其他"
-                    binding.purchasedWorkShare.text = ""
+                    binding.purchasedWorkShareText.text = ""
+                    binding.purchasedWorkShareNote.visibility = View.GONE
                 }
             }
 

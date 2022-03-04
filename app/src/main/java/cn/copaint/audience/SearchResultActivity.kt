@@ -1,12 +1,17 @@
 package cn.copaint.audience
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.databinding.ActivitySearchResultBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
@@ -14,14 +19,16 @@ import cn.copaint.audience.fragment.SearchFilterFragment
 import cn.copaint.audience.fragment.SearchUsersFragment
 import cn.copaint.audience.fragment.SearchWorksFragment
 import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
 
 class SearchResultActivity : AppCompatActivity() {
     lateinit var binding: ActivitySearchResultBinding
-    val fragmentList = mutableListOf<Fragment>(SearchWorksFragment(),SearchAppointmentFragment(),SearchUsersFragment())
+    val fragmentList = mutableListOf<Fragment>(SearchWorksFragment(this),SearchAppointmentFragment(this),SearchUsersFragment(this))
     var currentFragment = 0
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = ActivitySearchResultBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
@@ -30,9 +37,25 @@ class SearchResultActivity : AppCompatActivity() {
         app = this
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        binding.searchEdit.setText(intent.getStringExtra("SearchContent"))
         //默认页为作品页
         replaceFragment(fragmentList[currentFragment])
-        binding.searchEdit.setText(intent.getStringExtra("SearchContent"))
+
+        binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if(textview.text.toString() == ""){
+                    ToastUtils.toast("搜索内容不得为空")
+                    return@setOnEditorActionListener false
+                }
+                val imm: InputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                // 隐藏软键盘
+                imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
+
+                fragmentList[currentFragment].onResume()
+            }
+            false;
+        }
     }
 
 

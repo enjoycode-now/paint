@@ -97,7 +97,9 @@ class SearchActivity : AppCompatActivity() {
             val s: String = recommendList[position]
             itemBinding.itemTextview.text = s
             itemBinding.root.setOnClickListener {
-                ToastUtils.toast(s)
+                searchHistoryList.add(0,itemBinding.itemTextview.text.toString())
+                startActivity(Intent(this@SearchActivity, SearchResultActivity::class.java).putExtra("SearchContent",itemBinding.itemTextview.text.toString()))
+                toast(s)
             }
             return itemBinding.root
         }

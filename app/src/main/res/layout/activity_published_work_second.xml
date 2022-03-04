@@ -225,6 +225,7 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/btn_purple_rectangle_radius3"
         android:gravity="center"
+        android:onClick="onSubmitBtn"
         android:text="发布"
         android:textColor="#F5FFFFFF"
         android:textSize="16sp"

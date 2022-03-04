@@ -1,0 +1,13 @@
+query AuthingSearchUsers($query: String!, $page: Int!, $limit: Int!) {
+    authingSearchUsers(query: $query, page: $page, limit: $limit) {
+        id
+        nickname
+        gender
+        photo
+        biography
+        birthdate
+        country
+        province
+        city
+    }
+}

@@ -1,0 +1,5 @@
+mutation CreatePainting($input: CreatePaintingInput!, $imageKey: String!, $videoKey: String!) {
+    createPainting(input: $input, imageKey: $imageKey, videoKey: $videoKey) {
+        id
+    }
+}

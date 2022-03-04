@@ -1,17 +1,14 @@
 package cn.copaint.audience
 
-import android.content.ContentResolver
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.GridImageAdapter
 import cn.copaint.audience.databinding.ActivityPublishRequirementBinding
 import cn.copaint.audience.utils.GlideEngine
@@ -26,7 +23,6 @@ import com.luck.picture.lib.config.PictureSelectionConfig.selectorStyle
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
-import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.MediaUtils
 import kotlinx.coroutines.CoroutineScope
@@ -35,17 +31,17 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.File
 import java.lang.Exception
 
-
+/**
+ * 发布约稿页面
+ */
 class PublishRequirementActivity : AppCompatActivity() {
-    private val TAG = "chenlin"
+    private val TAG = "PublishRequirementActivity"
     lateinit var binding: ActivityPublishRequirementBinding
     val photoList = arrayListOf<LocalMedia>()
     lateinit var mAdapter: GridImageAdapter
-    val maxSelectNum = 10
+    val maxSelectNum = 9
     lateinit var launcherResult: ActivityResultLauncher<Intent>
 
 
@@ -61,7 +57,7 @@ class PublishRequirementActivity : AppCompatActivity() {
 
 
         binding.imageView8.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            GridLayoutManager(this,3,GridLayoutManager.VERTICAL, false)
         mAdapter = GridImageAdapter(this, photoList)
         binding.imageView8.adapter = mAdapter
 
@@ -118,10 +114,6 @@ class PublishRequirementActivity : AppCompatActivity() {
             }
         })
 
-
-        // 清除缓存
-//        clearCache()
-
     }
 
 
@@ -132,20 +124,18 @@ class PublishRequirementActivity : AppCompatActivity() {
      */
     private fun createActivityResultLauncher(): ActivityResultLauncher<Intent> {
         return registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult(),
-            object : ActivityResultCallback<ActivityResult?> {
-
-
-                override fun onActivityResult(result: ActivityResult?) {
-                    val resultCode = result?.resultCode
-                    if (resultCode == RESULT_OK) {
-                        val selectList = PictureSelector.obtainSelectorList(result.data)
-                        analyticalSelectResults(selectList)
-                    } else if (resultCode == RESULT_CANCELED) {
-                        Log.i("chenlin", "onActivityResult PictureSelector Cancel")
-                    }
-                }
-            })
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val resultCode = result?.resultCode
+            if (resultCode == RESULT_OK) {
+                // 将选择的结果添加到mAdapter中的数据源中
+                val tempList = PictureSelector.obtainSelectorList(result.data)
+                analyticalSelectResults(tempList)
+            } else if (resultCode == RESULT_CANCELED) {
+                toast("你已经退出")
+                Log.i(TAG, "onActivityResult PictureSelector Cancel")
+            }
+        }
     }
 
     /**
@@ -197,29 +187,6 @@ class PublishRequirementActivity : AppCompatActivity() {
         finish()
     }
 
-    fun onclick(view: View) {
-        PictureSelector.create(this)
-            .openGallery(SelectMimeType.ofImage())
-            .setImageEngine(GlideEngine)
-            .setSelectionMode(1)
-            .forResult(object : OnResultCallbackListener<LocalMedia?> {
-                override fun onResult(result: ArrayList<LocalMedia?>?) {
-                    GlideEngine.loadGridImage(
-                        this@PublishRequirementActivity,
-                        result?.get(0)?.realPath.toString(),
-                        binding.imageView10
-                    )
-                    val inputStream = result?.get(0)?.path?.toUri()
-                        ?.let { contentResolver.openInputStream(it) }
-                    uploadAvatar(inputStream?.readBytes()!!)
-                }
-
-                override fun onCancel() {
-                    toast("你已经退出")
-                }
-            })
-    }
-
 
     /**
      * 上传图片
@@ -254,6 +221,17 @@ class PublishRequirementActivity : AppCompatActivity() {
                 Log.i(TAG, url)
             }
         }
+    }
+
+    fun onSubmit(view: View) {
+        // 上传图片
+        val readBytes =
+            contentResolver.openInputStream(mAdapter.list[0].path.toUri())?.readBytes()
+        uploadAvatar(readBytes!!)
+
+        // 调用apollo graphql的接口新增约稿
+
+
     }
 
 }

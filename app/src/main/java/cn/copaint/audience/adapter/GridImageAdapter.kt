@@ -26,7 +26,7 @@ class GridImageAdapter(context: Context?, result: List<LocalMedia>?) :
     val TYPE_PICTURE = 2
     var mInflater: LayoutInflater? = null
     val list = ArrayList<LocalMedia>()
-    var selectMax = 10
+    var selectMax = 9
 
     /**
      * 删除

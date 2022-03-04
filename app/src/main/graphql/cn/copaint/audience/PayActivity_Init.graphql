@@ -1,11 +1,11 @@
-query PayACtivity_Init {
+query PayACtivity_Init($orderBy: BalanceRecordOrder) {
     wallet {
         id
         userID
         income
         balance
     }
-    balanceRecords {
+    balanceRecords(orderBy: $orderBy) {
         edges {
             node {
                 id

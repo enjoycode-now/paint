@@ -14,6 +14,8 @@ import cn.copaint.audience.databinding.ActivityPayBinding
 import cn.copaint.audience.model.BalanceRecord
 import cn.copaint.audience.model.PayResult
 import cn.copaint.audience.repo.api
+import cn.copaint.audience.type.BalanceRecordOrder
+import cn.copaint.audience.type.OrderDirection
 import cn.copaint.audience.type.TopUpOrderPaymentMethod
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
@@ -23,6 +25,7 @@ import cn.copaint.audience.utils.ToastUtils.toast
 import com.alipay.sdk.app.EnvUtils
 import com.alipay.sdk.app.PayTask
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +36,7 @@ class PayActivity : AppCompatActivity() {
 
     //    lateinit var mHandler: Handler
     val SDK_PAY_FLAG = 1
+    private val TAG = "PayActivity"
     lateinit var topUpOrderId: String
     lateinit var binding: ActivityPayBinding
     lateinit var ryAdpater: YuanbeiDetailAdapter
@@ -43,7 +47,7 @@ class PayActivity : AppCompatActivity() {
         EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX)
         super.onCreate(savedInstanceState)
         binding = ActivityPayBinding.inflate(layoutInflater)
-        StatusBarUtils.initSystemBar(window,"#FAFBFF",true)
+        StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         setContentView(binding.root)
         app = this
         initView()
@@ -168,10 +172,10 @@ class PayActivity : AppCompatActivity() {
     @SuppressLint("HandlerLeak")
     private val mHandler = object : Handler() {
         override fun handleMessage(msg: Message) {
-            Log.i("chen", msg.toString())
+            Log.i(TAG, msg.toString())
             when (msg.what) {
                 SDK_PAY_FLAG -> { // 支付回调
-                    Log.i("chen", "aliPay: " + msg)
+                    Log.i(TAG, "aliPay: $msg")
                     val payResult = PayResult(msg.obj as Map<String, String>)
                     val resultStatus = payResult.resultStatus
                     // 判断resultStatus 为9000则代表支付成功
@@ -202,12 +206,18 @@ class PayActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
-                    apolloclient.query(PayACtivity_InitQuery()).execute()
+                    apolloclient.query(
+                        PayACtivity_InitQuery(
+                            Optional.presentIfNotNull(
+                                BalanceRecordOrder(OrderDirection.DESC)
+                            )
+                        )
+                    ).execute()
                 } catch (e: ApolloException) {
                     Log.d("PayActivity", "Failure", e)
                     return@launch
                 }
-                binding.remainYuanbei.setText("元贝余额：" + (response.data?.wallet?.balance ?: 0))
+                binding.remainYuanbei.text = "元贝余额：" + (response.data?.wallet?.balance ?: 0)
                 YuanbeiDetailList.clear()
                 var balanceRecord: BalanceRecord
                 var i = 0

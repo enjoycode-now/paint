@@ -220,22 +220,8 @@ class UserActivity : AppCompatActivity() {
 
         // 弹出PopUpWindow
         val layerDetailWindow =
-            PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, 250.dp, true)
+            PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, true)
         layerDetailWindow.isOutsideTouchable = true
-
-        // 设置弹窗时背景变暗
-        var layoutParams = window.attributes
-        layoutParams.alpha = 0.4f // 设置透明度
-        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        window.attributes = layoutParams
-
-        // 弹窗消失时背景恢复
-        layerDetailWindow.setOnDismissListener {
-            layoutParams = window.attributes
-            layoutParams.alpha = 1f
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            window.attributes = layoutParams
-        }
 
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
 

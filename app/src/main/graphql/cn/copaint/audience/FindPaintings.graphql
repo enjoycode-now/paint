@@ -1,0 +1,31 @@
+query FindPaintings($orderBy: PaintingOrder, $where: PaintingWhereInput, $first: Int, $after: Cursor) {
+    paintings(orderBy: $orderBy, where: $where, first: $first, after: $after) {
+        edges {
+            node {
+                id
+                creator
+                name
+                description
+                tags {
+                    id
+                    createdAt
+                    name
+                }
+                image {
+                    id
+                    key
+                }
+                video {
+                    id
+                    key
+                }
+            }
+            cursor
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        totalCount
+    }
+}

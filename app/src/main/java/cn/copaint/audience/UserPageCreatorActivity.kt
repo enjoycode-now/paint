@@ -78,7 +78,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
                     apolloclient.query(
                         UserPageCreator_InitQuery(
                             input = Optional.presentIfNotNull(
-                                FollowInfoInput(userID = AuthingUtils.user.id)
+                                FollowInfoInput(userID = user.id)
                             ),
                             listOf(creatorId),
                             where = Optional.presentIfNotNull(

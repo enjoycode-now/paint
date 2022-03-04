@@ -5,16 +5,35 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_item_search_recommend">
 
+<!--    <TextView-->
+<!--        android:id="@+id/labelName"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="自定义"-->
+<!--        android:textSize="13sp"-->
+<!--        android:textColor="#8C6DE3"-->
+<!--        android:paddingVertical="5dp"-->
+<!--        android:paddingHorizontal="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        />-->
+
+
     <EditText
         android:id="@+id/itemTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="自定义"
         android:background="@null"
         android:textSize="13sp"
         android:textColor="#8C6DE3"
         android:paddingVertical="5dp"
         android:paddingHorizontal="10dp"
+        android:text="自定义"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:descendantFocusability="blocksDescendants"
         android:layout_marginHorizontal="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

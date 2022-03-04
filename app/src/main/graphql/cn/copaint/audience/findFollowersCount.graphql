@@ -1,0 +1,5 @@
+query findFollowersCount($input: FollowInfoInput) {
+    followInfo(input: $input) {
+        followersCount
+    }
+}

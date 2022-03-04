@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.SearchResultActivity
 import cn.copaint.audience.adapter.FragmentSearchAppointmentsAdapter
 import cn.copaint.audience.databinding.FragmentSearchAppointmentsBinding
 
-class SearchAppointmentFragment : Fragment() {
+class SearchAppointmentFragment(activity: SearchResultActivity) : Fragment() {
 
     lateinit var binding: FragmentSearchAppointmentsBinding
     val data: ArrayList<String> = arrayListOf()

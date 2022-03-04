@@ -101,33 +101,31 @@
                 android:id="@+id/imageView8"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="10dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:src="@drawable/add_example_pic"
-                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
                 app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
 
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="10dp"
-                android:layout_height="100dp"
-                android:onClick="onclick"
-                android:src="@drawable/add_example_pic"
-                app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
+<!--            <ImageView-->
+<!--                android:id="@+id/imageView10"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_marginHorizontal="10dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:onClick="onclick"-->
+<!--                android:src="@drawable/add_example_pic"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />-->
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:onClick="onclick"
                 android:text="每张5M 以内，最多 10 张"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+                app:layout_constraintStart_toStartOf="@+id/imageView8"
+                app:layout_constraintTop_toBottomOf="@+id/imageView8" />
 
             <LinearLayout
                 android:id="@+id/requirementType"
@@ -395,6 +393,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/selectPainter"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp"
@@ -451,7 +450,26 @@
                     app:layout_constraintStart_toEndOf="@+id/explainText1"
                     app:layout_constraintTop_toTopOf="parent" />
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:id="@+id/textView30"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/btn_purple_rectangle_radius3"
+                android:text="下一步"
+                android:gravity="center"
+                android:textColor="#F5FFFFFF"
+                android:textSize="16sp"
+                android:onClick="onSubmit"
+                app:layout_constraintTop_toBottomOf="@+id/selectPainter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/isPublic"
+                app:layout_constraintStart_toStartOf="@+id/isPublic" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
