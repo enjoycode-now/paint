@@ -8,13 +8,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.GridImageAdapter
 import cn.copaint.audience.databinding.ActivityPublishRequirementBinding
+import cn.copaint.audience.type.ProposalType
+import cn.copaint.audience.utils.DialogUtils
+import cn.copaint.audience.utils.FileUploadUtils.uploadPic
 import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.apollographql.apollo3.api.Optional
 import com.luck.picture.lib.app.PictureAppMaster
 import com.luck.picture.lib.basic.PictureSelectionModel
 import com.luck.picture.lib.basic.PictureSelector
@@ -25,13 +30,14 @@ import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.MediaUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * 发布约稿页面
@@ -43,7 +49,19 @@ class PublishRequirementActivity : AppCompatActivity() {
     lateinit var mAdapter: GridImageAdapter
     val maxSelectNum = 9
     lateinit var launcherResult: ActivityResultLauncher<Intent>
-
+    var proposalTitle:String= ""
+    var proposalDescription :String = ""
+    var requirementType = "" //需求类型
+    var dealLine = Optional.presentIfNotNull(Date())  // 截稿日期
+    var workStyle: String = "机甲风" // 作品风格
+    var colorMode: String = "暖色调" // 颜色模式
+    var dimensions = "1920x1080" // 尺寸规格
+    var wordFormat: String = "" // 稿件格式
+    val example: ArrayList<String> = arrayListOf() //样例图
+    var acceptancePhase: String = ""// 验收阶段
+    var balance = 100
+    val stock = 10
+    var isPublic= Optional.presentIfNotNull(ProposalType.PUBLIC) // 稿件是否公开
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +74,13 @@ class PublishRequirementActivity : AppCompatActivity() {
         launcherResult = createActivityResultLauncher()
 
 
-        binding.imageView8.layoutManager =
+        binding.referenceSampleRecyclerview.layoutManager =
             GridLayoutManager(this,3,GridLayoutManager.VERTICAL, false)
         mAdapter = GridImageAdapter(this, photoList)
-        binding.imageView8.adapter = mAdapter
+        binding.referenceSampleRecyclerview.adapter = mAdapter
+
+        binding.proposalTitle.doAfterTextChanged { text -> proposalTitle = text.toString() }
+        binding.proposalDescription.doAfterTextChanged { text -> proposalDescription = text.toString() }
 
         mAdapter.setOnItemClickListener(object : GridImageAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
@@ -188,48 +209,64 @@ class PublishRequirementActivity : AppCompatActivity() {
     }
 
 
-    /**
-     * 上传图片
-     */
-    fun uploadAvatar(byteArray: ByteArray) {
-        if (byteArray.size > 5242880) {
-            toast("图片超过5MB,请更换一张")
-            return
-        }
-        var client = OkHttpClient().newBuilder()
-            .build()
-        var mediaType: MediaType = "image/*".toMediaType()
-        var body: RequestBody = byteArray.toRequestBody(mediaType)
-        var request: Request = Request.Builder()
-            .url("http://120.78.173.15:20000/upload")
-            .method("POST", body)
-            .addHeader("x-file-size", byteArray.size.toString())
-            .addHeader("x-file-type", "image")
-            .addHeader("Content-Type", "image/*")
-            .build()
-        CoroutineScope(Dispatchers.IO).launch {
-            var response: Response = try {
-                client.newCall(request).execute()
-            } catch (e: Exception) {
-                toast(e.toString())
-                return@launch
-            }
 
-            val url = response.body?.string() ?: ""
-            runOnUiThread {
-                toast(url)
-                Log.i(TAG, url)
-            }
-        }
-    }
 
     fun onSubmit(view: View) {
-        // 上传图片
-        val readBytes =
-            contentResolver.openInputStream(mAdapter.list[0].path.toUri())?.readBytes()
-        uploadAvatar(readBytes!!)
+        if (binding.proposalTitle.text.toString() == ""){
+            toast("标题不能为空")
+            return
+        }
+        if (binding.proposalDescription.text.toString() == ""){
+            toast("需求描述不能为空")
+            return
+        }
+        val progressDialog = DialogUtils.getLoadingDialog(this,false,"文件上传中，请稍候...");
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);//设置点击屏幕加载框不会取消（返回键可以取消）
+        example.clear()
+
+        // 开启子线程批量上传图片
+        val job = CoroutineScope(Dispatchers.IO).async {
+            mAdapter.list.forEach {
+                try {
+                    val readBytes =
+                        contentResolver.openInputStream(it.path.toUri())?.readBytes()
+                    if (readBytes != null) {
+                        val json = uploadPic(readBytes)
+                        if (JSONObject(json).get("key")!=null && !JSONObject(json).get("key").equals("")){
+                            example.add(JSONObject(json).get("key").toString())
+                            Log.i(TAG, "JSONObject(json).get(\"key\").toString() == "+JSONObject(json).get("key").toString())
+                        }
+                    }
+
+                }catch (e:Exception){
+                    toast(e.toString())
+                    return@async false
+                }
+            }
+            return@async true
+
+        }
 
         // 调用apollo graphql的接口新增约稿
+        CoroutineScope(Dispatchers.IO).launch {
+            if(job.await()){
+                toast("上传成功")
+                progressDialog.dismiss()
+                delay(1000)
+                runOnUiThread{
+                    val intent = Intent(this@PublishRequirementActivity,PublishRequirementSecondActivity::class.java)
+                    intent.putExtra("example",example)
+                    intent.putExtra("proposalTitle",proposalTitle)
+                    intent.putExtra("proposalDescription",proposalDescription)
+                    startActivity(intent)
+                }
+            }else{
+                toast("上传失败")
+                progressDialog.dismiss()
+            }
+        }
+
 
 
     }

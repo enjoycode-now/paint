@@ -48,12 +48,13 @@
                 android:text="发布约稿"
                 android:textAlignment="center"
                 android:textColor="#CC000000"
-                android:textSize="28sp" />
+                android:textSize="18sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestScrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -67,12 +68,14 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/proposalTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_multiline_edit"
                 android:hint="请输入标题（25 字以内）"
+                android:maxLength="25"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
@@ -80,7 +83,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/editTextTextMultiLine"
+                android:id="@+id/proposalDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -89,43 +92,37 @@
                 android:inputType="textMultiLine"
                 android:minLines="8"
                 android:maxLines="11"
+                android:maxLength="1000"
+                android:hint="请输入需求描述（10 ~ 1000 字）"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/bg_multiline_edit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 android:padding="4dp"
-                app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+                app:layout_constraintStart_toStartOf="@+id/proposalTitle"
+                app:layout_constraintTop_toBottomOf="@+id/proposalTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/imageView8"
+                android:id="@+id/referenceSampleRecyclerview"
                 android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginHorizontal="10dp"
-                android:layout_height="wrap_content"
                 android:src="@drawable/add_example_pic"
-                app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
+                app:layout_constraintStart_toStartOf="@+id/proposalDescription"
+                app:layout_constraintTop_toBottomOf="@+id/proposalDescription" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/imageView10"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_marginHorizontal="10dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                android:onClick="onclick"-->
-<!--                android:src="@drawable/add_example_pic"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />-->
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/uploadPicTip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="每张5M 以内，最多 10 张"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/imageView8"
-                app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+                app:layout_constraintStart_toStartOf="@+id/referenceSampleRecyclerview"
+                app:layout_constraintTop_toBottomOf="@+id/referenceSampleRecyclerview" />
 
             <LinearLayout
                 android:id="@+id/requirementType"
@@ -134,8 +131,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
-                app:layout_constraintTop_toBottomOf="@+id/textView12">
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
+                app:layout_constraintTop_toBottomOf="@+id/uploadPicTip">
 
                 <ImageView
                     android:id="@+id/myim"
@@ -168,7 +165,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/requirementType">
 
                 <ImageView
@@ -201,7 +198,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/dealLine">
 
                 <ImageView
@@ -234,7 +231,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/workStyle">
 
                 <ImageView
@@ -267,7 +264,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/colorMode">
 
                 <ImageView
@@ -300,7 +297,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/dimensions">
 
                 <ImageView
@@ -327,13 +324,13 @@
 
 
             <LinearLayout
-                android:id="@+id/wordOrder"
+                android:id="@+id/acceptancePhase"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
                 app:layout_constraintTop_toBottomOf="@+id/wordFormat">
 
                 <ImageView
@@ -366,8 +363,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
-                app:layout_constraintTop_toBottomOf="@+id/wordOrder">
+                app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
+                app:layout_constraintTop_toBottomOf="@+id/acceptancePhase">
 
                 <ImageView
                     android:layout_width="30dp"
@@ -397,10 +394,13 @@
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="60dp"
                 android:background="#30000000"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintEnd_toEndOf="@+id/isPublic"
                 app:layout_constraintStart_toStartOf="@+id/isPublic"
-                app:layout_constraintTop_toBottomOf="@+id/isPublic">
+                app:layout_constraintTop_toBottomOf="@+id/isPublic"
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/circleImageView"
@@ -454,22 +454,23 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <TextView
-                android:id="@+id/textView30"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/btn_purple_rectangle_radius3"
-                android:text="下一步"
-                android:gravity="center"
-                android:textColor="#F5FFFFFF"
-                android:textSize="16sp"
-                android:onClick="onSubmit"
-                app:layout_constraintTop_toBottomOf="@+id/selectPainter"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/isPublic"
-                app:layout_constraintStart_toStartOf="@+id/isPublic" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+    <TextView
+        android:id="@+id/submitBtn"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/btn_purple_rectangle_radius3"
+        android:text="下一步"
+        android:gravity="center"
+        android:textColor="#F5FFFFFF"
+        android:textSize="16sp"
+        android:onClick="onSubmit"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/nestScrollview"
+        app:layout_constraintEnd_toEndOf="@+id/nestScrollview"
+        app:layout_constraintStart_toStartOf="@+id/nestScrollview" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

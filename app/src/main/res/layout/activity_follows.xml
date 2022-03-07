@@ -48,7 +48,7 @@
                 android:gravity="center"
                 android:text="关注"
                 android:textColor="#CC000000"
-                android:textSize="28sp" />
+                android:textSize="18sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>

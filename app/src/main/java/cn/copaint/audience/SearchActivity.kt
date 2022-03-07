@@ -1,16 +1,13 @@
 package cn.copaint.audience
 
-import android.R
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.FlowAdapter
@@ -18,7 +15,6 @@ import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.StatusBarUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import kotlinx.coroutines.CoroutineScope
@@ -26,13 +22,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+val searchHistoryList =
+    mutableListOf<String>("EVA剧场", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士")
+val recommendList =
+    mutableListOf<String>("一号机", "机甲", "绝对领域", "绝对领域剧场初雪", "最终机", "机甲格斗", "AOE", "无限世界拳击")
+
 
 class SearchActivity : AppCompatActivity() {
     lateinit var binding: ActivitySearchBinding
-    val searchHistoryList =
-        mutableListOf<String>("EVA剧场", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士")
-    val recommendList =
-        mutableListOf<String>("一号机", "机甲", "绝对领域", "绝对领域剧场初雪", "最终机", "机甲格斗", "AOE", "无限世界拳击")
+
+
     val searchHistoryAdapter = SearchHistoryAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,3 +105,4 @@ class SearchActivity : AppCompatActivity() {
     }
 
 }
+

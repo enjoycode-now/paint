@@ -1,0 +1,5 @@
+mutation CreateProposal($input: CreateProposalInput!, $exampleKeys: ExampleKeysInput!, $expiredAt: Datetime!) {
+    createProposal(input: $input, exampleKeys: $exampleKeys, expiredAt: $expiredAt) {
+        id
+    }
+}

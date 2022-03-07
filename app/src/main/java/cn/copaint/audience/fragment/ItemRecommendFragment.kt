@@ -70,7 +70,12 @@ class ItemRecommendFragment : Fragment() {
                 delay(150)
                 url = picQueue.removeLastOrNull()
             }
-            picQueue.add("https://api.ghser.com/random/pe.php")
+            try {
+                picQueue.add("https://api.ghser.com/random/pe.php")
+            }catch (e: Exception){
+                toast(e.toString())
+            }
+
 
 
             activity?.runOnUiThread {
@@ -128,7 +133,7 @@ class ItemRecommendFragment : Fragment() {
                 return@launch
             }
 
-            if (response?.data != null) {
+            if (response.data != null) {
                 activity?.runOnUiThread {
                     binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
                     followStatus = !followStatus
@@ -193,7 +198,7 @@ class ItemRecommendFragment : Fragment() {
                 }
 
                 activity?.runOnUiThread {
-                    followStatus = if (response?.data?.followers?.totalCount != 0) {
+                    followStatus = if (response.data?.followers?.totalCount != 0) {
                         binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
                         true
                     } else {

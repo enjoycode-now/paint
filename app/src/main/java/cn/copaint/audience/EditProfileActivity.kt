@@ -83,8 +83,8 @@ class EditProfileActivity : AppCompatActivity() {
         setGender(user.gender ?: "U")
         if (!user.birthdate.isNullOrEmpty()) binding.birthDate.setText( user.birthdate!!.split("T")[0])
         if (!user.region.isNullOrEmpty()) binding.region.setText(user.region)
-        if (!user.province.isNullOrEmpty()) binding.region.setText(user.province)
-        if (!user.city.isNullOrEmpty()) binding.region.setText(user.city)
+        if (!user.province.isNullOrEmpty()) binding.province.setText(user.province)
+        if (!user.city.isNullOrEmpty()) binding.city.setText(user.city)
     }
 
 

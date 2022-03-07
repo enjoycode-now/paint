@@ -1,0 +1,31 @@
+query findProposals($after: Cursor, $first: Int, $orderBy: ProposalOrder, $where: ProposalWhereInput) {
+    proposals(after: $after, first: $first, orderBy: $orderBy, where: $where) {
+        edges {
+            node {
+                id
+                proposalStatus
+                proposalType
+                creator
+                title
+                examples {
+                    id
+                    key
+                }
+                createdAt
+                stock
+                balance
+                description
+                colorModel
+                currentPhase {
+                    id
+                    phaseStatus
+                    name
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+    }
+}

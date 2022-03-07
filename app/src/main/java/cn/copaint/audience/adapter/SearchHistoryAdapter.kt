@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.SearchActivity
 import cn.copaint.audience.databinding.ItemFansBinding
 import cn.copaint.audience.databinding.ItemSearchHistoryBinding
+import cn.copaint.audience.searchHistoryList
 
 class SearchHistoryAdapter(private val activity: SearchActivity) :
     RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {
@@ -20,7 +21,7 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
         ) {
             binding.historyTv.text = searchHistoryString
             binding.historyDelete.setOnClickListener {
-                activity.searchHistoryList.removeAt(position)
+                searchHistoryList.removeAt(position)
                 searchHistoryAdapter.notifyDataSetChanged()
             }
         }
@@ -33,10 +34,10 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.searchHistoryList[position], position, activity, this)
+        holder.bind(searchHistoryList[position], position, activity, this)
     }
 
     override fun getItemCount(): Int {
-        return if (activity.searchHistoryList.size > 6) 6 else activity.searchHistoryList.size
+        return if (searchHistoryList.size > 6) 6 else searchHistoryList.size
     }
 }

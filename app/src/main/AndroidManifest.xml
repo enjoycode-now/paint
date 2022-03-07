@@ -31,10 +31,10 @@
 
     <queries package="cn.copaint.audience">
         <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE"></action>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
         <intent>
-            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE"></action>
+            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE" />
         </intent>
     </queries>
 
@@ -47,6 +47,9 @@
         android:theme="@style/Theme.WhiteBoardWacom"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
+        <activity
+            android:name=".PublishRequirementSecondActivity"
+            android:exported="false" />
         <activity
             android:name=".PublishedWorkSecondActivity"
             android:exported="false" />

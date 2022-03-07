@@ -252,7 +252,7 @@
                 app:layout_constraintWidth_percent="0.2" />
 
             <LinearLayout
-                android:id="@+id/wordOrder"
+                android:id="@+id/acceptancePhase"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="20dp"
@@ -284,9 +284,9 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                app:layout_constraintTop_toBottomOf="@id/wordOrder"
-                app:layout_constraintStart_toStartOf="@id/wordOrder"
-                app:layout_constraintEnd_toEndOf="@id/wordOrder"
+                app:layout_constraintTop_toBottomOf="@id/acceptancePhase"
+                app:layout_constraintStart_toStartOf="@id/acceptancePhase"
+                app:layout_constraintEnd_toEndOf="@id/acceptancePhase"
                 android:background="#08000000"
                 />
 
@@ -297,7 +297,7 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
-                app:layout_constraintTop_toBottomOf="@id/wordOrder">
+                app:layout_constraintTop_toBottomOf="@id/acceptancePhase">
 
                 <ImageView
                     android:layout_width="30dp"

@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="165dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/multiple_shadows_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,6 +25,9 @@
             android:text=""
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
+            android:textColor="#323233"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-condensed-medium"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toStartOf="@+id/coverPic"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +35,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginTop="8dp"
             app:srcCompat="@drawable/ic_avatar_sample"
             app:layout_constraintStart_toStartOf="@+id/title"
@@ -40,9 +45,11 @@
         <TextView
             android:id="@+id/authorName"
             android:layout_width="wrap_content"
-            android:layout_height="11dp"
+            android:layout_height="15dp"
             android:text=""
             android:textSize="11sp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColor="#656565"
             android:layout_marginStart="4dp"
             app:layout_constraintStart_toEndOf="@id/avatar"
             app:layout_constraintTop_toTopOf="@id/avatar"
@@ -53,28 +60,43 @@
         <TextView
             android:id="@+id/description"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="13dp"
             android:layout_marginTop="7dp"
             android:lines="2"
             android:text="需求描述需求描述需求描述，需求
 需求描述，需求描述需求描述需…"
+            android:ellipsize="end"
+            android:textColor="#CC000000"
             android:textSize="13sp"
+            android:lineHeight="20dp"
             app:layout_constraintEnd_toStartOf="@+id/coverPic"
             app:layout_constraintStart_toStartOf="@id/avatar"
             app:layout_constraintTop_toBottomOf="@id/authorName" />
 
         <TextView
             android:id="@+id/workType"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="18dp"
             android:layout_marginTop="8dp"
             android:gravity="center"
+            android:paddingHorizontal="5dp"
             android:text="稿件类型"
-            android:textSize="11sp"
+            android:textSize="12sp"
+            android:textColor="#8C6DE3"
             android:background="@drawable/btn_purple_rectangle"
             app:layout_constraintTop_toBottomOf="@id/description"
             app:layout_constraintStart_toStartOf="@id/description"/>
+<!--        <cn.copaint.audience.views.FlowLayout-->
+<!--            android:id="@+id/workType"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="18dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="稿件类型"-->
+<!--            android:textSize="11sp"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/description"-->
+<!--            app:layout_constraintStart_toStartOf="@id/description"/>-->
 
         <ImageView
             android:id="@+id/yuanbeiImage"
@@ -82,8 +104,10 @@
             android:layout_height="12dp"
             app:srcCompat="@drawable/ic_yuanbei"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
             app:layout_constraintStart_toStartOf="@id/workType"
-            app:layout_constraintTop_toBottomOf="@id/workType"/>
+            app:layout_constraintTop_toBottomOf="@id/workType"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/yuanbeiText"
@@ -92,6 +116,7 @@
             android:layout_marginStart="5dp"
             android:text="124213"
             android:textSize="12sp"
+            android:textColor="#939393"
             android:autoSizeTextType="uniform"
             android:autoSizeMaxTextSize="13sp"
             android:autoSizeMinTextSize="9sp"
@@ -118,6 +143,7 @@
             android:layout_marginStart="5dp"
             android:textSize="12sp"
             android:text="1111w"
+            android:textColor="#939393"
             android:autoSizeTextType="uniform"
             android:autoSizeMaxTextSize="13sp"
             android:autoSizeMinTextSize="9sp"
@@ -134,6 +160,7 @@
             android:layout_marginEnd="12dp"
             android:background="@drawable/ic_border"
             android:elevation="2dp"
+            app:layout_constraintBottom_toTopOf="@+id/date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -141,11 +168,11 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
-            android:layout_marginTop="10dp"
             android:text="1970-12-30"
-            android:textSize="11sp"
-            app:layout_constraintTop_toBottomOf="@+id/coverPic"
-            app:layout_constraintEnd_toEndOf="@id/coverPic"/>
+            android:textColor="#939393"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/coverPic"
+            app:layout_constraintTop_toTopOf="@+id/viewersText" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

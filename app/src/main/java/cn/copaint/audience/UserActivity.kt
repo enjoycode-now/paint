@@ -226,7 +226,7 @@ class UserActivity : AppCompatActivity() {
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
 
         popBind.uploadWorkBtn.setOnClickListener {
-//            startActivity(Intent(this,UpLoadWorkActivity::class.java))
+            startActivity(Intent(this,PublishedWorkActivity::class.java))
             layerDetailWindow.dismiss()
         }
         popBind.publishRequirementBtn.setOnClickListener {
