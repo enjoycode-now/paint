@@ -104,18 +104,20 @@
         app:layout_constraintTop_toTopOf="@+id/shareEditText"
         app:layout_constraintBottom_toBottomOf="@id/shareEditText"/>
 
-    <TextView
+    <EditText
         android:id="@+id/shareEditText"
         android:layout_width="72dp"
         android:layout_height="40dp"
         android:textSize="13sp"
         android:gravity="center"
         android:alpha="0.8"
+        android:background="@null"
         android:textColor="@color/black"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="7sp"
         android:autoSizeMaxTextSize="18sp"
         android:text="100%"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="@+id/purchaseShareNote"
         app:layout_constraintBottom_toBottomOf="@id/textView9"
         app:layout_constraintEnd_toStartOf="@id/shareAddBtn"/>
@@ -178,7 +180,8 @@
         android:autoSizeMinTextSize="7sp"
         android:autoSizeMaxTextSize="18sp"
         android:background="@null"
-        android:text="1000000"
+        android:text="1000"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="@+id/textView10"
         app:layout_constraintBottom_toBottomOf="@id/textView24"
         app:layout_constraintEnd_toStartOf="@id/priceAddBtn"/>
@@ -208,7 +211,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
     <TextView
-        android:id="@+id/textView26"
+        android:id="@+id/totalBalance"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:text="0 元贝"

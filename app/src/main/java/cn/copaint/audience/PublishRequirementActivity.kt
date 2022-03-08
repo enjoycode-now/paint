@@ -220,6 +220,10 @@ class PublishRequirementActivity : AppCompatActivity() {
             toast("需求描述不能为空")
             return
         }
+        if (binding.proposalDescription.text.length !in 10..1000){
+            toast("需求描述至少10字符，至多1000字符")
+            return
+        }
         val progressDialog = DialogUtils.getLoadingDialog(this,false,"文件上传中，请稍候...");
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);//设置点击屏幕加载框不会取消（返回键可以取消）

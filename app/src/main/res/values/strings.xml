@@ -3,6 +3,7 @@
     <string name="sdk_name">WILL SDK for ink (Android)</string>
     <string name="sdk_version">版本号：v 1.0.0</string>
     <string name="raster_eraser">Raster eraser</string>
+    <string name="PicUrlPrefix">http://120.78.173.15:9000/painting/</string>
 
     <declare-styleable name="VerificationCodeInputView">
         <!--输入框的数量-->

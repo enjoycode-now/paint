@@ -13,6 +13,8 @@ import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.utils.DateUtils.rcfDateStr2DateStr
+import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStr
+import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStrWithoutTime
 import cn.copaint.audience.utils.ToastUtils
 import com.bumptech.glide.Glide
 
@@ -22,7 +24,7 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
             binding.authorName.text = fragment.dataList[position].nickname
             binding.title.text = fragment.dataList[position].title
             binding.description.text = fragment.dataList[position].description
-            binding.date.text = rcfDateStr2DateStr(fragment.dataList[position].createAt?:"")
+            binding.date.text = rcfDateStr2StandardDateStrWithoutTime(fragment.dataList[position].createAt?:"")
             if (fragment.dataList[position].colorMode == ""){
                 binding.workType.visibility = View.INVISIBLE
             }else{
@@ -35,10 +37,13 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
                 .load(fragment.dataList[position].avatar)
                 .into(binding.avatar)
             if(fragment.dataList[position].example?.size?:0 > 0){
+                val coverPicUrl =  fragment.resources.getString(R.string.PicUrlPrefix)+(fragment.dataList[position].example?.get(0)?.key ?: "")
                 Glide.with(fragment)
-                    .load(fragment.dataList[position].example?.get(0) ?: "")
-                    .error(R.drawable.avatar_sample)
+                    .load(coverPicUrl)
+                    .error(R.drawable.loading_failed)
                     .into(binding.coverPic)
+            }else{
+                // 用户没有上传例图 todo:等设计稿
             }
             binding.description.setOnClickListener {
                 if (binding.description.ellipsize == null ){
