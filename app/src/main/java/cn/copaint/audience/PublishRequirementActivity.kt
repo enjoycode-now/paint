@@ -59,8 +59,8 @@ class PublishRequirementActivity : AppCompatActivity() {
     var wordFormat: String = "" // 稿件格式
     val example: ArrayList<String> = arrayListOf() //样例图
     var acceptancePhase: String = ""// 验收阶段
-    var balance = 100
-    val stock = 10
+    var balance: Int = 100
+    val stock: Int = 10
     var isPublic= Optional.presentIfNotNull(ProposalType.PUBLIC) // 稿件是否公开
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -273,6 +273,13 @@ class PublishRequirementActivity : AppCompatActivity() {
 
 
 
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        if(intent?.getBooleanExtra("isFinish",false)==true){
+            this.finish()
+        }
+        super.onNewIntent(intent)
     }
 
 }

@@ -23,6 +23,7 @@ import cn.copaint.audience.utils.AuthingUtils.authenticationClient
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
+import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
@@ -39,7 +40,7 @@ class HomePageActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityHomePageBinding
 
-    val fragmentList = mutableListOf( FollowFragment(), RecommendFragment())
+    val fragmentList = mutableListOf(FollowFragment(), RecommendFragment())
     var lastBackPressedTimeMillis = 0L
     var myCurrentItem = 1
 
@@ -47,12 +48,11 @@ class HomePageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityHomePageBinding.inflate(layoutInflater)
-        StatusBarUtils.initSystemBar(window,"#303030",false)
+        StatusBarUtils.initSystemBar(window, "#303030", false)
         setContentView(binding.root)
         app = this
 
         buildStub()
-        highLightBtn(binding.homePageBtn)
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)
             setCurrentItem(myCurrentItem, false)
@@ -89,40 +89,21 @@ class HomePageActivity : AppCompatActivity() {
         if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))
     }
 
-    fun onSearchActivity(view: View){
+    fun onSearchActivity(view: View) {
         startActivity(Intent(this, SearchActivity::class.java))
     }
 
 
-    private fun highLightBtn(view: View) {
-        view as TextView
-        binding.homePageBtn.isSelected = false
-        binding.userPageBtn.isSelected = false
-        binding.message.isSelected = false
-        binding.playground.isSelected = false
-        binding.homePageBtn.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.userPageBtn.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.playground.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.message.setTextColor(Color.parseColor("#B3B3B3"))
-        view.isSelected = true
-        view.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-
     fun onUserPage(view: View) {
         if (loginCheck()) {
-            highLightBtn(binding.userPageBtn)
-            binding.homePageBtn.isSelected = false
-            binding.userPageBtn.isSelected = true
             startActivity(Intent(this, UserActivity::class.java))
-            overridePendingTransition(0, 0)
-            finish()
         }
     }
 
     override fun onBackPressed() {
-        if ( System.currentTimeMillis() - lastBackPressedTimeMillis < 2000){
+        if (System.currentTimeMillis() - lastBackPressedTimeMillis < 2000) {
             super.onBackPressed()
-        }else{
+        } else {
             toast("再按一次退出")
             lastBackPressedTimeMillis = System.currentTimeMillis()
         }
@@ -137,34 +118,15 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onAddDialog(view: View) {
-        val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
-
-        // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, true)
-        layerDetailWindow.isOutsideTouchable = true
-
-        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
-
-        popBind.uploadWorkBtn.setOnClickListener{
-            if (loginCheck()) startActivity(Intent(this, PublishedWorkActivity::class.java))
-            layerDetailWindow.dismiss()
-        }
-        popBind.publishRequirementBtn.setOnClickListener{
-            startActivity(Intent(this,PublishRequirementActivity::class.java))
-            layerDetailWindow.dismiss()
-        }
-        popBind.closeBtn.setOnClickListener{
-            layerDetailWindow.dismiss()
-        }
-        popBind.root.setOnClickListener {
-            layerDetailWindow.dismiss()
-        }
+        DialogUtils.onAddDialog(binding.root,this)
     }
 
     fun onMessage(view: View) {
-        highLightBtn(view)
+
     }
-    fun onPlayground(view: View) {
-        highLightBtn(view)
+
+
+    fun onSquare(view: View) {
+        startActivity(Intent(this, SquareActivity::class.java))
     }
 }

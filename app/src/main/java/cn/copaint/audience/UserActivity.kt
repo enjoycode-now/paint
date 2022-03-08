@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -19,14 +18,11 @@ import cn.copaint.audience.adapter.SupportWorksAdapter
 import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.type.FollowInfoInput
-import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
-import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.dp
-import cn.copaint.audience.utils.getDigest
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
@@ -52,7 +48,7 @@ class UserActivity : AppCompatActivity() {
         setContentView(binding.root)
         app = this
 
-        highLightBth(binding.userPageBtn)
+
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
         val statusBarId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -78,11 +74,6 @@ class UserActivity : AppCompatActivity() {
             false
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateUiInfo()
         // 模拟用户的作品数据
         CoroutineScope(Dispatchers.Default).launch {
             val count: Int = abs(Random(System.currentTimeMillis()).nextInt())%10
@@ -100,7 +91,11 @@ class UserActivity : AppCompatActivity() {
             }
         }
 
+    }
 
+    override fun onResume() {
+        super.onResume()
+        updateUiInfo()
     }
 
 
@@ -109,7 +104,7 @@ class UserActivity : AppCompatActivity() {
         runOnUiThread {
             val apolloclient = ApolloClient.Builder()
                 .serverUrl("http://120.78.173.15:20000/query")
-                .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
+                .addHttpHeader("Authorization", "Bearer ${user.token ?: ""}")
                 .build()
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -145,19 +140,7 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    private fun highLightBth(view: View) {
-        view as TextView
-        binding.homePageBtn.isSelected = false
-        binding.userPageBtn.isSelected = false
-        binding.playground.isSelected = false
-        binding.message.isSelected = false
-        binding.homePageBtn.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.userPageBtn.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.playground.setTextColor(Color.parseColor("#B3B3B3"))
-        binding.message.setTextColor(Color.parseColor("#B3B3B3"))
-        view.isSelected = true
-        view.setTextColor(Color.parseColor("#333333"))
-    }
+
 
     fun editProfile(view: View) {
         startActivity(Intent(this, EditProfileActivity::class.java))
@@ -172,18 +155,18 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onHomePage(view: View) {
-        highLightBth(binding.homePageBtn)
         startActivity(Intent(this, HomePageActivity::class.java))
         overridePendingTransition(0, 0)
-        finish()
     }
 
     fun onMessage(view: View) {
-        highLightBth(view)
+        startActivity(Intent(this, SquareActivity::class.java))
+        overridePendingTransition(0, 0)
     }
 
-    fun onPlayground(view: View) {
-        highLightBth(view)
+    fun onSquare(view: View) {
+        startActivity(Intent(this, SquareActivity::class.java))
+        overridePendingTransition(0, 0)
     }
 
     fun buyScallop(view: View) {
@@ -216,29 +199,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onAddDialog(view: View) {
-        val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(this))
-
-        // 弹出PopUpWindow
-        val layerDetailWindow =
-            PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, true)
-        layerDetailWindow.isOutsideTouchable = true
-
-        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
-
-        popBind.uploadWorkBtn.setOnClickListener {
-            startActivity(Intent(this,PublishedWorkActivity::class.java))
-            layerDetailWindow.dismiss()
-        }
-        popBind.publishRequirementBtn.setOnClickListener {
-            startActivity(Intent(this, PublishRequirementActivity::class.java))
-            layerDetailWindow.dismiss()
-        }
-        popBind.closeBtn.setOnClickListener {
-            layerDetailWindow.dismiss()
-        }
-        popBind.root.setOnClickListener {
-            layerDetailWindow.dismiss()
-        }
+        DialogUtils.onAddDialog(binding.root,this)
     }
 
     // 判断当前EditText是否可滚动

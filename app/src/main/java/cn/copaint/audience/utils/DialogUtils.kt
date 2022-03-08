@@ -3,18 +3,21 @@ package cn.copaint.audience.utils
 import android.R
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import cn.copaint.audience.PublishRequirementActivity
+import cn.copaint.audience.PublishedWorkActivity
+import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.databinding.DialogLoadingBinding
 
 
-object  DialogUtils {
+object DialogUtils {
 
     /**
      *
@@ -54,4 +57,46 @@ object  DialogUtils {
         )
         return progressDialog
     }
+
+    /**
+     *
+     * @param view activity的root view
+     * @param activity 当前活动
+     * @return
+     */
+    fun onAddDialog(view: View, activity: AppCompatActivity) {
+        val popBind = DialogHomepageAddBinding.inflate(LayoutInflater.from(activity))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+
+        layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
+
+        popBind.uploadWorkBtn.setOnClickListener {
+            if (AuthingUtils.loginCheck()) activity.startActivity(
+                Intent(
+                    activity,
+                    PublishedWorkActivity::class.java
+                )
+            )
+            layerDetailWindow.dismiss()
+        }
+        popBind.publishRequirementBtn.setOnClickListener {
+            activity.startActivity(Intent(activity, PublishRequirementActivity::class.java))
+            layerDetailWindow.dismiss()
+        }
+        popBind.closeBtn.setOnClickListener {
+            layerDetailWindow.dismiss()
+        }
+        popBind.root.setOnClickListener {
+            layerDetailWindow.dismiss()
+        }
+    }
+
 }
