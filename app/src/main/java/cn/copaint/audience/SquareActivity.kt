@@ -1,6 +1,7 @@
 package cn.copaint.audience
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,14 +29,13 @@ import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.*
 import java.lang.Exception
-import java.time.Instant
 
 class SquareActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySquareBinding
     var lastBackPressedTimeMillis = 0L
     var lastReloadTimeMillis = 0L
-    val dataExpiredTimeMillis = 12L
+    val dataExpiredTimeMillis = 120000L // 设置2分钟缓存有效时间
     val dataList: ArrayList<Proposal> = arrayListOf()
     val first = 10
     var cursor: Any? = null
@@ -51,6 +51,9 @@ class SquareActivity : AppCompatActivity() {
         app = this
 
 
+
+        lastReloadTimeMillis = 0L
+        binding.animationView.visibility = View.VISIBLE
         binding.proposalList.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL, false
@@ -59,6 +62,7 @@ class SquareActivity : AppCompatActivity() {
         GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
 
         binding.swipeRefreshLayout.setProgressViewOffset(true,-50,50)
+        binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.proposalList.setListener(this,object : RecyclerListener {
             override fun loadMore() {
                 if (hasNextPage) {
@@ -98,7 +102,7 @@ class SquareActivity : AppCompatActivity() {
     }
 
     private fun updateUiInfo() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.animationView.visibility = View.VISIBLE
         val currentRcfDateStr = getCurrentRcfDateStr()
         val apolloClient = ApolloClient.Builder()
             .serverUrl("http://120.78.173.15:20000/query")
@@ -163,7 +167,7 @@ class SquareActivity : AppCompatActivity() {
                     }
                 }
                 runOnUiThread {
-                    binding.progressBar.visibility = View.GONE
+                    binding.animationView.visibility = View.GONE
                     binding.swipeRefreshLayout.isRefreshing = false
                 }
 
