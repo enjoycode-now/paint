@@ -14,23 +14,27 @@ import cn.copaint.audience.adapter.FlowAdapter
 import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
+import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.apollographql.apollo3.ApolloClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
+import java.lang.Exception
 
 val searchHistoryList =
-    mutableListOf<String>("EVA剧场", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士", "新世纪福音战士")
+    mutableListOf<String>()
 val recommendList =
-    mutableListOf<String>("一号机", "机甲", "绝对领域", "绝对领域剧场初雪", "最终机", "机甲格斗", "AOE", "无限世界拳击")
+    mutableListOf<RecommendTag>()
 
 
 class SearchActivity : AppCompatActivity() {
     lateinit var binding: ActivitySearchBinding
-
+    lateinit var recommendTagAdapter: MyFlowAdapter
 
     val searchHistoryAdapter = SearchHistoryAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +46,17 @@ class SearchActivity : AppCompatActivity() {
 
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
+        // 取出搜索缓存记录
+        getSearchHistory()
+
+        getRecommendTagsList()
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchHistoryRecyclerView.adapter = searchHistoryAdapter
         binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                if(textview.text.toString() == ""){
+                if (textview.text.toString() == "") {
                     toast("搜索内容不得为空")
                     return@setOnEditorActionListener false
                 }
@@ -55,13 +64,55 @@ class SearchActivity : AppCompatActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-                searchHistoryList.add(0,textview.text.toString())
-                startActivity(Intent(this, SearchResultActivity::class.java).putExtra("SearchContent",textview.text.toString()))
+                searchHistoryList.add(0, textview.text.toString())
+                startActivity(
+                    Intent(
+                        this,
+                        SearchResultActivity::class.java
+                    ).putExtra("SearchContent", textview.text.toString())
+                )
             }
             false;
         }
         binding.changeRecommendIm.setOnClickListener { refreshRecommend() }
         binding.changeRecommend.setOnClickListener { refreshRecommend() }
+    }
+
+    private fun getRecommendTagsList() {
+        recommendList.clear()
+        val apolloclient = ApolloClient.Builder()
+            .serverUrl("http://120.78.173.15:20000/query")
+            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = apolloclient.query(
+                    GetRandomTagsQuery()
+                ).execute()
+                response.data?.randomTags?.forEach { recommendList.add(RecommendTag(it.id,it.name,it.createdAt.toString())) }
+            } catch (e: Exception) {
+                toast(e.toString())
+            }finally {
+                runOnUiThread{
+                    binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
+                }
+            }
+        }
+
+    }
+
+    private fun getSearchHistory() {
+        searchHistoryList.clear()
+        var saveData = getPreferences(Context.MODE_PRIVATE).getStringSet("searchHistory", null)
+        saveData?.forEach { s -> searchHistoryList.add(s) }
+    }
+
+    override fun onStop() {
+        var editor = getPreferences(Context.MODE_PRIVATE).edit()
+        editor.putStringSet("searchHistory", searchHistoryList.toSet())
+        editor.apply()
+        super.onStop()
     }
 
 
@@ -84,20 +135,24 @@ class SearchActivity : AppCompatActivity() {
                 delay(50)
             }
         }
-
-        // TODO 对接更新推荐内容的后端接口
+        getRecommendTagsList()
     }
 
-    inner class MyFlowAdapter :FlowAdapter(){
+    inner class MyFlowAdapter : FlowAdapter() {
         override val count: Int = recommendList.size
 
         override fun getView(position: Int, parent: ViewGroup?): View {
             val itemBinding = ItemSearchRecommendBinding.inflate(layoutInflater)
-            val s: String = recommendList[position]
+            val s: String = recommendList[position].name
             itemBinding.itemTextview.text = s
             itemBinding.root.setOnClickListener {
-                searchHistoryList.add(0,itemBinding.itemTextview.text.toString())
-                startActivity(Intent(this@SearchActivity, SearchResultActivity::class.java).putExtra("SearchContent",itemBinding.itemTextview.text.toString()))
+                searchHistoryList.add(0, itemBinding.itemTextview.text.toString())
+                startActivity(
+                    Intent(
+                        this@SearchActivity,
+                        SearchResultActivity::class.java
+                    ).putExtra("SearchContent", itemBinding.itemTextview.text.toString())
+                )
                 toast(s)
             }
             return itemBinding.root
@@ -105,4 +160,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
 }
+
+data class RecommendTag(val id:String,val name: String,val createAt: String)
 

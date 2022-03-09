@@ -623,6 +623,23 @@ input ProposalWhereInput {
   stockLT: Int
   stockLTE: Int
 
+  """invite_user_id field predicates"""
+  inviteUserID: String
+  inviteUserIDNEQ: String
+  inviteUserIDIn: [String!]
+  inviteUserIDNotIn: [String!]
+  inviteUserIDGT: String
+  inviteUserIDGTE: String
+  inviteUserIDLT: String
+  inviteUserIDLTE: String
+  inviteUserIDContains: String
+  inviteUserIDHasPrefix: String
+  inviteUserIDHasSuffix: String
+  inviteUserIDIsNil: Boolean
+  inviteUserIDNotNil: Boolean
+  inviteUserIDEqualFold: String
+  inviteUserIDContainsFold: String
+
   """proposal_user_id field predicates"""
   proposalUserID: String
   proposalUserIDNEQ: String
@@ -810,20 +827,20 @@ input CommentWhereInput {
   updatedAtLT: Time
   updatedAtLTE: Time
 
-  """comment field predicates"""
-  comment: String
-  commentNEQ: String
-  commentIn: [String!]
-  commentNotIn: [String!]
-  commentGT: String
-  commentGTE: String
-  commentLT: String
-  commentLTE: String
-  commentContains: String
-  commentHasPrefix: String
-  commentHasSuffix: String
-  commentEqualFold: String
-  commentContainsFold: String
+  """reason field predicates"""
+  reason: String
+  reasonNEQ: String
+  reasonIn: [String!]
+  reasonNotIn: [String!]
+  reasonGT: String
+  reasonGTE: String
+  reasonLT: String
+  reasonLTE: String
+  reasonContains: String
+  reasonHasPrefix: String
+  reasonHasSuffix: String
+  reasonEqualFold: String
+  reasonContainsFold: String
 
   """id field predicates"""
   id: ID
@@ -1090,6 +1107,7 @@ input GetOrCreateTagsInput {
     tagName: [String!]!
 }enum ProposalStatus  {
     WAITING
+    IN_PROGRESS
     SUCCESS
     FAILED
 }
@@ -1116,6 +1134,8 @@ type Phase implements Node {
     auditTimes: Int!
     name: String!
     depositPercent: Int!
+    attachments: [Attachment!]
+    comments: [Comment!]
     updatedAt: Time!
     createdAt: Time!
 }
@@ -1124,6 +1144,12 @@ type WaitingUser implements Node {
     id: ID!
     userID: String!
     createdAt: Time!
+}
+
+type Comment implements Node {
+    id: ID!
+    reason: String!
+    attachments: [Attachment!]
 }
 
 type Proposal implements Node {
@@ -1143,6 +1169,8 @@ type Proposal implements Node {
     updatedAt: Time!
     createdAt: Time!
 
+    inviteUserID: String
+
     waitingList: [WaitingUser!]
     examples: [Attachment!]
     phases: [Phase!]!
@@ -1158,10 +1186,10 @@ input CreateProposalInput {
     size: String!
     balance: Int!
     stock: Int!
-    proposalUserID: String
+    inviteUserID: String
 }
 
-input ExampleKeysInput {
+input AttachmentKeysInput {
     keys: [String!]
 }
 
@@ -1185,6 +1213,18 @@ type ProposalEdge {
 input ProposalOrder {
     direction: OrderDirection!
     field: ProposalOrderField
+}
+
+input UpdateProposalInput {
+    title: String
+    description: String
+    color_model: String
+    size: String
+    addExampleIDs: [ID!]
+}
+
+input UpdatePhaseInput {
+    removeAttachmentIDs: [ID!]
 }
 
 
@@ -1225,6 +1265,8 @@ type Query {
         orderBy: PaintingOrder
         where: PaintingWhereInput,
     ): PaintingConnection
+    """Tags"""
+    randomTags: [Tag!]
     """Follower"""
     followers(
         after: Cursor
@@ -1274,7 +1316,14 @@ type Mutation {
     """Wallet"""
     createTopUpOrder(amount: Float!): TopUpOrder!
     """Proposal"""
-    createProposal(input: CreateProposalInput!, exampleKeys: ExampleKeysInput!, expiredAt: Datetime!): Proposal!
+    createProposal(input: CreateProposalInput!, exampleKeys: AttachmentKeysInput!, expiredAt: Datetime!): Proposal!
+    updateProposal(id: ID!, input: UpdateProposalInput!, addExampleKeys: AttachmentKeysInput!, expiredAt: Datetime): Proposal!
+    applyProposal(proposalID: ID!): Proposal!
+    confirmProposal(proposalID: ID!, userID: String!): Proposal!
+    updatePhase(phaseID: ID!, input: UpdatePhaseInput!, addAttachmentKeys: AttachmentKeysInput): Phase!
+    submitProposalPhase(proposalID: ID!): Phase!
+    callbackProposalPhase(proposalID: ID!, reason: String!): Phase!
+    confirmProposalPhase(proposalID: ID!): Phase!
 }
 enum TopUpOrderStatus {
     UNPAID

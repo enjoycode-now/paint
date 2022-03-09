@@ -12,7 +12,7 @@ import java.lang.Integer.max
 
 class FlowLayout : ViewGroup {
 
-    private var mAdapter: FlowAdapter? = null
+    var mAdapter: FlowAdapter? = null
 
     //  每个item横向间距
     private val mHorizontalSpacing: Int = dp2px(16)
@@ -184,4 +184,22 @@ class FlowLayout : ViewGroup {
             addView(childView)
         }
     }
+
+    fun notifySetChange(){
+        if (mAdapter == null) {
+            //控制针异常
+            throw NullPointerException("adapter is null")
+        }
+        //清空所有子view
+        removeAllViews()
+
+        //获取数量
+        val childCount: Int = mAdapter!!.count
+        for (i in 0 until childCount) {
+            val childView: View = mAdapter!!.getView(i, this)!!
+            addView(childView)
+        }
+    }
+
+
 }

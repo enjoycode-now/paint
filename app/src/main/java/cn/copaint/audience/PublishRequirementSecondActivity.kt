@@ -139,9 +139,9 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
                             size = "1920x1080",
                             balance = balance,
                             stock = stock,
-                            proposalUserID = Optional.Absent
+                            inviteUserID = Optional.Absent
                         ),
-                        ExampleKeysInput(Optional.presentIfNotNull(example)),
+                        AttachmentKeysInput(Optional.presentIfNotNull(example)),
                         expiredAt = "2022-10-01" // 记住一定要是yyyy-MM-dd   不能是yyyy-M-d
                     )
                 ).execute()
