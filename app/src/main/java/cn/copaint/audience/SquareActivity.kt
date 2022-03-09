@@ -53,7 +53,6 @@ class SquareActivity : AppCompatActivity() {
 
 
         lastReloadTimeMillis = 0L
-        binding.animationView.visibility = View.VISIBLE
         binding.proposalList.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL, false

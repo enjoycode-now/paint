@@ -1,18 +1,20 @@
 package cn.copaint.audience.listener
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import cn.copaint.audience.interfaces.RecyclerListener
 import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideContext
 
 object swipeRefreshListener {
 
     var sIsScrolling = false
 
     // 实现下拉刷新上拉加载更多
-    fun RecyclerView.setListener(activity: AppCompatActivity, l: RecyclerListener){
+    fun RecyclerView.setListener(context: Context, l: RecyclerListener){
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             var lastVisibleItem: Int = 0
             val swipeRefreshLayout = this@setListener.parent
@@ -25,11 +27,11 @@ object swipeRefreshListener {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
                     sIsScrolling = true;
-                    Glide.with(activity).pauseRequests()
+                    Glide.with(context).pauseRequests()
                 }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (sIsScrolling) {
-                        Glide.with(activity).resumeRequests();
+                        Glide.with(context).resumeRequests();
                     }
                     sIsScrolling = false;
 

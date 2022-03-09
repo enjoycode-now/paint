@@ -6,9 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
-import cn.copaint.audience.databinding.FragmentItemSearchUsersBinding
-import cn.copaint.audience.databinding.FragmentItemSearchWorkBinding
-import cn.copaint.audience.databinding.ItemFollowBinding
+import cn.copaint.audience.databinding.*
 import cn.copaint.audience.fragment.SearchUsersFragment
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
@@ -21,17 +19,46 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
-    RecyclerView.Adapter<FragmentSearchUserAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val EMPTY_TYPE = 0
+    val NORMAL_TYPE = 1
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        when (viewType) {
+
+            NORMAL_TYPE -> {
+                val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                return ViewHolder(binding)
+            }
+            else -> {
+                val binding = ItemUserpageEmptyViewBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                return EmptyViewHolder(binding)
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(fragment.userList[position], fragment)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ViewHolder) {
+            holder.bind(fragment.userList[position], fragment)
+        } else {
+
+        }
     }
 
-    override fun getItemCount() = fragment.userList.size
+    override fun getItemViewType(position: Int): Int {
+        return if (fragment.userList.size == 0)
+            EMPTY_TYPE
+        else
+            NORMAL_TYPE
+    }
+
+    override fun getItemCount() = if(fragment.userList.size == 0) 1 else fragment.userList.size
 
     inner class ViewHolder(val itemBind: ItemFollowBinding) : RecyclerView.ViewHolder(itemBind.root) {
         fun bind(userInfo: SearchUsersFragment.searchUserInfo, fragment: SearchUsersFragment) {
@@ -63,6 +90,8 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
         }
     }
 
+    inner class EmptyViewHolder(val itemBind: ItemUserpageEmptyViewBinding) :
+        RecyclerView.ViewHolder(itemBind.root) {}
 
     /**
      * 关注

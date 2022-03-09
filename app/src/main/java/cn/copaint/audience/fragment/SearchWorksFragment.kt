@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
 import cn.copaint.audience.adapter.FragmentSearchWorkAdapter
 import cn.copaint.audience.databinding.FragmentItemSearchWorksBinding
+import cn.copaint.audience.interfaces.RecyclerListener
+import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.type.*
 import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.ToastUtils
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
@@ -25,8 +28,9 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
     lateinit var adapter: FragmentSearchWorkAdapter
     lateinit var searchText: String
     val workList = arrayListOf<searchWorkInfo>()
-    val first = 10
-    var cursor = null
+    val first = 5
+    var cursor: Any? = null
+    var hasNextPage = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,16 +41,36 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         adapter = FragmentSearchWorkAdapter(this)
         binding.worksRecyclerView.adapter = adapter
+        binding.worksRecyclerView.setListener(activity, object : RecyclerListener {
+            override fun loadMore() {
+                if (hasNextPage) {
+                    ToastUtils.toast("加载更多...")
+                    updateUiInfo()
+                } else {
+                    ToastUtils.toast("拉到底了，客官哎...")
+                }
+            }
+
+            override fun refresh() {
+                ToastUtils.toast("刷新")
+                binding.swipeRefreshLayout.isRefreshing = false
+                onResume()
+            }
+        })
+
         return binding.root
     }
 
 
     override fun onResume() {
         super.onResume()
+        workList.clear()
+        cursor = null
         updateUiInfo()
     }
 
     fun updateUiInfo() {
+        binding.animationView.visibility = View.VISIBLE
         searchText = activity.binding.searchEdit.text.toString()
         val apolloclient = ApolloClient.Builder()
             .serverUrl("http://120.78.173.15:20000/query")
@@ -96,9 +120,10 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                         after = Optional.presentIfNotNull(cursor)
                     )
                 ).execute()
-                Log.i("chenlin", response?.data.toString())
+
+                hasNextPage = response.data?.paintings?.pageInfo?.hasNextPage == true
+                cursor = response.data?.paintings?.pageInfo?.endCursor
                 // 批量查询关注状态
-                workList.clear()
                 response.data?.paintings?.edges?.forEach {
                     var tempInfo = it?.let { it ->
                         val followResponse = apolloclient.query(
@@ -167,6 +192,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
 
 
             activity.runOnUiThread {
+                binding.animationView.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
         }

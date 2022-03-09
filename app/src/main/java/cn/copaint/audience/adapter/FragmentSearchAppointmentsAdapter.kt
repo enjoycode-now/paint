@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.R
 import cn.copaint.audience.SearchResultActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
+import cn.copaint.audience.databinding.FragmentItemSearchWorkBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
+import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.utils.DateUtils.rcfDateStr2DateStr
 import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStr
@@ -18,7 +20,10 @@ import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStrWithoutTime
 import cn.copaint.audience.utils.ToastUtils
 import com.bumptech.glide.Glide
 
-class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<FragmentSearchAppointmentsAdapter.ViewHolder>() {
+class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val EMPTY_TYPE = 0
+    val NORMAL_TYPE = 1
+
     class ViewHolder(val binding: FragmentItemSearchAppointmentsBinding):RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, fragment: SearchAppointmentFragment) {
             binding.authorName.text = fragment.dataList[position].nickname
@@ -73,19 +78,45 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
 //            }
 //        }
     }
+    inner class EmptyViewHolder(val itemBind: ItemUserpageEmptyViewBinding) :
+        RecyclerView.ViewHolder(itemBind.root) {}
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            FragmentItemSearchAppointmentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        when (viewType) {
+
+            NORMAL_TYPE -> {
+                val binding =
+                    FragmentItemSearchAppointmentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                return ViewHolder(binding)
+            }
+            else -> {
+                val binding = ItemUserpageEmptyViewBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                return EmptyViewHolder(binding)
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(position,fragment)
+    override fun getItemViewType(position: Int): Int {
+        return if (fragment.dataList.size == 0)
+            EMPTY_TYPE
+        else
+            NORMAL_TYPE
     }
 
-    override fun getItemCount() = fragment.dataList.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ViewHolder) {
+            holder.bind(position, fragment)
+        } else {
+
+        }
+    }
+
+    override fun getItemCount() = if (fragment.dataList.size == 0) 1 else fragment.dataList.size
 
 
 }
