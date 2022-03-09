@@ -1,4 +1,4 @@
-package cn.copaint.audience.utils
+package cn.copaint.audience.interfaces
 
 import android.view.View
 

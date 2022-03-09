@@ -1,7 +1,11 @@
 package cn.copaint.audience.utils
 
+import cn.authing.core.types.S
+import com.apollographql.apollo3.mpp.currentTimeMillis
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -41,5 +45,13 @@ object DateUtils {
             LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId())
         return DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .format(datetime)
+    }
+
+
+    // 得到当前rcf339时间字符串
+    fun getCurrentRcfDateStr(): String {
+        val instant = Instant.now()
+        instant.atZone(ZoneId.systemDefault())
+        return  instant.toString()
     }
 }

@@ -13,6 +13,7 @@ import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.utils.DateUtils
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
 
 class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerView.Adapter<SquareAppointmentAdapter.ViewHolder>() {
     class ViewHolder(val binding:FragmentItemSearchAppointmentsBinding):RecyclerView.ViewHolder(binding.root) {
@@ -36,6 +37,7 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
                 .into(binding.avatar)
             if(activity.dataList[position].example?.size?:0 > 0){
                 val coverPicUrl =  activity.resources.getString(R.string.PicUrlPrefix)+(activity.dataList[position].example?.get(0)?.key ?: "")
+
                 Glide.with(activity)
                     .load(coverPicUrl)
                     .error(R.drawable.loading_failed)

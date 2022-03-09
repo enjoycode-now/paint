@@ -1,50 +1,50 @@
 package cn.copaint.audience
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
-import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import cn.copaint.audience.adapter.FragmentSearchAppointmentsAdapter
 import cn.copaint.audience.adapter.SquareAppointmentAdapter
 import cn.copaint.audience.databinding.ActivitySquareBinding
-import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
-import cn.copaint.audience.myinterface.RecyclerListener
+import cn.copaint.audience.interfaces.RecyclerListener
+import cn.copaint.audience.model.Proposal
 import cn.copaint.audience.type.OrderDirection
 import cn.copaint.audience.type.ProposalOrder
+import cn.copaint.audience.type.ProposalType
 import cn.copaint.audience.type.ProposalWhereInput
 import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.DateUtils.getCurrentRcfDateStr
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.utils.ToastUtils.toastNetError
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
+import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.*
 import java.lang.Exception
+import java.time.Instant
 
 class SquareActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySquareBinding
     var lastBackPressedTimeMillis = 0L
-    val dataList: ArrayList<SearchAppointmentFragment.searchAppointmentInfo> = arrayListOf()
+    var lastReloadTimeMillis = 0L
+    val dataExpiredTimeMillis = 12L
+    val dataList: ArrayList<Proposal> = arrayListOf()
     val first = 10
     var cursor: Any? = null
     var hasNextPage = true
+    lateinit var job: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Bugsnag.start(this)
         binding = ActivitySquareBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
@@ -56,14 +56,15 @@ class SquareActivity : AppCompatActivity() {
             LinearLayoutManager.VERTICAL, false
         )
         binding.proposalList.adapter = SquareAppointmentAdapter(this)
-        GlideEngine.loadGridImage(this,user.photo?:"",binding.userAvatar)
+        GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
 
-        binding.proposalList.setListener(object :RecyclerListener{
+        binding.swipeRefreshLayout.setProgressViewOffset(true,-50,50)
+        binding.proposalList.setListener(this,object : RecyclerListener {
             override fun loadMore() {
-                if(hasNextPage){
+                if (hasNextPage) {
                     toast("加载更多...")
                     updateUiInfo()
-                }else{
+                } else {
                     toast("拉到底了，客官哎...")
                 }
 
@@ -71,9 +72,9 @@ class SquareActivity : AppCompatActivity() {
 
             override fun refresh() {
                 toast("刷新")
-                dataList.clear()
-                cursor = null
-                updateUiInfo()
+                binding.swipeRefreshLayout.isRefreshing = false
+                lastReloadTimeMillis = 0L
+                onResume()
             }
         })
     }
@@ -87,27 +88,37 @@ class SquareActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        dataList.clear()
-        cursor = null
-        updateUiInfo()
+        if ( System.currentTimeMillis() - lastReloadTimeMillis > dataExpiredTimeMillis){
+            dataList.clear()
+            cursor = null
+            binding.proposalList.adapter?.notifyDataSetChanged()
+            updateUiInfo()
+            lastReloadTimeMillis = System.currentTimeMillis()
+        }
     }
 
-    private fun updateUiInfo(){
-        binding.swipeRefreshLayout.isRefreshing = true
-        val apolloclient = ApolloClient.Builder()
+    private fun updateUiInfo() {
+        binding.progressBar.visibility = View.VISIBLE
+        val currentRcfDateStr = getCurrentRcfDateStr()
+        val apolloClient = ApolloClient.Builder()
             .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
+            .addHttpHeader("Authorization", "Bearer ${user.token}")
             .build()
 
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        job = CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到约稿信息
-                val response = apolloclient.query(
+                val response = apolloClient.query(
                     FindProposalsQuery(
                         after = Optional.presentIfNotNull(cursor),
                         first = Optional.presentIfNotNull(first),
                         orderBy = Optional.presentIfNotNull(ProposalOrder(OrderDirection.DESC)),
-                        where = Optional.Absent
+                        where = Optional.presentIfNotNull(
+                            ProposalWhereInput(
+                                expiredAtGT = Optional.presentIfNotNull(currentRcfDateStr),
+                                proposalType = Optional.presentIfNotNull(ProposalType.PUBLIC)
+                            )
+                        )
                     )
                 ).execute()
                 cursor = response.data?.proposals?.pageInfo?.endCursor
@@ -117,7 +128,7 @@ class SquareActivity : AppCompatActivity() {
                 response.data?.proposals?.edges?.forEach {
                     var tempInfo = it?.let { it ->
 
-                        val creatorInfoResponse = apolloclient.query(
+                        val creatorInfoResponse = apolloClient.query(
                             GetAuthingUsersInfoQuery(
                                 listOf(
                                     it.node?.creator ?: ""
@@ -125,11 +136,11 @@ class SquareActivity : AppCompatActivity() {
                             )
                         ).execute()
 
-                        return@let SearchAppointmentFragment.searchAppointmentInfo(
+                        return@let Proposal(
                             it.node?.title,
                             it.node?.description,
                             it.node?.colorModel,
-                            "",
+                            it.node?.expiredAt.toString(),
                             it.node?.createdAt.toString(),
                             "",
                             it.node?.colorModel,
@@ -146,26 +157,26 @@ class SquareActivity : AppCompatActivity() {
                     }
                     if (tempInfo != null) {
                         dataList.add(tempInfo)
+                        runOnUiThread{
+                            binding.proposalList.adapter?.notifyItemChanged(dataList.lastIndex)
+                        }
                     }
                 }
+                runOnUiThread {
+                    binding.progressBar.visibility = View.GONE
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+
             } catch (e: ApolloException) {
+                toastNetError()
                 Log.e("SearchUsersFragment", "Failure", e)
-                return@launch
             } catch (e: Exception) {
+                toastNetError()
                 Log.e("SearchUsersFragment", "Failure", e)
-                return@launch
-            }
-
-
-            runOnUiThread {
-                binding.proposalList.adapter?.notifyDataSetChanged()
-                binding.swipeRefreshLayout.isRefreshing = false
             }
         }
+
     }
-
-
-
 
 
     fun onMessage(view: View) {
@@ -181,7 +192,7 @@ class SquareActivity : AppCompatActivity() {
         if (System.currentTimeMillis() - lastBackPressedTimeMillis < 2000) {
             super.onBackPressed()
         } else {
-            ToastUtils.toast("再按一次退出")
+            toast("再按一次退出")
             lastBackPressedTimeMillis = System.currentTimeMillis()
         }
     }
@@ -192,5 +203,10 @@ class SquareActivity : AppCompatActivity() {
 
     fun onAddDialog(view: View) {
         DialogUtils.onAddDialog(binding.root, this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (this::job.isInitialized) job.cancel()
     }
 }

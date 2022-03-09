@@ -1,4 +1,4 @@
-package cn.copaint.audience.myinterface
+package cn.copaint.audience.interfaces
 
 interface RecyclerListener{
     fun loadMore(){}

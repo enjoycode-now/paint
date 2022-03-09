@@ -2,6 +2,7 @@ package cn.copaint.audience.utils
 
 import android.os.Handler
 import android.view.View
+import cn.copaint.audience.interfaces.DoubleClickListener
 
 open class DoubleClick(
     private val doubleClickListener: DoubleClickListener,

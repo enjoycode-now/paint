@@ -12,6 +12,7 @@ query findProposals($after: Cursor, $first: Int, $orderBy: ProposalOrder, $where
                     key
                 }
                 createdAt
+                expiredAt
                 stock
                 balance
                 description
