@@ -1,0 +1,6 @@
+query GetWallet {
+    wallet {
+        income
+        balance
+    }
+}

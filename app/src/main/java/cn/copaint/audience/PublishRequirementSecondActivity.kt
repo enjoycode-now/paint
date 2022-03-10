@@ -118,12 +118,12 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
         val proposalTitle = intent.getStringExtra("proposalTitle") ?: ""
         val proposalDescription = intent.getStringExtra("proposalDescription") ?: ""
         val example = intent.getStringArrayListExtra("example")
-        val balance = bind.priceEditText.text.toString().toInt()
+        val perPrice = bind.priceEditText.text.toString().toInt()
         val stock =
             bind.shareEditText.text.toString().substring(0, bind.shareEditText.text.lastIndex)
                 .toInt()
 
-        if (balance < 100 ){
+        if (perPrice < 100 ){
             toast("注意：每1%份额价格不能小于100元贝")
             return
         }
@@ -131,50 +131,10 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             toast("发布份额区间[1-100]")
             return
         }
-        val job = CoroutineScope(Dispatchers.IO).async {
-            val response = try {
-                apolloClient(this@PublishRequirementSecondActivity).mutation(
-                    CreateProposalMutation(
-                        CreateProposalInput(
-                            proposalType = ProposalType.PUBLIC,
-                            title = proposalTitle,
-                            description = proposalDescription,
-                            colorModel = "暖色调",
-                            size = "1920x1080",
-                            balance = balance,
-                            stock = stock,
-                            inviteUserID = Optional.Absent
-                        ),
-                        AttachmentKeysInput(Optional.presentIfNotNull(example)),
-                        expiredAt = "2022-10-01" // 记住一定要是yyyy-MM-dd   不能是yyyy-M-d
-                    )
-                ).execute()
-
-            } catch (e: Exception) {
-                toast(e.toString())
-                return@async false
-            }
-            Log.i(packageName, response.toString())
-
-            return@async true
-        }
-        CoroutineScope(Dispatchers.Default).launch {
-            val str = job.await()
-            if (str) {
-                toast("发布成功")
-                delay(500)
-                runOnUiThread {
-                    // PublishRequirementActivity的启动模式是singleTop,如果处于栈顶，会调用onNewIntent，在那里finish该任务栈
-                    val intent = Intent(
-                        this@PublishRequirementSecondActivity,
-                        PublishRequirementActivity::class.java
-                    )
-                    intent.putExtra("isFinish", true)
-                    finish()
-                    startActivity(intent)
-                }
-            }
-        }
+        intent.setClass(this,PayOrderActivity::class.java)
+        intent.putExtra("stock",stock)
+        intent.putExtra("perPrice",perPrice)
+        startActivity(intent)
 
     }
     fun shareEditTextLostFocus(){
@@ -256,4 +216,6 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(ev);
     }
+
+
 }

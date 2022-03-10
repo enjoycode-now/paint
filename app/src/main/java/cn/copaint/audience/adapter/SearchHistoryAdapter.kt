@@ -1,9 +1,11 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.SearchActivity
+import cn.copaint.audience.SearchResultActivity
 import cn.copaint.audience.databinding.ItemFansBinding
 import cn.copaint.audience.databinding.ItemSearchHistoryBinding
 import cn.copaint.audience.searchHistoryList
@@ -19,6 +21,14 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
             activity: SearchActivity,
             searchHistoryAdapter: SearchHistoryAdapter
         ) {
+            binding.root.setOnClickListener {
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        SearchResultActivity::class.java
+                    ).putExtra("SearchContent", searchHistoryString)
+                )
+            }
             binding.historyTv.text = searchHistoryString
             binding.historyDelete.setOnClickListener {
                 searchHistoryList.removeAt(position)

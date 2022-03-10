@@ -269,11 +269,5 @@ class PublishRequirementActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        if(intent?.getBooleanExtra("isFinish",false)==true){
-            this.finish()
-        }
-        super.onNewIntent(intent)
-    }
 
 }

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PayOrderActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#FAFBFF"
+        app:contentInsetStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/onBackButton"
+                android:layout_width="18dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:onClick="onBackPress"
+                android:src="@drawable/ic_back_deep_gray"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#999999" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:onClick="onBackPress"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/titleNote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="支付订单"
+                android:textAlignment="center"
+                android:textColor="#CC000000"
+                android:textSize="18sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <TextView
+        android:id="@+id/reciprocalNote"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:textSize="13sp"
+        android:text="支付剩余时间："
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/chronometer"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:countDown="true"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:textColor="#009688"
+        android:textSize="13sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/reciprocalNote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/reciprocalNote" />
+
+    <TextView
+        android:id="@+id/yuanbeiText"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-condensed-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reciprocalNote" />
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/yuanbeiConstraint"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="120dp"
+        app:layout_constraintTop_toBottomOf="@id/yuanbeiText"
+        >
+
+        <TextView
+            android:id="@+id/methodNote1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="元贝账户："/>
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@id/methodNote1"
+            android:text=""/>
+
+
+        <CheckBox
+            android:id="@+id/checkbox1"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    <TextView
+        android:id="@+id/submitBtn"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/btn_purple_rectangle_radius3"
+        android:gravity="center"
+        android:onClick="onPay"
+        android:text="立即支付"
+        android:textColor="#F5FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/yuanbeiConstraint"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,7 +37,7 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
                 .into(binding.avatar)
             if(activity.dataList[position].example?.size?:0 > 0){
                 val coverPicUrl =  activity.resources.getString(R.string.PicUrlPrefix)+(activity.dataList[position].example?.get(0)?.key ?: "")
-
+                binding.coverPic.visibility = View.VISIBLE
                 Glide.with(activity)
                     .load(coverPicUrl)
                     .error(R.drawable.loading_failed)

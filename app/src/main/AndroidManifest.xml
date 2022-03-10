@@ -53,7 +53,7 @@
         <activity
             android:name=".SquareActivity"
             android:exported="false"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".PublishRequirementSecondActivity"
             android:exported="false" />
@@ -65,8 +65,7 @@
             android:exported="false" />
         <activity
             android:name=".PublishRequirementActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
+            android:exported="false" />
         <activity
             android:name=".SearchActivity"
             android:exported="false" />
@@ -92,12 +91,12 @@
         <activity android:name=".VerificationCodeActivity" />
         <activity
             android:name=".UserActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar" />
         <activity
             android:name=".HomePageActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

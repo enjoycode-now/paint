@@ -221,7 +221,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView25"
         app:layout_constraintTop_toTopOf="@+id/textView25" />
 
-
     <TextView
         android:id="@+id/submitBtn"
         android:layout_width="0dp"

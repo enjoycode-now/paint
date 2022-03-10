@@ -3,6 +3,7 @@ package cn.copaint.audience
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -122,11 +123,12 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     fun onMessage(view: View) {
-
     }
 
 
     fun onSquare(view: View) {
         startActivity(Intent(this, SquareActivity::class.java))
     }
+
+
 }
