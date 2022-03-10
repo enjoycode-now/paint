@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
 import cn.copaint.audience.adapter.FollowAdapter
 import cn.copaint.audience.adapter.FragmentSearchUserAdapter
+import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentItemSearchUsersBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
@@ -73,22 +75,22 @@ class SearchUsersFragment(val activity: SearchResultActivity) : Fragment() {
 
     private fun updateUiInfo() {
         binding.animationView.visibility = View.VISIBLE
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
-            .build()
+        val searchText = activity.binding.searchEdit.text.toString()
+        if (searchText == ""){
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = apolloclient.query(
+                val response = apolloClient(activity).query(
                     AuthingSearchUsersQuery(
-                        activity.binding.searchEdit.text.toString(),
+                        searchText,
                         page,
                         limit
                     )
                 ).execute()
                 hasNextPage = response.data?.authingSearchUsers?.size == limit
                 response.data?.authingSearchUsers?.forEach {
-                    val followResponse = apolloclient.query(
+                    val followResponse = apolloClient(activity).query(
                         FindIsFollowQuery(
                             Optional.presentIfNotNull(
                                 FollowerWhereInput(

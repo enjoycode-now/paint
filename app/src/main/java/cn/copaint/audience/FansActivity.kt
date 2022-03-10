@@ -11,6 +11,7 @@ import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.FansAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityFansBinding
 import cn.copaint.audience.databinding.ActivityFollowsBinding
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
@@ -63,13 +64,9 @@ class FansActivity : AppCompatActivity() {
     }
 
     fun updateUiInfo() {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
-                apolloClient.query(
+                apolloClient(this@FansActivity).query(
                     GetFollowersListQuery(
                         cursor,
                         first = Optional.presentIfNotNull(first),
@@ -96,7 +93,7 @@ class FansActivity : AppCompatActivity() {
             fansList.clear()
 
             // 根据列表获取每一个粉丝的个人信息，然后添加到List去，最后notifyChange
-            apolloClient.query(GetAuthingUsersInfoQuery(userIdList))
+            apolloClient(this@FansActivity).query(GetAuthingUsersInfoQuery(userIdList))
                 .execute().data?.authingUsersInfo?.forEach {
                     fansList.add(it)
             }

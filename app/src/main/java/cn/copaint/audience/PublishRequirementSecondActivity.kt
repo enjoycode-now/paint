@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPublishRequirementSecondBinding
 import cn.copaint.audience.type.*
 import cn.copaint.audience.utils.AuthingUtils
@@ -122,14 +123,17 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             bind.shareEditText.text.toString().substring(0, bind.shareEditText.text.lastIndex)
                 .toInt()
 
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
-
+        if (balance < 100 ){
+            toast("注意：每1%份额价格不能小于100元贝")
+            return
+        }
+        if(stock !in 1..100){
+            toast("发布份额区间[1-100]")
+            return
+        }
         val job = CoroutineScope(Dispatchers.IO).async {
             val response = try {
-                apolloClient.mutation(
+                apolloClient(this@PublishRequirementSecondActivity).mutation(
                     CreateProposalMutation(
                         CreateProposalInput(
                             proposalType = ProposalType.PUBLIC,

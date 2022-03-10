@@ -251,6 +251,7 @@
         app:srcCompat="@drawable/ic_video_logo"
         android:clickable="false"
         android:visibility="gone"
+        android:onClick="onPreviewVideo"
         app:layout_constraintBottom_toBottomOf="@+id/uploadVideo"
         app:layout_constraintEnd_toEndOf="@+id/uploadVideo"
         app:layout_constraintStart_toStartOf="@+id/uploadVideo"

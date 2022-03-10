@@ -48,9 +48,12 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity
-            android:name=".SquareActivity"
-            android:launchMode="singleInstance"
+            android:name=".PayOrderActivity"
             android:exported="false" />
+        <activity
+            android:name=".SquareActivity"
+            android:exported="false"
+            android:launchMode="singleInstance" />
         <activity
             android:name=".PublishRequirementSecondActivity"
             android:exported="false" />
@@ -62,8 +65,8 @@
             android:exported="false" />
         <activity
             android:name=".PublishRequirementActivity"
-            android:launchMode="singleTop"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
             android:name=".SearchActivity"
             android:exported="false" />
@@ -98,6 +101,7 @@
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

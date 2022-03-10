@@ -150,7 +150,7 @@ class EditProfileActivity : AppCompatActivity() {
                 if(photoUri != null){
                     val inputStream = contentResolver.openInputStream(photoUri!!)
                     if (inputStream != null) {
-                        updateInput.photo = uploadAvatar(inputStream.readBytes()) ?: updateInput.photo
+                        updateInput.photo = uploadAvatar(this@EditProfileActivity,inputStream.readBytes()) ?: updateInput.photo
                     }
                 }
                 authenticationClient.updateProfile(updateInput).execute()

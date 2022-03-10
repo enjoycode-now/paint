@@ -53,7 +53,7 @@ class InkEnvironmentModel(val activity: Activity) {
         environment.putProperty("os.version.incremental", Build.VERSION.INCREMENTAL)
         environment.putProperty("os.version.release", Build.VERSION.RELEASE)
         environment.putProperty("wacom.ink.sdk.name", activity.getString(R.string.sdk_name))
-        environment.putProperty("wacom.ink.sdk.version", activity.getString(R.string.sdk_version))
+        environment.putProperty("wacom.ink.sdk.version", activity.getString(R.string.app_version))
 
         // Initialize InputDevice
         inputDevice = InputDevice()

@@ -77,8 +77,8 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
             itemBind.biography.text = workInfo.work.node?.description
             itemBind.fansCount.text = "粉丝: ${workInfo.fansCount ?: "加载出错"}"
             Glide.with(fragment).load(workInfo.avatar ?: "").into(itemBind.userAvatar)
-            val imageUri = "http://120.78.173.15:9000/painting/" + workInfo.work.node?.image?.key
-            Glide.with(fragment).load(imageUri).into(itemBind.workImage)
+            val imageUri = fragment.resources.getString(R.string.PicUrlPrefix) + workInfo.work.node?.image?.key
+            Glide.with(fragment).load(imageUri).error(R.drawable.loading_failed).into(itemBind.workImage)
             if (workInfo.isFollow) {
                 itemBind.followBtn.text = "已关注"
                 itemBind.followBtn.setTextColor(Color.parseColor("#A9A9A9"))

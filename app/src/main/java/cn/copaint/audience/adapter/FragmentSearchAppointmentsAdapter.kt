@@ -48,7 +48,8 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
                     .error(R.drawable.loading_failed)
                     .into(binding.coverPic)
             }else{
-                // 用户没有上传例图 todo:等设计稿
+                // 用户没有上传例图
+                binding.coverPic.visibility = View.GONE
             }
             binding.description.setOnClickListener {
                 if (binding.description.ellipsize == null ){

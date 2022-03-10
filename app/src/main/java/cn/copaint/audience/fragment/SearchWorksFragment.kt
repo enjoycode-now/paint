@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
 import cn.copaint.audience.adapter.FragmentSearchWorkAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentItemSearchWorksBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
@@ -72,15 +73,13 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
     fun updateUiInfo() {
         binding.animationView.visibility = View.VISIBLE
         searchText = activity.binding.searchEdit.text.toString()
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
-            .build()
-
+        if (searchText == ""){
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到作品信息
-                val response = apolloclient.query(
+                val response = apolloClient(activity).query(
                     FindPaintingsQuery(
                         Optional.presentIfNotNull(PaintingOrder(OrderDirection.DESC)),
                         Optional.presentIfNotNull(
@@ -126,7 +125,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                 // 批量查询关注状态
                 response.data?.paintings?.edges?.forEach {
                     var tempInfo = it?.let { it ->
-                        val followResponse = apolloclient.query(
+                        val followResponse = apolloClient(activity).query(
                             FindIsFollowQuery(
                                 Optional.presentIfNotNull(
                                     FollowerWhereInput(
@@ -141,7 +140,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                             )
                         ).execute()
 
-                        val creatorInfoResponse = apolloclient.query(
+                        val creatorInfoResponse = apolloClient(activity).query(
                             GetAuthingUsersInfoQuery(
                                 listOf(
                                     it.node?.creator ?: ""
@@ -149,7 +148,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                             )
                         ).execute()
 
-                        val fansAccountResponse = apolloclient.query(
+                        val fansAccountResponse = apolloClient(activity).query(
                             FindFollowersCountQuery(
                                 Optional.presentIfNotNull(
                                     FollowInfoInput(

@@ -145,4 +145,7 @@ dependencies {
     implementation "com.airbnb.android:lottie:5.0.3"
     // 高斯模糊
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
+
+    // koin依赖出入框架
+    implementation "org.koin:koin-android:1.0.2"
 }

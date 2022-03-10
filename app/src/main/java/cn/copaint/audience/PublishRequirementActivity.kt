@@ -34,6 +34,7 @@ import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.wait
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
@@ -59,8 +60,6 @@ class PublishRequirementActivity : AppCompatActivity() {
     var wordFormat: String = "" // 稿件格式
     val example: ArrayList<String> = arrayListOf() //样例图
     var acceptancePhase: String = ""// 验收阶段
-    var balance: Int = 100
-    val stock: Int = 10
     var isPublic= Optional.presentIfNotNull(ProposalType.PUBLIC) // 稿件是否公开
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,8 +111,9 @@ class PublishRequirementActivity : AppCompatActivity() {
                             .openGallery(SelectMimeType.ofImage())
                             .setSelectorUIStyle(selectorStyle)
                             .setImageEngine(GlideEngine)
+                            .setSelectMaxFileSize(5 shl 20) // 筛选不超过5M的图片
                             .isDisplayTimeAxis(true)//显示资源时间轴
-                            .isPageStrategy(false)//是否分页
+                            .isPageStrategy(true)//是否分页
                             .isOriginalControl(true)//是否开启原图功能
                             .isDisplayCamera(true)//是否支持相机拍摄
                             .isFastSlidingSelect(true) //是否支持滑动选择
@@ -129,8 +129,6 @@ class PublishRequirementActivity : AppCompatActivity() {
                             .setSelectedData(mAdapter.getData())
 
                     selectionModel.forResult(launcherResult)
-
-
                 }
             }
         })
@@ -230,14 +228,14 @@ class PublishRequirementActivity : AppCompatActivity() {
         example.clear()
 
         // 开启子线程批量上传图片
-        val job = CoroutineScope(Dispatchers.IO).async {
+        val isComplete = CoroutineScope(Dispatchers.IO).async {
             mAdapter.list.forEach {
                 try {
                     val readBytes =
                         contentResolver.openInputStream(it.path.toUri())?.readBytes()
                     if (readBytes != null) {
-                        val json = uploadPic(readBytes)
-                        if (JSONObject(json).get("key")!=null && !JSONObject(json).get("key").equals("")){
+                        val json = uploadPic(this@PublishRequirementActivity,readBytes)
+                        if (!JSONObject(json).get("key").equals("")){
                             example.add(JSONObject(json).get("key").toString())
                             Log.i(TAG, "JSONObject(json).get(\"key\").toString() == "+JSONObject(json).get("key").toString())
                         }
@@ -249,12 +247,11 @@ class PublishRequirementActivity : AppCompatActivity() {
                 }
             }
             return@async true
-
         }
 
         // 调用apollo graphql的接口新增约稿
         CoroutineScope(Dispatchers.IO).launch {
-            if(job.await()){
+            if(isComplete.await()){
                 toast("上传成功")
                 progressDialog.dismiss()
                 delay(1000)
@@ -270,9 +267,6 @@ class PublishRequirementActivity : AppCompatActivity() {
                 progressDialog.dismiss()
             }
         }
-
-
-
     }
 
     override fun onNewIntent(intent: Intent?) {

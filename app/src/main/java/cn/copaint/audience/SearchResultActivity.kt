@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.databinding.ActivitySearchResultBinding
@@ -83,21 +84,21 @@ class SearchResultActivity : AppCompatActivity() {
         currentFragment = 2
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = resources.getDrawable(R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
     fun onWorkBtn(view: View) {
         currentFragment = 0
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = resources.getDrawable(R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
     fun onAppointmentsBtn(view: View) {
         currentFragment = 1
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = resources.getDrawable(R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
 

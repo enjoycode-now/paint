@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import cn.copaint.audience.adapter.SupportWorksAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityUserBinding
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.type.FollowInfoInput
@@ -102,14 +103,10 @@ class UserActivity : AppCompatActivity() {
 
     private fun updateUiInfo() {
         runOnUiThread {
-            val apolloclient = ApolloClient.Builder()
-                .serverUrl("http://120.78.173.15:20000/query")
-                .addHttpHeader("Authorization", "Bearer ${user.token ?: ""}")
-                .build()
 
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
-                    apolloclient.query(
+                    apolloClient(this@UserActivity).query(
                         UserPage_InitQuery(
                             input = Optional.presentIfNotNull(
                                 FollowInfoInput(userID = user.id)
@@ -121,11 +118,10 @@ class UserActivity : AppCompatActivity() {
                     return@launch
                 }
                 runOnUiThread {
-                    binding.moneyText.text = response.data?.wallet?.balance.toString()
+                    binding.moneyText.text = response.data?.wallet?.balance.toString() ?: ""
                     binding.followingText.text =
-                        response.data?.followInfo?.followingCount.toString()
+                        response.data?.followInfo?.followingCount.toString() ?: ""
                 }
-
             }
             binding.authorName.text = user.nickname
             binding.authorId.text = user.id.uppercase()

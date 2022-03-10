@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.FlowAdapter
 import cn.copaint.audience.adapter.SearchHistoryAdapter
+import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.AuthingUtils
@@ -80,14 +82,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun getRecommendTagsList() {
         recommendList.clear()
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
-            .build()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = apolloclient.query(
+                val response = apolloClient(this@SearchActivity).query(
                     GetRandomTagsQuery()
                 ).execute()
                 response.data?.randomTags?.forEach { recommendList.add(RecommendTag(it.id,it.name,it.createdAt.toString())) }
@@ -158,7 +156,6 @@ class SearchActivity : AppCompatActivity() {
             return itemBinding.root
         }
     }
-
 }
 
 data class RecommendTag(val id:String,val name: String,val createAt: String)

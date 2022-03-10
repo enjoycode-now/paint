@@ -43,7 +43,8 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
                     .error(R.drawable.loading_failed)
                     .into(binding.coverPic)
             }else{
-                // 用户没有上传例图的情况 todo:等设计稿
+                // 用户没有上传例图的情况
+                binding.coverPic.visibility = View.GONE
             }
             binding.description.setOnClickListener {
                 if (binding.description.ellipsize == null ){

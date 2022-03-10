@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.FollowAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityFollowsBinding
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
@@ -48,13 +49,9 @@ class FollowsActivity : AppCompatActivity() {
     }
 
     fun updateUiInfo() {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
-                apolloClient.query(GetFollowersListQuery(cursor,first = Optional.presentIfNotNull(10), where = Optional.presentIfNotNull(where)))
+                apolloClient(this@FollowsActivity).query(GetFollowersListQuery(cursor,first = Optional.presentIfNotNull(10), where = Optional.presentIfNotNull(where)))
                     .execute().data
             } catch (e: ApolloException) {
                 Log.d("PayActivity", "Failure", e)
@@ -69,7 +66,7 @@ class FollowsActivity : AppCompatActivity() {
                 it?.node?.userID?.let { it1 -> userIdList.add(it1) }
             }
             followList.clear()
-            apolloClient.query(GetAuthingUsersInfoQuery(userIdList)).execute().data?.authingUsersInfo?.forEach{
+            apolloClient(this@FollowsActivity).query(GetAuthingUsersInfoQuery(userIdList)).execute().data?.authingUsersInfo?.forEach{
                 followList.add(it)
             }
             runOnUiThread{

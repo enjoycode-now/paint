@@ -12,6 +12,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityUserPageCreatorBinding
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
 import cn.copaint.audience.type.FollowInfoInput
@@ -32,7 +33,6 @@ import kotlinx.coroutines.launch
 class UserPageCreatorActivity : AppCompatActivity() {
     lateinit var creatorId: String
     var is_follow = true
-    lateinit var apolloclient: ApolloClient
     lateinit var binding: ActivityUserPageCreatorBinding
     var lastTimeMillis = 0L
 
@@ -45,10 +45,6 @@ class UserPageCreatorActivity : AppCompatActivity() {
         StatusBarUtils.initSystemBar(window, "#dacdd8", true)
         setContentView(binding.root)
         app = this
-        apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + user.token!!)
-            .build()
         // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
         binding.biography.setOnTouchListener { v, event ->
             if(v == binding.biography && canVerticalScroll(v as EditText)){
@@ -75,7 +71,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
-                    apolloclient.query(
+                    apolloClient(this@UserPageCreatorActivity).query(
                         UserPageCreator_InitQuery(
                             input = Optional.presentIfNotNull(
                                 FollowInfoInput(userID = user.id)
@@ -176,7 +172,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
             true -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val response = try {
-                        apolloclient.mutation(
+                        apolloClient(this@UserPageCreatorActivity).mutation(
                             UnfollowUserMutation(creatorId)
                         ).execute()
                     } catch (e: Exception) {
@@ -203,7 +199,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
             }
             else -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val response = apolloclient.mutation(
+                    val response = apolloClient(this@UserPageCreatorActivity).mutation(
                         FollowUserMutation(creatorId)
                     ).execute()
 

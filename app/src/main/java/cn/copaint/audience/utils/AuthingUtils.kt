@@ -6,6 +6,8 @@ import cn.authing.core.auth.AuthenticationClient
 import cn.authing.core.graphql.GraphQLException
 import cn.authing.core.types.User
 import cn.copaint.audience.LoginActivity
+import cn.copaint.audience.apollo.myOkHttpClient
+import cn.copaint.audience.apollo.myOkHttpClient.myOkHttpClient
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -50,8 +52,7 @@ object AuthingUtils {
         }
     }
 
-    fun uploadAvatar(byteArray: ByteArray): String? {
-        val client = OkHttpClient().newBuilder().build()
+    fun uploadAvatar(context: Context,byteArray: ByteArray): String? {
         val body = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("file", "avatar_${System.currentTimeMillis()}.jpg", byteArray.toRequestBody("image/jpeg".toMediaType(), 0, byteArray.size))
             .build()
@@ -59,7 +60,7 @@ object AuthingUtils {
             .url("https://core.authing.cn/api/v2/upload?folder=photos")
             .method("POST", body)
             .build()
-        val response: Response = client.newCall(request).execute()
+        val response: Response = myOkHttpClient(context).newCall(request).execute()
         val url = response.body?.string() ?: ""
         return JSONObject(url).takeIf { it.get("code") == 200 }?.getJSONObject("data")?.getString("url")
     }

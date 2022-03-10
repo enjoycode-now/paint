@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
 import cn.copaint.audience.adapter.FragmentSearchAppointmentsAdapter
+import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentSearchAppointmentsBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
@@ -79,15 +81,15 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
     private fun updateUiInfo() {
         binding.animationView.visibility = View.VISIBLE
         searchText = activity.binding.searchEdit.text.toString()
-        val apolloclient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${AuthingUtils.user.token}")
-            .build()
+        if (searchText == ""){
+            return
+        }
+
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到约稿信息
-                val response = apolloclient.query(
+                val response = apolloClient(activity).query(
                     FindProposalsQuery(
                         after = Optional.presentIfNotNull(cursor),
                         first = Optional.presentIfNotNull(first),
@@ -123,7 +125,7 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
                 response.data?.proposals?.edges?.forEach {
                     var tempInfo = it?.let { it ->
 
-                        val creatorInfoResponse = apolloclient.query(
+                        val creatorInfoResponse = apolloClient(activity).query(
                             GetAuthingUsersInfoQuery(
                                 listOf(
                                     it.node?.creator ?: ""

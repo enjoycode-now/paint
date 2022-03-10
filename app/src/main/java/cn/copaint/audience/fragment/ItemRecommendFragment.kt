@@ -6,6 +6,8 @@ import android.view.*
 import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.*
+import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
@@ -31,9 +33,6 @@ class ItemRecommendFragment : Fragment() {
 
     //关注状态位
     var followStatus = false
-
-    lateinit var apolloClient: ApolloClient
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,49 +118,49 @@ class ItemRecommendFragment : Fragment() {
             toast("不能关注自己")
             return
         }
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
-                apolloClient.mutation(
-                    FollowUserMutation(userid)
-                ).execute()
+                context?.let {
+                    apolloClient(it).mutation(
+                        FollowUserMutation(userid)
+                    ).execute()
+                }
             } catch (e: Exception) {
                 toast(e.toString())
                 return@launch
             }
 
-            if (response.data != null) {
-                activity?.runOnUiThread {
-                    binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
-                    followStatus = !followStatus
+            if (response != null) {
+                if (response.data != null) {
+                    activity?.runOnUiThread {
+                        binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
+                        followStatus = !followStatus
+                    }
                 }
             }
         }
     }
 
     fun unFollowUser(userid: String) {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
-                apolloClient.mutation(
-                    UnfollowUserMutation(userid)
-                ).execute()
+                context?.let {
+                    apolloClient(it).mutation(
+                        UnfollowUserMutation(userid)
+                    ).execute()
+                }
             } catch (e: Exception) {
                 toast(e.toString())
                 return@launch
             }
             activity?.runOnUiThread {
-                if (response.data != null) {
-                    binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
-                    followStatus = !followStatus
-                } else {
-                    toast(response.errors?.get(0)?.message.toString())
+                if (response != null) {
+                    if (response.data != null) {
+                        binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
+                        followStatus = !followStatus
+                    } else {
+                        toast(response.errors?.get(0)?.message.toString())
+                    }
                 }
             }
         }
@@ -174,36 +173,35 @@ class ItemRecommendFragment : Fragment() {
 
     fun updateInfo() {
         if (AuthingUtils.user.id != "") {
-            val apolloClient = ApolloClient.Builder()
-                .serverUrl("http://120.78.173.15:20000/query")
-                .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token)
-                .build()
-
             CoroutineScope(Dispatchers.Default).launch {
                 val response = try {
-                    apolloClient.query(
-                        FindIsFollowQuery(
-                            where = Optional.presentIfNotNull(
-                                FollowerWhereInput(
-                                    userID = Optional.presentIfNotNull(
-                                        creatorId
-                                    ), followerID = Optional.presentIfNotNull(AuthingUtils.user.id)
+                    context?.let {
+                        apolloClient(it).query(
+                            FindIsFollowQuery(
+                                where = Optional.presentIfNotNull(
+                                    FollowerWhereInput(
+                                        userID = Optional.presentIfNotNull(
+                                            creatorId
+                                        ), followerID = Optional.presentIfNotNull(AuthingUtils.user.id)
+                                    )
                                 )
                             )
-                        )
-                    ).execute()
+                        ).execute()
+                    }
                 } catch (e: Exception) {
                     toast(e.toString())
                     return@launch
                 }
 
                 activity?.runOnUiThread {
-                    followStatus = if (response.data?.followers?.totalCount != 0) {
-                        binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
-                        true
-                    } else {
-                        binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
-                        false
+                    if (response != null) {
+                        followStatus = if (response.data?.followers?.totalCount != 0) {
+                            binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.drawable.ic_unfollow))
+                            true
+                        } else {
+                            binding.toolbar.followBtn.setImageDrawable(context?.getDrawable(R.mipmap.ic_follow))
+                            false
+                        }
                     }
                 }
             }
