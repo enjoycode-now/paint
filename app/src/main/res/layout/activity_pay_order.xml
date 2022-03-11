@@ -84,10 +84,35 @@
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:textSize="18sp"
+        android:textColor="@color/black"
         android:fontFamily="sans-serif-condensed-medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reciprocalNote" />
+
+
+    <TextView
+        android:id="@+id/tip1"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif-condensed-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yuanbeiText" />
+
+
+    <TextView
+        android:id="@+id/tip2"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif-condensed-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tip1" />
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/yuanbeiConstraint"
@@ -103,6 +128,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textSize="13sp"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif-condensed-medium"
             android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
             android:text="元贝账户："/>
@@ -113,6 +140,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textSize="13sp"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif-condensed-medium"
             app:layout_constraintStart_toEndOf="@id/methodNote1"
             android:text=""/>
 

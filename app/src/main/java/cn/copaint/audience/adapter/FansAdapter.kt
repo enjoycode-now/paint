@@ -7,6 +7,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
 import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.databinding.ItemFansBinding
@@ -92,13 +93,10 @@ fun onConfirmRemoveDialog(activity: FansActivity, id: String, photo: String?) {
         layerDetailWindow.dismiss()
     }
     popBind.confirmBtn.setOnClickListener {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-            .build()
+
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
-                apolloClient.mutation(RemoveFollowerMutation(id)).execute()
+                apolloClient(activity).mutation(RemoveFollowerMutation(id)).execute()
             }catch ( e: Exception){
                 Log.e("FansAdapter", e.toString() )
                 return@launch

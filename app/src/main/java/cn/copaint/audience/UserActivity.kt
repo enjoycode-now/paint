@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -48,7 +49,6 @@ class UserActivity : AppCompatActivity() {
         StatusBarUtils.initSystemBar(window,"#dacdd8",false)
         setContentView(binding.root)
         app = this
-
 
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
@@ -97,6 +97,7 @@ class UserActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateUiInfo()
+        Log.i("chenlin", "onResume: 1")
     }
 
 
@@ -107,7 +108,7 @@ class UserActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
                     apolloClient(this@UserActivity).query(
-                        UserPage_InitQuery(
+                        UserPageInitQuery(
                             input = Optional.presentIfNotNull(
                                 FollowInfoInput(userID = user.id)
                             )
@@ -118,7 +119,12 @@ class UserActivity : AppCompatActivity() {
                     return@launch
                 }
                 runOnUiThread {
-                    binding.moneyText.text = response.data?.wallet?.balance.toString() ?: ""
+                    val yuanbeiCount = (response.data?.wallet?.balance ?: 0.0) * aliPayUtils.yuanbeiExchangeRate
+                    if (yuanbeiCount > 100000)
+                        binding.moneyText.text = "${(yuanbeiCount/10000)}w"
+                    else
+                        binding.moneyText.text = "${yuanbeiCount}"
+
                     binding.followingText.text =
                         response.data?.followInfo?.followingCount.toString() ?: ""
                 }

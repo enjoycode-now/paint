@@ -147,15 +147,10 @@ class PayActivity : AppCompatActivity() {
 
     fun updateUiInfo() {
         if (loginCheck()) {
-            val apolloclient = ApolloClient.Builder()
-                .serverUrl("http://120.78.173.15:20000/query")
-                .addHttpHeader("Authorization", "Bearer " + AuthingUtils.user.token!!)
-                .build()
-
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
-                    apolloclient.query(
-                        PayACtivity_InitQuery(
+                    apolloClient(this@PayActivity).query(
+                        PayActivityInitQuery(
                             Optional.presentIfNotNull(
                                 BalanceRecordOrder(OrderDirection.DESC)
                             )
@@ -165,7 +160,8 @@ class PayActivity : AppCompatActivity() {
                     Log.d("PayActivity", "Failure", e)
                     return@launch
                 }
-                binding.remainYuanbei.text = "元贝余额：" + (response.data?.wallet?.balance ?: 0)
+                val yuanbeiCount = (response.data?.wallet?.balance ?: 0.0)*aliPayUtils.yuanbeiExchangeRate
+                binding.remainYuanbei.text = "元贝余额：$yuanbeiCount"
                 YuanbeiDetailList.clear()
                 var balanceRecord: BalanceRecord
                 var i = 0
@@ -173,7 +169,7 @@ class PayActivity : AppCompatActivity() {
                     var node = response.data?.balanceRecords?.edges?.get(i)
                     balanceRecord = BalanceRecord(
                         node?.node?.id!!,
-                        node.node?.balance!!,
+                        node.node?.balance!! * aliPayUtils.yuanbeiExchangeRate,
                         node.node?.balanceRecordAction!!,
                         node.node?.balanceRecordType!!,
                         node.node?.createdAt.toString()

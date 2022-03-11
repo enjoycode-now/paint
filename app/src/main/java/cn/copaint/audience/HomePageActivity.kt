@@ -82,9 +82,6 @@ class HomePageActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
 
     fun onDrawActivity(view: View) {
         if (loginCheck()) startActivity(Intent(this, DrawActivity::class.java))

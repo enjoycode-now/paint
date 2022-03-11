@@ -1,4 +1,4 @@
-query UserPage_Init($input: FollowInfoInput) {
+query UserPageInit($input: FollowInfoInput) {
     wallet {
         balance
     }

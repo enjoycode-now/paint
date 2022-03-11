@@ -72,7 +72,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val response = try {
                     apolloClient(this@UserPageCreatorActivity).query(
-                        UserPageCreator_InitQuery(
+                        UserPageCreatorActivityInitQuery(
                             input = Optional.presentIfNotNull(
                                 FollowInfoInput(userID = user.id)
                             ),

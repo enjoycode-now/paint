@@ -115,26 +115,32 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
     }
 
     fun onSubmitBtn(view: View) {
-        val proposalTitle = intent.getStringExtra("proposalTitle") ?: ""
-        val proposalDescription = intent.getStringExtra("proposalDescription") ?: ""
-        val example = intent.getStringArrayListExtra("example")
-        val perPrice = bind.priceEditText.text.toString().toInt()
-        val stock =
-            bind.shareEditText.text.toString().substring(0, bind.shareEditText.text.lastIndex)
-                .toInt()
+        try {
+            val perPrice = bind.priceEditText.text.toString().toInt()
+            val stock =
+                bind.shareEditText.text.toString().substring(0, bind.shareEditText.text.lastIndex)
+                    .toInt()
 
-        if (perPrice < 100 ){
-            toast("注意：每1%份额价格不能小于100元贝")
-            return
+            if (perPrice < 100 ){
+                toast("注意：每1%份额价格不能小于100元贝")
+                return
+            }
+            if(stock !in 1..100){
+                toast("发布份额区间[1-100]")
+                return
+            }
+            intent.setClass(this,PayOrderActivity::class.java)
+            intent.putExtra("stock",stock)
+            intent.putExtra("perPrice",perPrice)
+            startActivity(intent)
+
+
+        }catch (e : Exception){
+            toast(e.toString())
         }
-        if(stock !in 1..100){
-            toast("发布份额区间[1-100]")
-            return
-        }
-        intent.setClass(this,PayOrderActivity::class.java)
-        intent.putExtra("stock",stock)
-        intent.putExtra("perPrice",perPrice)
-        startActivity(intent)
+
+
+
 
     }
     fun shareEditTextLostFocus(){

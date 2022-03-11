@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PayStatusActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#FAFBFF"
+        app:contentInsetStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/onBackButton"
+                android:layout_width="18dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:onClick="onBackPress"
+                android:src="@drawable/ic_back_deep_gray"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#999999" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:onClick="onBackPress"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/titleNote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="支付成功"
+                android:textAlignment="center"
+                android:textColor="#CC000000"
+                android:textSize="18sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:lottie_speed="2"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/tick_green" />
+
+
+    <Chronometer
+        android:id="@id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:countDown="true"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/lottieView"
+        app:layout_constraintStart_toStartOf="@+id/lottieView"
+        app:layout_constraintTop_toBottomOf="@id/lottieView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

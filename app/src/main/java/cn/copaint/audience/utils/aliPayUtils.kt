@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 
 object aliPayUtils {
     val SDK_PAY_FLAG = 1
+    val yuanbeiExchangeRate = 10  // 10 元贝 = 1 人民币
 
     fun aliPay(activity: AppCompatActivity, currentNum: Double, mHandler: Handler) {
         //若支付金额不在0.1~10000元之间，不允许支付

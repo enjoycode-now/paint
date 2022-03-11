@@ -1,4 +1,4 @@
-query PayACtivity_Init($orderBy: BalanceRecordOrder) {
+query PayActivityInit($orderBy: BalanceRecordOrder) {
     wallet {
         id
         userID

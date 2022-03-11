@@ -1,5 +1,6 @@
 package cn.copaint.audience.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -29,7 +30,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
     lateinit var adapter: FragmentSearchWorkAdapter
     lateinit var searchText: String
     val workList = arrayListOf<searchWorkInfo>()
-    val first = 5
+    val first = 20
     var cursor: Any? = null
     var hasNextPage = false
 
@@ -40,6 +41,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
         binding = FragmentItemSearchWorksBinding.inflate(layoutInflater, container, false)
         binding.worksRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         adapter = FragmentSearchWorkAdapter(this)
         binding.worksRecyclerView.adapter = adapter
         binding.worksRecyclerView.setListener(activity, object : RecyclerListener {
@@ -71,11 +73,13 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
     }
 
     fun updateUiInfo() {
-        binding.animationView.visibility = View.VISIBLE
+
         searchText = activity.binding.searchEdit.text.toString()
         if (searchText == ""){
+            binding.animationView.visibility = View.GONE
             return
         }
+        binding.animationView.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到作品信息
@@ -122,6 +126,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
 
                 hasNextPage = response.data?.paintings?.pageInfo?.hasNextPage == true
                 cursor = response.data?.paintings?.pageInfo?.endCursor
+                val tempWorkList = arrayListOf<searchWorkInfo>()
                 // 批量查询关注状态
                 response.data?.paintings?.edges?.forEach {
                     var tempInfo = it?.let { it ->
@@ -178,8 +183,15 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                         }
                     }
                     if (tempInfo != null) {
-                        workList.add(tempInfo)
+                        tempWorkList.add(tempInfo)
                     }
+                }
+
+
+                activity.runOnUiThread {
+                    workList.addAll(tempWorkList)
+                    binding.animationView.visibility = View.GONE
+                    adapter.notifyDataSetChanged()
                 }
             } catch (e: ApolloException) {
                 Log.e("SearchUsersFragment", "Failure", e)
@@ -187,12 +199,6 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
             } catch (e: Exception) {
                 Log.e("SearchUsersFragment", "Failure", e)
                 return@launch
-            }
-
-
-            activity.runOnUiThread {
-                binding.animationView.visibility = View.GONE
-                adapter.notifyDataSetChanged()
             }
         }
     }

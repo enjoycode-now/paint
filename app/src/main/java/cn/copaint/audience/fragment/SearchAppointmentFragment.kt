@@ -1,5 +1,6 @@
 package cn.copaint.audience.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,16 +28,15 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-private val APPEND = 1
-private val RELOAD = 2
 class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment() {
 
     lateinit var binding: FragmentSearchAppointmentsBinding
     var searchText: String = ""
     val dataList: ArrayList<searchAppointmentInfo> = arrayListOf()
-    val first = 5
+    val first = 20
     var cursor: Any? = null
     var hasNextPage = false
+    lateinit var adapter: FragmentSearchAppointmentsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +48,9 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
             context,
             LinearLayoutManager.VERTICAL, false
         )
-        binding.appointmentsRecyclerView.adapter = FragmentSearchAppointmentsAdapter(this)
+        binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
+        adapter = FragmentSearchAppointmentsAdapter(this)
+        binding.appointmentsRecyclerView.adapter = adapter
         binding.appointmentsRecyclerView.setListener(activity, object : RecyclerListener {
             override fun loadMore() {
                 if (hasNextPage) {
@@ -75,17 +77,19 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
         super.onResume()
         dataList.clear()
         cursor = null
+        adapter.notifyDataSetChanged()
         updateUiInfo()
     }
 
     private fun updateUiInfo() {
-        binding.animationView.visibility = View.VISIBLE
+
         searchText = activity.binding.searchEdit.text.toString()
-        if (searchText == ""){
+         if (searchText == ""){
+            binding.animationView.visibility = View.GONE
             return
         }
 
-
+        binding.animationView.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到约稿信息
@@ -120,7 +124,7 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
                 ).execute()
                 hasNextPage = response.data?.proposals?.pageInfo?.hasNextPage == true
                 cursor = response.data?.proposals?.pageInfo?.endCursor
-
+                val tempDataList: ArrayList<searchAppointmentInfo> = arrayListOf()
                 // 批量查询用户昵称和头像
                 response.data?.proposals?.edges?.forEach {
                     var tempInfo = it?.let { it ->
@@ -153,21 +157,22 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
                         )
                     }
                     if (tempInfo != null) {
-                        dataList.add(tempInfo)
+                        tempDataList.add(tempInfo)
                     }
                 }
+                activity.runOnUiThread {
+                    dataList.addAll(tempDataList)
+                    binding.animationView.visibility = View.GONE
+                    adapter.notifyDataSetChanged()
+                }
+
+
             } catch (e: ApolloException) {
                 Log.e("SearchUsersFragment", "Failure", e)
                 return@launch
             } catch (e: Exception) {
                 Log.e("SearchUsersFragment", "Failure", e)
                 return@launch
-            }
-
-
-            activity.runOnUiThread {
-                binding.animationView.visibility = View.GONE
-                binding.appointmentsRecyclerView.adapter?.notifyDataSetChanged()
             }
         }
     }

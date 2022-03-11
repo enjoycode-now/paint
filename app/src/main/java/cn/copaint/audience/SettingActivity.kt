@@ -3,6 +3,7 @@ package cn.copaint.audience
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cn.authing.core.types.User
@@ -27,15 +28,15 @@ class SettingActivity : AppCompatActivity() {
 
     fun onLogout(view: View) {
         val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
-        sharedPref.edit().putString("token", "").commit()
+        sharedPref.edit().putString("token", "").apply()
         user = User(arn = "", id = "", userPoolId = "")
         biography = "这个人没有填简介啊"
         toast("退出登录成功")
         startActivity(Intent(this, HomePageActivity::class.java))
-        finish()
     }
 
     fun onBackPress(view: View) {
-        finish()
+        startActivity(Intent(this,HomePageActivity::class.java))
     }
+
 }

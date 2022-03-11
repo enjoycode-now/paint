@@ -14,34 +14,36 @@ object swipeRefreshListener {
     var sIsScrolling = false
 
     // 实现下拉刷新上拉加载更多
-    fun RecyclerView.setListener(context: Context, l: RecyclerListener){
+    fun RecyclerView.setListener(context: Context, l: RecyclerListener) {
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             var lastVisibleItem: Int = 0
             val swipeRefreshLayout = this@setListener.parent
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                lastVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                lastVisibleItem =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    sIsScrolling = true;
-                    Glide.with(context).pauseRequests()
-                }
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (sIsScrolling) {
-                        Glide.with(context).resumeRequests();
-                    }
-                    sIsScrolling = false;
+                if ( newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    sIsScrolling = true
+//                    Glide.with(context).pauseRequests()
 
-                    if (lastVisibleItem + 1 === recyclerView.adapter?.itemCount){
+                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    if (sIsScrolling) {
+//                        Glide.with(context).resumeRequests()
+                    }
+                    sIsScrolling = false
+
+                    if (lastVisibleItem + 1 === recyclerView.adapter?.itemCount) {
                         //下拉刷新的时候不可以加载更多
-                        if(swipeRefreshLayout is SwipeRefreshLayout){
-                            if(!swipeRefreshLayout.isRefreshing){
+                        if (swipeRefreshLayout is SwipeRefreshLayout) {
+                            if (!swipeRefreshLayout.isRefreshing) {
                                 l.loadMore()
                             }
-                        }else{
+                        } else {
                             l.loadMore()
                         }
                     }
@@ -52,7 +54,7 @@ object swipeRefreshListener {
         })
 
         val swipeRefreshLayout = this.parent
-        if(swipeRefreshLayout is SwipeRefreshLayout){
+        if (swipeRefreshLayout is SwipeRefreshLayout) {
             swipeRefreshLayout.setOnRefreshListener {
                 l.refresh()
             }

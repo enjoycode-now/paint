@@ -3,6 +3,7 @@ package cn.copaint.audience
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -122,6 +123,8 @@ class SearchActivity : AppCompatActivity() {
         super.onResume()
         searchHistoryAdapter.notifyDataSetChanged()
     }
+
+
 
     fun refreshRecommend() {
         CoroutineScope(Dispatchers.Default).launch {

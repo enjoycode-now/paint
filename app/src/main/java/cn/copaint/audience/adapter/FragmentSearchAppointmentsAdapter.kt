@@ -41,15 +41,28 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
             Glide.with(fragment)
                 .load(fragment.dataList[position].avatar)
                 .into(binding.avatar)
+
+            // 将例图列表的首图作为封面图
             if(fragment.dataList[position].example?.size?:0 > 0){
+                binding.coverPic.visibility = View.VISIBLE
                 val coverPicUrl =  fragment.resources.getString(R.string.PicUrlPrefix)+(fragment.dataList[position].example?.get(0)?.key ?: "")
                 Glide.with(fragment)
                     .load(coverPicUrl)
                     .error(R.drawable.loading_failed)
                     .into(binding.coverPic)
+
+                // 例图的数量
+                if (fragment.dataList[position].example?.size?:0 > 1){
+                    val num = fragment.dataList[position].example?.size!! - 1
+                    binding.picCount.visibility = View.VISIBLE
+                    binding.picCount.text = "+$num"
+                }else{
+                    binding.picCount.visibility = View.GONE
+                }
             }else{
                 // 用户没有上传例图
                 binding.coverPic.visibility = View.GONE
+                binding.picCount.visibility = View.GONE
             }
             binding.description.setOnClickListener {
                 if (binding.description.ellipsize == null ){
@@ -60,7 +73,6 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
                     binding.description.isSingleLine = false
                 }
             }
-
         }
 
 //        inner class MyFlowAdapter(val searchAppointmentInfo: SearchAppointmentFragment.searchAppointmentInfo) :FlowAdapter(){

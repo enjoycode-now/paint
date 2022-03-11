@@ -8,8 +8,8 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.adapter.SquareAppointmentAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivitySquareBinding
-import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.model.Proposal
@@ -23,10 +23,10 @@ import cn.copaint.audience.utils.DateUtils.getCurrentRcfDateStr
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.ToastUtils.toastNetError
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Exception
 
@@ -37,10 +37,12 @@ class SquareActivity : AppCompatActivity() {
     var lastReloadTimeMillis = 0L
     val dataExpiredTimeMillis = 120000L // 设置2分钟缓存有效时间
     val dataList: ArrayList<Proposal> = arrayListOf()
-    val first = 10
+    val first = 20
     var cursor: Any? = null
     var hasNextPage = true
     lateinit var job: Job
+    val APPEND = 0
+    val RELOAD = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +62,13 @@ class SquareActivity : AppCompatActivity() {
         binding.proposalList.adapter = SquareAppointmentAdapter(this)
         GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
 
-        binding.swipeRefreshLayout.setProgressViewOffset(true,-50,50)
+        binding.swipeRefreshLayout.setProgressViewOffset(true, -50, 50)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
-        binding.proposalList.setListener(this,object : RecyclerListener {
+        binding.proposalList.setListener(this, object : RecyclerListener {
             override fun loadMore() {
                 if (hasNextPage) {
                     toast("加载更多...")
-                    updateUiInfo()
+                    updateUiInfo(APPEND)
                 } else {
                     toast("拉到底了，客官哎...")
                 }
@@ -91,27 +93,22 @@ class SquareActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if ( System.currentTimeMillis() - lastReloadTimeMillis > dataExpiredTimeMillis){
-            dataList.clear()
+        if (System.currentTimeMillis() - lastReloadTimeMillis > dataExpiredTimeMillis) {
             cursor = null
-            binding.proposalList.adapter?.notifyDataSetChanged()
-            updateUiInfo()
+            updateUiInfo(RELOAD)
             lastReloadTimeMillis = System.currentTimeMillis()
         }
     }
 
-    private fun updateUiInfo() {
+    private fun updateUiInfo(type: Int) {
         binding.animationView.visibility = View.VISIBLE
         val currentRcfDateStr = getCurrentRcfDateStr()
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("http://120.78.173.15:20000/query")
-            .addHttpHeader("Authorization", "Bearer ${user.token}")
-            .build()
+
 
         job = CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 获取到约稿信息
-                val response = apolloClient.query(
+                val response = apolloClient(this@SquareActivity).query(
                     FindProposalsQuery(
                         after = Optional.presentIfNotNull(cursor),
                         first = Optional.presentIfNotNull(first),
@@ -127,11 +124,12 @@ class SquareActivity : AppCompatActivity() {
                 cursor = response.data?.proposals?.pageInfo?.endCursor
                 hasNextPage = response.data?.proposals?.pageInfo?.hasNextPage ?: true
                 Log.i(packageName, response.data.toString())
+                val tempDataList: ArrayList<Proposal> = arrayListOf()
                 // 批量查询用户昵称和头像
                 response.data?.proposals?.edges?.forEach {
                     var tempInfo = it?.let { it ->
 
-                        val creatorInfoResponse = apolloClient.query(
+                        val creatorInfoResponse = apolloClient(this@SquareActivity).query(
                             GetAuthingUsersInfoQuery(
                                 listOf(
                                     it.node?.creator ?: ""
@@ -159,13 +157,16 @@ class SquareActivity : AppCompatActivity() {
                         )
                     }
                     if (tempInfo != null) {
-                        dataList.add(tempInfo)
-                        runOnUiThread{
-                            binding.proposalList.adapter?.notifyItemChanged(dataList.lastIndex)
-                        }
+                        tempDataList.add(tempInfo)
                     }
                 }
                 runOnUiThread {
+                    when (type) {
+                        RELOAD -> dataList.clear()
+                        else -> {}
+                    }
+                    dataList.addAll(tempDataList)
+                    binding.proposalList.adapter?.notifyDataSetChanged()
                     binding.animationView.visibility = View.GONE
                     binding.swipeRefreshLayout.isRefreshing = false
                 }
@@ -173,7 +174,9 @@ class SquareActivity : AppCompatActivity() {
             } catch (e: ApolloException) {
                 toastNetError()
                 Log.e("SearchUsersFragment", "Failure", e)
-            } catch (e: Exception) {
+            }catch (e: CancellationException){
+                // job was cancel
+            }catch (e: Exception) {
                 toastNetError()
                 Log.e("SearchUsersFragment", "Failure", e)
             }
@@ -209,7 +212,7 @@ class SquareActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         if (this::job.isInitialized) job.cancel()
+        super.onDestroy()
     }
 }

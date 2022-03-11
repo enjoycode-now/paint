@@ -160,9 +160,30 @@
             android:layout_marginEnd="12dp"
             android:background="@drawable/ic_border"
             android:elevation="2dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@+id/date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/picCount"
+            android:layout_width="wrap_content"
+            android:layout_height="16dp"
+            android:text="+2"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_rectangle_light_black_radius10"
+            android:textSize="11sp"
+            android:elevation="2dp"
+            android:gravity="center|start"
+            android:drawablePadding="5dp"
+            android:paddingHorizontal="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"
+            android:textColorHighlight="@color/teal_700"
+            app:layout_constraintBottom_toBottomOf="@id/coverPic"
+            app:layout_constraintEnd_toEndOf="@+id/coverPic"
+            app:drawableStartCompat="@drawable/ic_small_pic" />
 
         <TextView
             android:id="@+id/date"
@@ -173,7 +194,6 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@id/coverPic"
             app:layout_constraintTop_toTopOf="@+id/viewersText" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
