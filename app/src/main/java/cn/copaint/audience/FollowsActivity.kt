@@ -25,10 +25,11 @@ class FollowsActivity : AppCompatActivity() {
 
     var cursor = Optional.Absent
     var first = 10
-    var where : FollowerWhereInput = FollowerWhereInput(followerID = Optional.presentIfNotNull(user.id))
+    lateinit var where : FollowerWhereInput
     lateinit var binding: ActivityFollowsBinding
     val followList = ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>()
     val followAdapter = FollowAdapter(this)
+    val currentUserId: String? = intent.getStringExtra("userId")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +42,8 @@ class FollowsActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.followRecycle.layoutManager = LinearLayoutManager(this)
         binding.followRecycle.adapter = followAdapter
+
+        where = FollowerWhereInput(followerID = Optional.presentIfNotNull(currentUserId))
     }
 
     override fun onResume() {
@@ -54,11 +57,11 @@ class FollowsActivity : AppCompatActivity() {
                 apolloClient(this@FollowsActivity).query(GetFollowersListQuery(cursor,first = Optional.presentIfNotNull(10), where = Optional.presentIfNotNull(where)))
                     .execute().data
             } catch (e: ApolloException) {
-                Log.d("PayActivity", "Failure", e)
+                Log.d("FollowsActivity", "Failure", e)
                 return@launch
             }
 
-            Log.i("FollowActivity", response.toString())
+            Log.i("FollowsActivity", response.toString())
 
             // 获取全部关注对象的userid
             val userIdList = mutableListOf<String>()

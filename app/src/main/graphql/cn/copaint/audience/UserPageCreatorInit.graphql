@@ -1,4 +1,4 @@
-query UserPageCreatorActivityInit($input: FollowInfoInput, $authingIDs: [String!]!, $where: FollowerWhereInput) {
+query UserPageCreatorActivityInit($input: FollowInfoInput!, $authingIDs: [String!]!, $where: FollowerWhereInput) {
     followInfo(input: $input) {
         followingCount
         followersCount

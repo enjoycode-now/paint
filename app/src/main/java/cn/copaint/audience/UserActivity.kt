@@ -91,7 +91,7 @@ class UserActivity : AppCompatActivity() {
                 binding.emptyView.emptyLayout.visibility = View.GONE
             }
         }
-
+        Log.i("user_token", user.token?:"")
     }
 
     override fun onResume() {
@@ -109,9 +109,9 @@ class UserActivity : AppCompatActivity() {
                 val response = try {
                     apolloClient(this@UserActivity).query(
                         UserPageInitQuery(
-                            input = Optional.presentIfNotNull(
-                                FollowInfoInput(userID = user.id)
-                            )
+                            input =
+                                FollowInfoInput(userID = user.id ?:"")
+
                         )
                     ).execute()
                 } catch (e: Exception){
@@ -153,7 +153,9 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onFollows(view: View) {
-        startActivity(Intent(this, FollowsActivity::class.java))
+        val intent = Intent(this, FollowsActivity::class.java)
+        intent.putExtra("userId",user.id)
+        startActivity(intent)
     }
 
     fun onHomePage(view: View) {

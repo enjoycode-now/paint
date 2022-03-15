@@ -35,6 +35,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
     var is_follow = true
     lateinit var binding: ActivityUserPageCreatorBinding
     var lastTimeMillis = 0L
+    val sponsorList = mutableListOf<String>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,9 +74,9 @@ class UserPageCreatorActivity : AppCompatActivity() {
                 val response = try {
                     apolloClient(this@UserPageCreatorActivity).query(
                         UserPageCreatorActivityInitQuery(
-                            input = Optional.presentIfNotNull(
-                                FollowInfoInput(userID = user.id)
-                            ),
+                            input =
+                                FollowInfoInput(userID = user.id ?: "")
+                            ,
                             listOf(creatorId),
                             where = Optional.presentIfNotNull(
                                 FollowerWhereInput(
@@ -92,7 +93,7 @@ class UserPageCreatorActivity : AppCompatActivity() {
 
 
                 runOnUiThread {
-                    binding.moneyText.text = response.data?.wallet?.balance.toString()
+                    binding.followText.text = response.data?.followInfo?.followingCount.toString()
                     binding.fansText.text = response.data?.followInfo?.followersCount.toString()
                     val thisAuthingUserInfo = response.data?.authingUsersInfo?.get(0)
                     binding.authorName.text = thisAuthingUserInfo?.nickname
@@ -124,6 +125,11 @@ class UserPageCreatorActivity : AppCompatActivity() {
         } else {
 
         }
+    }
+    fun onFollows(view: View) {
+        val intent = Intent(this, FollowsActivity::class.java)
+        intent.putExtra("userId",creatorId)
+        startActivity(intent)
     }
 
     fun onFans(view: View) {
