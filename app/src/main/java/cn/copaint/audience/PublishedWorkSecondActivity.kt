@@ -1,10 +1,15 @@
 package cn.copaint.audience
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
@@ -12,6 +17,7 @@ import cn.copaint.audience.databinding.ActivityPublishedWorkSecondBinding
 import cn.copaint.audience.type.CreatePaintingInput
 import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
@@ -26,7 +32,13 @@ import java.lang.Exception
  */
 class PublishedWorkSecondActivity : AppCompatActivity() {
     lateinit var bind: ActivityPublishedWorkSecondBinding
+    val MAX_SHARE = 100
+    val MIN_SHARE = 1
+    val MAX_NUM = Int.MAX_VALUE
+    val MIN_NUM = 100
 
+    var currentNum: Int = 100 // 每1%份额的元贝价格 [0-INF],默认100
+    var currentShare: Int = 10 // 份额 [1-100]，默认10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,32 +48,65 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
 
+        bind.shareEditText.setOnFocusChangeListener { _, hasFocus ->
+            when (hasFocus) {
+                false -> {
+                    // 失去焦点
+                    shareEditTextLostFocus()
+                }
+                else->{}
+            }
+        }
+
+        bind.priceEditText.setOnFocusChangeListener { _, hasFocus ->
+            when (hasFocus) {
+                false -> {
+                    // 失去焦点
+                    priceEditTextLostFocus()
+                }
+                else ->{}
+            }
+        }
     }
 
     fun onMinusReleaseShareNum(view: View) {
-        val currentNum = bind.shareEditText.text.toString().trimEnd('%').toInt()
-        if (currentNum >= 1) {
-            bind.shareEditText.text = (currentNum - 1).toString() + "%"
+        if (currentShare >= MIN_SHARE + 1) {
+            currentShare -= 1
+            bind.shareEditText.setText("${currentShare}%")
+            bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+        }else{
+            toast("不能继续减少")
         }
     }
 
     fun onAddReleaseShareNum(view: View) {
-        val currentNum = bind.shareEditText.text.toString().trimEnd('%').toInt()
-        if (currentNum <= 99) {
-            bind.shareEditText.text = (currentNum + 1).toString() + "%"
+        if (currentShare <= MAX_SHARE - 1) {
+            currentShare += 1
+            bind.shareEditText.setText("${currentShare}%")
+            bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+        }else{
+            toast("不能继续增加")
         }
     }
 
     fun onMinusEveryShareCost(view: View) {
-        val currentNum = bind.priceEditText.text.toString().toInt()
-        if (currentNum >= 1) {
-            bind.priceEditText.text = (currentNum - 1).toString()
+        if (currentNum >= MIN_NUM + 1) {
+            currentNum -= 1
+            bind.priceEditText.setText("$currentNum")
+            bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+        }else{
+            toast("不能继续减少")
         }
     }
 
     fun onAddEveryShareCost(view: View) {
-        val currentNum = bind.priceEditText.text.toString().toInt()
-        bind.priceEditText.text = (currentNum + 1).toInt().toString()
+        if (currentNum <= MAX_NUM -1){
+            currentNum += 1
+            bind.priceEditText.setText("$currentNum")
+            bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+        }else{
+            toast("不能继续增加")
+        }
     }
 
     fun onBackPress(view: View) {
@@ -69,6 +114,28 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
     }
 
     fun onSubmitBtn(view: View) {
+
+        try {
+            val perPrice = bind.priceEditText.text.toString().toInt()
+            val stock =
+                bind.shareEditText.text.toString().substring(0, bind.shareEditText.text.lastIndex)
+                    .toInt()
+
+            if (perPrice < 100 ){
+                toast("注意：每1%份额价格不能小于100元贝")
+                return
+            }else{
+                currentNum = perPrice
+            }
+            if(stock !in 1..100){
+                toast("发布份额区间[1-100]")
+                return
+            }else{
+                currentShare = stock
+            }
+        }catch (e: Exception){
+            toast(e.toString())
+        }
         val workName = intent.getStringExtra("workName")
         val workIntroduction = intent.getStringExtra("workIntroduction")
         val coverPicUrlKey = intent.getStringExtra("coverPicUrlKey")
@@ -84,6 +151,9 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
             return
         }
 
+        val progressDialog = DialogUtils.getLoadingDialog(this,false,"作品发布中，请稍候...");
+        progressDialog.show()
+        progressDialog.setCancelable(true)
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
                 apolloClient(this@PublishedWorkSecondActivity).mutation(
@@ -98,13 +168,109 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 toast(e.toString())
                 return@launch
+            }finally {
+                if (progressDialog.isShowing)
+                    progressDialog.dismiss()
             }
             runOnUiThread {
-                toast("发布成功")
-                Log.i("PublishedWorkSecondActivity", response.toString())
+
+                if(response.data != null){
+                    toast("发布成功")
+                    Log.i("PublishedWorkSecondActivity", response.toString())
+                    if (progressDialog.isShowing)
+                        progressDialog.dismiss()
+                    startActivity(Intent(this@PublishedWorkSecondActivity,HomePageActivity::class.java))
+                }
+
             }
 
         }
 
+    }
+
+    fun shareEditTextLostFocus(){
+        if (bind.shareEditText.text.isNullOrEmpty()) {
+            bind.shareEditText.setText("${MIN_SHARE}%")
+            currentShare = MIN_SHARE
+        }
+        try {
+            currentShare = if (bind.shareEditText.text?.endsWith('%') == true) {
+                bind.shareEditText.text.toString().trimEnd('%').toInt()
+            } else {
+                bind.shareEditText.text.toString().toInt()
+            }
+        } catch (e: Exception) {
+            toast("输入只能为数字")
+            currentShare = MIN_SHARE
+            bind.shareEditText.setText("${MIN_SHARE}")
+        }
+
+
+        if (currentShare > MAX_SHARE) {
+            bind.shareEditText.setText("${MAX_SHARE}%")
+            currentShare = MAX_SHARE
+        } else if (currentShare < MIN_SHARE) {
+            bind.shareEditText.setText("${MIN_SHARE}%")
+            currentShare = MIN_SHARE
+        }
+
+        // 保证格式为xx%
+        if (!bind.shareEditText.text.endsWith('%')){
+            bind.shareEditText.setText("${bind.shareEditText.text}%")
+        }
+        bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+    }
+    fun priceEditTextLostFocus(){
+        if (bind.priceEditText.text.isNullOrEmpty()) {
+            bind.priceEditText.setText("$MIN_NUM")
+            currentNum = MIN_NUM
+        }
+        currentNum = try {
+            bind.priceEditText.text.toString().toInt()
+        } catch (e: Exception) {
+            toast("输入只能为数字")
+            bind.priceEditText.setText("${MIN_NUM}")
+            MIN_NUM
+        }
+
+
+
+        if (currentNum > MAX_NUM) {
+            bind.priceEditText.setText("$MAX_NUM")
+            currentNum = MAX_NUM
+        } else if (currentNum < MIN_NUM) {
+            bind.priceEditText.setText("$MIN_NUM")
+            currentNum = MIN_NUM
+        }
+        bind.totalBalance.text = "${currentNum * currentShare} 元贝"
+    }
+
+    // 点击屏幕其他地方，使 EditText 失去焦点
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev != null) {
+            if (ev.action == MotionEvent.ACTION_DOWN) {
+                // 获取当前焦点所在的控件；
+                val view = currentFocus
+                if (view == bind.submitBtn){
+                    return super.dispatchTouchEvent(ev)
+                }
+                if (view != null && view is EditText) {
+                    val r = Rect();
+                    view.getGlobalVisibleRect(r);
+                    val rawX : Int = ev.rawX.toInt()
+                    val rawY : Int = ev.rawY.toInt()
+
+                    // 判断点击的点是否落在当前焦点所在的 view 上；
+                    if (!r.contains(rawX, rawY)) {
+                        view.clearFocus()
+                        val imm: InputMethodManager =
+                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        // 隐藏软键盘
+                        imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

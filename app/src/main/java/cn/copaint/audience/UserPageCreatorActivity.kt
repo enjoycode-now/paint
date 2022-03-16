@@ -133,7 +133,11 @@ class UserPageCreatorActivity : AppCompatActivity() {
     }
 
     fun onFans(view: View) {
-        startActivity(Intent(this, FansActivity::class.java))
+        if (creatorId.isNotBlank()){
+            val intent = Intent(this, FansActivity::class.java)
+            intent.putExtra("currentUserID",creatorId)
+            startActivity(intent)
+        }
     }
 
     fun editProfile(view: View) {

@@ -1,4 +1,4 @@
-query findFollowersCount($input: FollowInfoInput) {
+query findFollowersCount($input: FollowInfoInput!) {
     followInfo(input: $input) {
         followersCount
     }

@@ -39,4 +39,18 @@ class SettingActivity : AppCompatActivity() {
         startActivity(Intent(this,HomePageActivity::class.java))
     }
 
+    fun buyScallop(view: View) {
+        val intent = Intent(this, PayActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun onWorkShareAccord(view: View) {
+        toast("你点击了作品份额记录单")
+    }
+    fun onServiceAgreement(view: View) {
+        toast("你点击了服务协议")
+    }
+    fun onPrivacyPolicy(view: View) {
+        toast("你点击了隐私政策")
+    }
 }

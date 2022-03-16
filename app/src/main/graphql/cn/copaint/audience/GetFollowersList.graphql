@@ -9,5 +9,9 @@ query GetFollowersList($after: Cursor, $first: Int, $where: FollowerWhereInput) 
             }
             cursor
         }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
 }

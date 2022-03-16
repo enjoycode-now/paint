@@ -1,7 +1,4 @@
 query UserPageInit($input: FollowInfoInput!) {
-    wallet {
-        balance
-    }
     followInfo(input: $input) {
         followingCount
         followersCount

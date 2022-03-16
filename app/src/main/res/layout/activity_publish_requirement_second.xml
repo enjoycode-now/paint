@@ -166,7 +166,8 @@
         app:srcCompat="@drawable/ic_minus_grey_circle"
         app:layout_constraintEnd_toStartOf="@id/priceEditText"
         app:layout_constraintTop_toTopOf="@+id/priceEditText"
-        app:layout_constraintBottom_toBottomOf="@id/priceEditText"/>
+        app:layout_constraintBottom_toBottomOf="@id/priceEditText"
+        />
 
     <EditText
         android:id="@+id/priceEditText"
@@ -216,10 +217,9 @@
         android:layout_height="20dp"
         android:text="1000 元贝"
         android:textColor="#F8566A"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView25"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/textView25"
-        app:layout_constraintTop_toTopOf="@+id/textView25" />
+         app:layout_constraintBaseline_toBaselineOf="@id/textView25"/>
 
     <TextView
         android:id="@+id/submitBtn"

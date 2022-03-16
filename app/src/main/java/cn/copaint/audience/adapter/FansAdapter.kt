@@ -11,7 +11,9 @@ import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.DialogCreatorMoreBinding
 import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.databinding.ItemFansBinding
+import cn.copaint.audience.databinding.ItemFollowBinding
 import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
 import com.apollographql.apollo3.ApolloClient
@@ -22,36 +24,99 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class FansAdapter(private val activity: FansActivity) : RecyclerView.Adapter<FansAdapter.ViewHolder>() {
+    val fansList :ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo> = arrayListOf()
+    val isFollowList = ArrayList<Boolean>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemFansBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.fansList[position], position,activity,this)
+        holder.bind(fansList[position], isFollowList[position],activity,this)
     }
 
     override fun getItemCount() = activity.fansList.size
 
-    class ViewHolder(val itemBind: ItemFansBinding) : RecyclerView.ViewHolder(itemBind.root) {
-        fun bind(fans: GetAuthingUsersInfoQuery.AuthingUsersInfo,position: Int, activity: FansActivity,adapter: FansAdapter) {
+    inner class ViewHolder(val itemBind: ItemFansBinding) : RecyclerView.ViewHolder(itemBind.root) {
+        fun bind(fans: GetAuthingUsersInfoQuery.AuthingUsersInfo,isFollow:Boolean, activity: FansActivity,adapter: FansAdapter) {
             itemBind.nicikname.text = fans.nickname ?: "此用户未命名"
             if (fans.photo == "" || fans.photo?.endsWith("svg") == true) {
                 Glide.with(activity).load(R.drawable.avatar_sample).into(itemBind.avatar)
             } else {
                 Glide.with(activity).load(fans.photo).into(itemBind.avatar)
             }
-            itemBind.status.setOnClickListener {
-                if( (it as TextView).text.equals("回关") ){
-                    it.text = "互相关注"
-                    it.setTextColor(Color.parseColor("#A9A9A9"))
-                }else{
-                    it.text = "回关"
-                    it.setTextColor(Color.parseColor("#8767E2"))
+            if(user.id == activity.currentUserID){
+                itemBind.status.visibility = View.VISIBLE
+                itemBind.unsubscribe.visibility = View.VISIBLE
+                itemBind.status.text = if (isFollow) "互相关注" else "回关"
+                itemBind.status.setOnClickListener{
+                    if (itemBind.status.text == "互相关注"){
+                        unFollowUser(fans.id,itemBind)
+                    }else{
+                        followUser(fans.id,itemBind)
+                    }
+                }
+                itemBind.unsubscribe.setOnClickListener{
+                    onConfirmRemoveDialog(activity,fans.id,fans.photo)
+                }
+            }else{
+                itemBind.status.visibility = View.GONE
+                itemBind.unsubscribe.visibility = View.GONE
+            }
+
+        }
+    }
+
+    /**
+     * 互相关注
+     * @param 目标用户id
+     */
+    fun followUser(userid: String, itemBind: ItemFansBinding) {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = try {
+                apolloClient(activity).mutation(
+                    FollowUserMutation(userid)
+                ).execute()
+            } catch (e: Exception) {
+                toast(e.toString())
+                return@launch
+            }
+
+            if (response.data != null) {
+                activity.runOnUiThread {
+                    toast("互相关注成功")
+                    itemBind.status.text = "互相关注"
+                    itemBind.status.setTextColor(Color.parseColor("#A9A9A9"))
                 }
             }
-            itemBind.unsubscribe.setOnClickListener{
-                onConfirmRemoveDialog(activity,fans.id,fans.photo)
+        }
+    }
+
+
+    /**
+     * 取消互相关注
+     * @param 目标用户id
+     */
+    fun unFollowUser(userid: String, itemBind: ItemFansBinding) {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = try {
+                apolloClient(activity).mutation(
+                    UnfollowUserMutation(userid)
+                ).execute()
+            } catch (e: Exception) {
+                toast(e.toString())
+                return@launch
+            }
+
+            if (response.data != null) {
+                activity.runOnUiThread {
+                    toast("已取消互相关注")
+                    itemBind.status.text = "回关"
+                    itemBind.status.setTextColor(Color.parseColor("#8767E2"))
+                }
             }
         }
     }
@@ -111,5 +176,6 @@ fun onConfirmRemoveDialog(activity: FansActivity, id: String, photo: String?) {
         }
         layerDetailWindow.dismiss()
     }
+
 
 }

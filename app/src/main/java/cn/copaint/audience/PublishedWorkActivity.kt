@@ -1,5 +1,6 @@
 package cn.copaint.audience
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -48,6 +49,7 @@ class PublishedWorkActivity : AppCompatActivity() {
     val selectedVideo: ArrayList<LocalMedia> = arrayListOf()
     var uploadPicStatus = false
     var uploadVideoStatus = false
+    lateinit var progressDialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
@@ -257,6 +259,9 @@ class PublishedWorkActivity : AppCompatActivity() {
         if (!AuthingUtils.loginCheck()){
             toast("发布作品前，请先登录")
         }
+        progressDialog = DialogUtils.getLoadingDialog(this,false,"文件上传中，请稍候...");
+        progressDialog.show()
+        progressDialog.setCanceledOnTouchOutside(false)
         uploadPicStatus = false
         uploadVideoStatus = false
         contentResolver.openInputStream(coverPicUrl.toUri())
@@ -292,7 +297,11 @@ class PublishedWorkActivity : AppCompatActivity() {
 
             intent.putExtra("coverPicUrlKey", str)
             toast("图片上传成功")
-            if (uploadVideoStatus) startActivity(intent)
+            uploadPicStatus = true
+            if (uploadVideoStatus){
+                if(progressDialog.isShowing) progressDialog.dismiss()
+                startActivity(intent)
+            }
         }
     }
 
@@ -313,7 +322,11 @@ class PublishedWorkActivity : AppCompatActivity() {
             }
             intent.putExtra("videoUrlKey", str)
             toast("视频上传成功")
-            if (uploadPicStatus) startActivity(intent)
+            uploadVideoStatus = true
+            if (uploadPicStatus){
+                if(progressDialog.isShowing) progressDialog.dismiss()
+                startActivity(intent)
+            }
         }
 
     }

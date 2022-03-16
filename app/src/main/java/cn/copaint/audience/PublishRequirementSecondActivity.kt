@@ -157,6 +157,7 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
         } catch (e: Exception) {
             toast("输入只能为数字")
             currentShare = MIN_SHARE
+            bind.shareEditText.setText("${currentNum}")
         }
 
 
@@ -183,7 +184,8 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             bind.priceEditText.text.toString().toInt()
         } catch (e: Exception) {
             toast("输入只能为数字")
-            100
+            bind.priceEditText.setText("${MIN_NUM}")
+            MIN_NUM
         }
 
 
@@ -203,6 +205,9 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             if (ev.action == MotionEvent.ACTION_DOWN) {
                 // 获取当前焦点所在的控件；
                 val view = currentFocus
+                if (view == bind.submitBtn){
+                    return super.dispatchTouchEvent(ev)
+                }
                 if (view != null && view is EditText) {
                     val r = Rect();
                     view.getGlobalVisibleRect(r);

@@ -223,8 +223,8 @@ class PublishRequirementActivity : AppCompatActivity() {
             return
         }
         val progressDialog = DialogUtils.getLoadingDialog(this,false,"文件上传中，请稍候...");
-        progressDialog.show();
-        progressDialog.setCanceledOnTouchOutside(false);//设置点击屏幕加载框不会取消（返回键可以取消）
+        progressDialog.show()
+        progressDialog.setCanceledOnTouchOutside(false)//设置点击屏幕加载框不会取消（返回键可以取消）
         example.clear()
 
         // 开启子线程批量上传图片
@@ -267,6 +267,10 @@ class PublishRequirementActivity : AppCompatActivity() {
                 progressDialog.dismiss()
             }
         }
+    }
+
+    fun onNULL(view: View) {
+        toast("缺少后端接口，请忽略此按钮的交互逻辑")
     }
 
 

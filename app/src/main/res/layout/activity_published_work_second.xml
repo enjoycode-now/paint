@@ -104,18 +104,20 @@
         app:layout_constraintTop_toTopOf="@+id/shareEditText"
         app:layout_constraintBottom_toBottomOf="@id/shareEditText"/>
 
-    <TextView
+    <EditText
         android:id="@+id/shareEditText"
         android:layout_width="72dp"
         android:layout_height="40dp"
         android:textSize="13sp"
         android:gravity="center"
         android:alpha="0.8"
+        android:background="@null"
         android:textColor="@color/black"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="7sp"
         android:autoSizeMaxTextSize="18sp"
-        android:text="100%"
+        android:text="10%"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="@+id/purchaseShareNote"
         app:layout_constraintBottom_toBottomOf="@id/textView9"
         app:layout_constraintEnd_toStartOf="@id/shareAddBtn"/>
@@ -166,18 +168,20 @@
         app:layout_constraintTop_toTopOf="@+id/priceEditText"
         app:layout_constraintBottom_toBottomOf="@id/priceEditText"/>
 
-    <TextView
+    <EditText
         android:id="@+id/priceEditText"
         android:layout_width="72dp"
         android:layout_height="40dp"
         android:textSize="13sp"
+        android:background="@null"
         android:gravity="center"
         android:alpha="0.8"
         android:textColor="@color/black"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="7sp"
         android:autoSizeMaxTextSize="18sp"
-        android:text="1000000"
+        android:text="100"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="@+id/textView10"
         app:layout_constraintBottom_toBottomOf="@id/textView24"
         app:layout_constraintEnd_toStartOf="@id/priceAddBtn"/>

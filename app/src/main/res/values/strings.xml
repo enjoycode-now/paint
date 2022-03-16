@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">元绘</string>
     <string name="sdk_name">WILL SDK for ink (Android)</string>
-    <string name="version_code">v0.0.1</string>
     <string name="client_name">android-dev</string>
-    <string name="app_version">版本号：</string>
+    <string name="app_version">版本号：v0.0.1</string>
     <string name="raster_eraser">Raster eraser</string>
     <string name="PicUrlPrefix">http://120.78.173.15:9000/painting/</string>
 
@@ -97,4 +96,5 @@
     <string name="layer_clear">清空图层</string>
     <string name="loading">loading...</string>
     <string name="follow">关注</string>
+    <string name="version_code">v0.0.1</string>
 </resources>

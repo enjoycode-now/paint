@@ -78,15 +78,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="10元贝"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="1元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -115,15 +116,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="60元贝"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="6元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -152,15 +154,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="300元贝"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="30元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -188,15 +191,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="980元贝"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="98元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -225,15 +229,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="9800元贝"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="980元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -262,15 +267,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="输入金额"
-                android:textSize="20sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="最低1元"
-                android:textSize="15sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -284,7 +290,8 @@
         android:onClick="aliPay"
         android:text="@string/purchaseNow"
         android:textColor="#F5FFFFFF"
-        android:textSize="20sp"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-condensed-medium"
         app:layout_constraintEnd_toEndOf="@+id/LastGear"
         app:layout_constraintStart_toStartOf="@+id/fourthGear"
         app:layout_constraintTop_toBottomOf="@id/fourthGear" />

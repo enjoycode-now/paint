@@ -46,7 +46,7 @@ object DialogUtils {
             binding.tvLoading.visibility = View.GONE
         } else {
             binding.tvLoading.text = message
-            binding.tvLoading.setTextColor(Color.parseColor("#EFEDFC"))
+            binding.tvLoading.setTextColor(Color.parseColor("#8767E2"))
         }
         progressDialog.setContentView(
             binding.root,

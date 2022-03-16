@@ -97,7 +97,6 @@ class UserActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateUiInfo()
-        Log.i("chenlin", "onResume: 1")
     }
 
 
@@ -119,14 +118,8 @@ class UserActivity : AppCompatActivity() {
                     return@launch
                 }
                 runOnUiThread {
-                    val yuanbeiCount = (response.data?.wallet?.balance ?: 0.0) * aliPayUtils.yuanbeiExchangeRate
-                    if (yuanbeiCount > 100000)
-                        binding.moneyText.text = "${(yuanbeiCount/10000)}w"
-                    else
-                        binding.moneyText.text = "${yuanbeiCount}"
-
-                    binding.followingText.text =
-                        response.data?.followInfo?.followingCount.toString() ?: ""
+                    binding.followText.text = response.data?.followInfo?.followingCount.toString()
+                    binding.fansText.text = response.data?.followInfo?.followersCount.toString()
                 }
             }
             binding.authorName.text = user.nickname
@@ -173,10 +166,6 @@ class UserActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
     }
 
-    fun buyScallop(view: View) {
-        val intent = Intent(this, PayActivity::class.java)
-        startActivity(intent)
-    }
 
     fun copyAddress(view: View) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -209,5 +198,16 @@ class UserActivity : AppCompatActivity() {
     // 判断当前EditText是否可滚动
     private fun canVerticalScroll(text: EditText): Boolean {
         return text.lineCount > text.maxLines
+    }
+
+    fun onFans(view: View) {
+        if (user.id.isNotBlank()){
+            val intent = Intent(this, FansActivity::class.java)
+            intent.putExtra("currentUserID",user.id)
+            startActivity(intent)
+        }
+    }
+    fun onLikes(view: View) {
+        toast("后端尚无接口")
     }
 }

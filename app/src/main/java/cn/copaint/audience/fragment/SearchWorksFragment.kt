@@ -17,6 +17,7 @@ import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.type.*
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
@@ -75,7 +76,7 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
     fun updateUiInfo() {
 
         searchText = activity.binding.searchEdit.text.toString()
-        if (searchText == ""){
+        if (searchText == "") {
             binding.animationView.visibility = View.GONE
             return
         }
@@ -155,10 +156,8 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
 
                         val fansAccountResponse = apolloClient(activity).query(
                             FindFollowersCountQuery(
-                                Optional.presentIfNotNull(
-                                    FollowInfoInput(
-                                        userID = it.node?.creator ?: "",
-                                    )
+                                FollowInfoInput(
+                                    userID = it.node?.creator ?: "",
                                 )
                             )
                         ).execute()
@@ -195,9 +194,11 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                 }
             } catch (e: ApolloException) {
                 Log.e("SearchUsersFragment", "Failure", e)
+                toast(e.toString())
                 return@launch
             } catch (e: Exception) {
                 Log.e("SearchUsersFragment", "Failure", e)
+                toast(e.toString())
                 return@launch
             }
         }

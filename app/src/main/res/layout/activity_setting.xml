@@ -88,6 +88,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <View
+        android:id="@+id/accountTouchHelpView"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:onClick="buyScallop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/splitLine2"/>
+
+    <View
         android:id="@+id/splitLine2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -128,6 +137,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <View
+        android:id="@+id/workShareAccordTouchHelpView"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:onClick="onWorkShareAccord"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/splitLine3"/>
+
+    <View
         android:id="@+id/splitLine3"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -165,6 +183,15 @@
         app:srcCompat="@drawable/ic_more_arrow"
         app:layout_constraintBottom_toTopOf="@+id/splitLine4"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/serviceAgreementTouchHelpView"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:onClick="onServiceAgreement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/splitLine4"/>
 
     <View
         android:id="@+id/splitLine4"
@@ -207,6 +234,15 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <View
+        android:id="@+id/privacyPolicyTouchHelpView"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:onClick="onPrivacyPolicy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/splitLine5"/>
+
+    <View
         android:id="@+id/splitLine5"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -226,7 +262,7 @@
         android:textColor="#333333"
         android:alpha="0.4"
         android:gravity="center"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:text="@string/app_version"
         app:layout_constraintBottom_toTopOf="@+id/tip2"
         app:layout_constraintEnd_toEndOf="@+id/logoutBtn"
