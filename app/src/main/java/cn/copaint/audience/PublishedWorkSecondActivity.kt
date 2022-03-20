@@ -39,6 +39,7 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
 
     var currentNum: Int = 100 // 每1%份额的元贝价格 [0-INF],默认100
     var currentShare: Int = 10 // 份额 [1-100]，默认10
+    var formatErrorFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,6 +116,12 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
 
     fun onSubmitBtn(view: View) {
 
+        // 重置标志位为true的话，需要用户点击两次按钮，作为确认
+        if(formatErrorFlag){
+            formatErrorFlag = false
+            return
+        }
+
         try {
             val perPrice = bind.priceEditText.text.toString().toInt()
             val stock =
@@ -189,10 +196,6 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
     }
 
     fun shareEditTextLostFocus(){
-        if (bind.shareEditText.text.isNullOrEmpty()) {
-            bind.shareEditText.setText("${MIN_SHARE}%")
-            currentShare = MIN_SHARE
-        }
         try {
             currentShare = if (bind.shareEditText.text?.endsWith('%') == true) {
                 bind.shareEditText.text.toString().trimEnd('%').toInt()
@@ -200,18 +203,23 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
                 bind.shareEditText.text.toString().toInt()
             }
         } catch (e: Exception) {
-            toast("输入只能为数字")
+            toast("输入格式有错，请输入数字1~100")
             currentShare = MIN_SHARE
             bind.shareEditText.setText("${MIN_SHARE}")
+            formatErrorFlag = true
         }
 
 
         if (currentShare > MAX_SHARE) {
             bind.shareEditText.setText("${MAX_SHARE}%")
             currentShare = MAX_SHARE
+            formatErrorFlag = true
+            toast("份额设置超过100%,已经重置回100%")
         } else if (currentShare < MIN_SHARE) {
             bind.shareEditText.setText("${MIN_SHARE}%")
             currentShare = MIN_SHARE
+            formatErrorFlag = true
+            toast("份额设置低于1%,已经重置回1%")
         }
 
         // 保证格式为xx%
@@ -221,15 +229,12 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
         bind.totalBalance.text = "${currentNum * currentShare} 元贝"
     }
     fun priceEditTextLostFocus(){
-        if (bind.priceEditText.text.isNullOrEmpty()) {
-            bind.priceEditText.setText("$MIN_NUM")
-            currentNum = MIN_NUM
-        }
         currentNum = try {
             bind.priceEditText.text.toString().toInt()
         } catch (e: Exception) {
-            toast("输入只能为数字")
+            toast("输入格式有错，须为大于或等于100的数字")
             bind.priceEditText.setText("${MIN_NUM}")
+            formatErrorFlag = true
             MIN_NUM
         }
 
@@ -238,9 +243,13 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
         if (currentNum > MAX_NUM) {
             bind.priceEditText.setText("$MAX_NUM")
             currentNum = MAX_NUM
+            formatErrorFlag = true
+            toast("设置的价格超过上限，已重置")
         } else if (currentNum < MIN_NUM) {
             bind.priceEditText.setText("$MIN_NUM")
             currentNum = MIN_NUM
+            formatErrorFlag = true
+            toast("设置的价格低于下限，已重置")
         }
         bind.totalBalance.text = "${currentNum * currentShare} 元贝"
     }
@@ -251,12 +260,9 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
             if (ev.action == MotionEvent.ACTION_DOWN) {
                 // 获取当前焦点所在的控件；
                 val view = currentFocus
-                if (view == bind.submitBtn){
-                    return super.dispatchTouchEvent(ev)
-                }
                 if (view != null && view is EditText) {
                     val r = Rect();
-                    view.getGlobalVisibleRect(r);
+                    view.getGlobalVisibleRect(r)
                     val rawX : Int = ev.rawX.toInt()
                     val rawY : Int = ev.rawY.toInt()
 

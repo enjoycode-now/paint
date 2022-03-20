@@ -48,6 +48,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity
+            android:name=".AppointmentDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".PayStatusActivity"
             android:exported="false" />
         <activity

@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AppointmentDetailsActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#FAFBFF"
+        app:contentInsetStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/onBackButton"
+                android:layout_width="18dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:onClick="onBackPress"
+                android:src="@drawable/ic_back_deep_gray"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#999999" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:onClick="onBackPress"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/titleNote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="约稿详情"
+                android:textAlignment="center"
+                android:textColor="#CC000000"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/onMoreDialogBtn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="16dp"
+                android:onClick="onMoreDialog"
+                android:src="@drawable/ic_baseline_more_vert"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#999999" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <cn.copaint.audience.views.ParentNestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="12dp"
+            android:background="@drawable/multiple_shadows_background">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="26dp"
+                    android:layout_marginHorizontal="4dp"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    android:textFontWeight="3"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/createAt"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#939393"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@+id/title"
+                    app:layout_constraintTop_toBottomOf="@+id/title" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="发布"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/createAt"
+                    app:layout_constraintStart_toEndOf="@+id/createAt"
+                    app:layout_constraintTop_toTopOf="@id/createAt" />
+
+                <TextView
+                    android:id="@+id/appointmentType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/btn_purple_rectangle"
+                    android:gravity="center"
+                    android:paddingHorizontal="5dp"
+                    android:text="稿件类型"
+                    android:textColor="#8C6DE3"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@id/createAt"
+                    app:layout_constraintTop_toBottomOf="@id/createAt" />
+
+
+                <TextView
+                    android:id="@+id/expiredAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="@id/appointmentType"
+                    app:layout_constraintEnd_toStartOf="@id/expiredNote"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toEndOf="@+id/appointmentType"
+                    app:layout_constraintTop_toTopOf="@id/appointmentType" />
+
+                <TextView
+                    android:id="@+id/expiredNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:text="截稿"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/appointmentType"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/appointmentType" />
+
+                <View
+                    android:id="@+id/splitLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#f2f2f2"
+                    app:layout_constraintTop_toBottomOf="@id/appointmentType" />
+
+                <TextView
+                    android:id="@+id/descriptionNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="需求详情"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/createAt"
+                    app:layout_constraintTop_toBottomOf="@id/splitLine" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="12dp"
+                    android:minLines="7"
+                    android:textColor="#939393"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toBottomOf="@id/descriptionNote" />
+
+                <TextView
+                    android:id="@+id/picNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="参考例图"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/descriptionNote"
+                    app:layout_constraintTop_toBottomOf="@id/description" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/picRecyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintTop_toBottomOf="@+id/picNote" />
+
+                <TextView
+                    android:id="@+id/appointmentRequirements"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="稿件要求"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/descriptionNote"
+                    app:layout_constraintTop_toBottomOf="@id/picRecyclerview" />
+
+                <TextView
+                    android:id="@+id/workType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="作品风格"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/appointmentRequirements" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/workType"
+                    app:layout_constraintStart_toEndOf="@id/workType"
+                    app:layout_constraintTop_toTopOf="@+id/workType" />
+
+                <TextView
+                    android:id="@+id/colorMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="颜色模式"
+                    app:layout_constraintStart_toStartOf="@id/workType"
+                    app:layout_constraintTop_toBottomOf="@id/workType" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/colorMode"
+                    app:layout_constraintStart_toEndOf="@id/colorMode"
+                    app:layout_constraintTop_toTopOf="@+id/colorMode" />
+
+                <TextView
+                    android:id="@+id/workSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="尺寸格式"
+                    app:layout_constraintStart_toStartOf="@id/colorMode"
+                    app:layout_constraintTop_toBottomOf="@id/colorMode" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/workSize"
+                    app:layout_constraintStart_toEndOf="@id/workSize"
+                    app:layout_constraintTop_toTopOf="@+id/workSize" />
+
+                <TextView
+                    android:id="@+id/workFormat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="稿件格式"
+                    app:layout_constraintStart_toStartOf="@id/workSize"
+                    app:layout_constraintTop_toBottomOf="@id/workSize" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/loading"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/workFormat"
+                    app:layout_constraintStart_toEndOf="@id/workFormat"
+                    app:layout_constraintTop_toTopOf="@+id/workFormat" />
+
+
+                <View
+                    android:id="@+id/splitLine2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#f2f2f2"
+                    app:layout_constraintTop_toBottomOf="@id/workFormat" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#B8B8B8"
+                    android:paddingBottom="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/splitLine2">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="12dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/publisherName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        app:layout_constraintBottom_toBottomOf="@id/avatar"
+                        app:layout_constraintStart_toEndOf="@id/avatar"
+                        app:layout_constraintTop_toTopOf="@id/avatar" />
+
+                    <TextView
+                        android:id="@+id/countText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="买入份额 loading...%,出价 loading...元贝"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/avatar"
+                        app:layout_constraintTop_toBottomOf="@id/avatar" />
+
+                    <TextView
+                        android:id="@+id/assessmentPainterList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="14dp"
+                        android:onClick="onAssessmentPainterList"
+                        android:text="已有loading...画师应征"
+                        android:textSize="11sp"
+                        app:drawableEndCompat="@drawable/ic_more_arrow_small"
+                        app:layout_constraintBottom_toBottomOf="@id/onApplyBtn"
+                        app:layout_constraintStart_toStartOf="@+id/avatar"
+                        app:layout_constraintTop_toTopOf="@id/onApplyBtn" />
+
+                    <TextView
+                        android:id="@+id/onApplyBtn"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_purple_btn"
+                        android:gravity="center"
+                        android:onClick="onApplyBtn"
+                        android:text="立即应征"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/countText" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </cn.copaint.audience.views.ParentNestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

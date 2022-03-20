@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.adapter.SquareAppointmentAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivitySquareBinding

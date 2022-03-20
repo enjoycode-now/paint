@@ -79,7 +79,7 @@ class PublishedWorkActivity : AppCompatActivity() {
             .openGallery(SelectMimeType.ofImage())
             .setImageEngine(GlideEngine)
             .setSelectionMode(1)
-            .setSelectMaxFileSize(5 shl 20)//最大5MB
+            .setSelectMaxFileSize((5 shl 20).toLong())//最大5MB
             .setSelectedData(selectedPic)
             .isGif(true)
             .forResult(object : OnResultCallbackListener<LocalMedia?> {
@@ -114,7 +114,7 @@ class PublishedWorkActivity : AppCompatActivity() {
             .openGallery(SelectMimeType.ofVideo())
             .setImageEngine(GlideEngine)
             .setSelectionMode(1)
-            .setSelectMaxFileSize(200 shl 20)//200MB以内
+            .setSelectMaxFileSize((200 shl 20).toLong())//200MB以内
             .setRecordVideoMaxSecond(120)//2min以内
             .setSelectedData(selectedVideo)
             .forResult(object : OnResultCallbackListener<LocalMedia?> {

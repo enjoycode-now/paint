@@ -1,12 +1,14 @@
 package cn.copaint.audience.adapter
 
 import android.R.attr.path
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import cn.copaint.audience.AppointmentDetailsActivity
 import cn.copaint.audience.R
 import cn.copaint.audience.SquareActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
@@ -14,6 +16,7 @@ import cn.copaint.audience.utils.DateUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import java.lang.Appendable
 
 
 class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerView.Adapter<SquareAppointmentAdapter.ViewHolder>() {
@@ -67,6 +70,9 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
                     binding.description.ellipsize = null
                     binding.description.isSingleLine = false
                 }
+            }
+            binding.root.setOnClickListener {
+                activity.startActivity(Intent(activity,AppointmentDetailsActivity::class.java))
             }
         }
     }
