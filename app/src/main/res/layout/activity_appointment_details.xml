@@ -76,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginVertical="12dp"
+            android:fillViewport="true"
             android:background="@drawable/multiple_shadows_background">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,6 +88,7 @@
                     android:layout_width="0dp"
                     android:layout_height="26dp"
                     android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
                     android:textFontWeight="3"
@@ -97,7 +99,7 @@
 
                 <TextView
                     android:id="@+id/createAt"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textColor="#939393"
@@ -110,7 +112,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:text="发布"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
+                    android:textColor="#939393"
                     app:layout_constraintBottom_toBottomOf="@id/createAt"
                     app:layout_constraintStart_toEndOf="@+id/createAt"
                     app:layout_constraintTop_toTopOf="@id/createAt" />
@@ -119,7 +122,7 @@
                     android:id="@+id/appointmentType"
                     android:layout_width="wrap_content"
                     android:layout_height="18dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/btn_purple_rectangle"
                     android:gravity="center"
                     android:paddingHorizontal="5dp"
@@ -135,7 +138,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-condensed-medium"
                     app:layout_constraintBottom_toBottomOf="@id/appointmentType"
                     app:layout_constraintEnd_toStartOf="@id/expiredNote"
                     app:layout_constraintHorizontal_bias="1"
@@ -148,7 +152,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:text="截稿"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-condensed-medium"
                     app:layout_constraintBottom_toBottomOf="@id/appointmentType"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/appointmentType" />
@@ -157,7 +162,7 @@
                     android:id="@+id/splitLine"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="10dp"
                     android:background="#f2f2f2"
                     app:layout_constraintTop_toBottomOf="@id/appointmentType" />
 
@@ -176,8 +181,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="10dp"
                     android:minLines="7"
+                    android:lineHeight="14.5dp"
                     android:textColor="#939393"
                     android:textSize="12sp"
                     app:layout_constraintTop_toBottomOf="@id/descriptionNote" />
@@ -186,7 +192,7 @@
                     android:id="@+id/picNote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="14dp"
                     android:text="参考例图"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="@+id/descriptionNote"
@@ -198,6 +204,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4dp"
                     android:layout_marginTop="12dp"
+                    android:overScrollMode="never"
                     app:layout_constraintTop_toBottomOf="@+id/picNote" />
 
                 <TextView
@@ -211,7 +218,7 @@
                     app:layout_constraintTop_toBottomOf="@id/picRecyclerview" />
 
                 <TextView
-                    android:id="@+id/workType"
+                    android:id="@+id/workTypeNote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -221,71 +228,75 @@
                     app:layout_constraintTop_toBottomOf="@id/appointmentRequirements" />
 
                 <TextView
+                    android:id="@+id/workType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@id/workType"
-                    app:layout_constraintStart_toEndOf="@id/workType"
-                    app:layout_constraintTop_toTopOf="@+id/workType" />
+                    app:layout_constraintBottom_toBottomOf="@id/workTypeNote"
+                    app:layout_constraintStart_toEndOf="@id/workTypeNote"
+                    app:layout_constraintTop_toTopOf="@+id/workTypeNote" />
+
+                <TextView
+                    android:id="@+id/colorModeNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="颜色模式"
+                    app:layout_constraintStart_toStartOf="@id/workTypeNote"
+                    app:layout_constraintTop_toBottomOf="@id/workTypeNote" />
 
                 <TextView
                     android:id="@+id/colorMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="颜色模式"
-                    app:layout_constraintStart_toStartOf="@id/workType"
-                    app:layout_constraintTop_toBottomOf="@id/workType" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@id/colorMode"
-                    app:layout_constraintStart_toEndOf="@id/colorMode"
-                    app:layout_constraintTop_toTopOf="@+id/colorMode" />
+                    app:layout_constraintBottom_toBottomOf="@id/colorModeNote"
+                    app:layout_constraintStart_toEndOf="@id/colorModeNote"
+                    app:layout_constraintTop_toTopOf="@+id/colorModeNote" />
+
+                <TextView
+                    android:id="@+id/workSizeNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="尺寸格式"
+                    app:layout_constraintStart_toStartOf="@id/colorModeNote"
+                    app:layout_constraintTop_toBottomOf="@id/colorModeNote" />
 
                 <TextView
                     android:id="@+id/workSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="尺寸格式"
-                    app:layout_constraintStart_toStartOf="@id/colorMode"
-                    app:layout_constraintTop_toBottomOf="@id/colorMode" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@id/workSize"
-                    app:layout_constraintStart_toEndOf="@id/workSize"
-                    app:layout_constraintTop_toTopOf="@+id/workSize" />
+                    app:layout_constraintBottom_toBottomOf="@id/workSizeNote"
+                    app:layout_constraintStart_toEndOf="@id/workSizeNote"
+                    app:layout_constraintTop_toTopOf="@+id/workSizeNote" />
+
+                <TextView
+                    android:id="@+id/workFormatNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="稿件格式"
+                    app:layout_constraintStart_toStartOf="@id/workSizeNote"
+                    app:layout_constraintTop_toBottomOf="@id/workSizeNote" />
 
                 <TextView
                     android:id="@+id/workFormat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="稿件格式"
-                    app:layout_constraintStart_toStartOf="@id/workSize"
-                    app:layout_constraintTop_toBottomOf="@id/workSize" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@id/workFormat"
-                    app:layout_constraintStart_toEndOf="@id/workFormat"
-                    app:layout_constraintTop_toTopOf="@+id/workFormat" />
+                    app:layout_constraintBottom_toBottomOf="@id/workFormatNote"
+                    app:layout_constraintStart_toEndOf="@id/workFormatNote"
+                    app:layout_constraintTop_toTopOf="@+id/workFormatNote" />
 
 
                 <View
@@ -294,13 +305,15 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="12dp"
                     android:background="#f2f2f2"
-                    app:layout_constraintTop_toBottomOf="@id/workFormat" />
+                    app:layout_constraintTop_toBottomOf="@id/workFormatNote" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#B8B8B8"
                     android:paddingBottom="12dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintVertical_bias="1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/splitLine2">
 
@@ -350,11 +363,29 @@
                         android:layout_width="60dp"
                         android:layout_height="30dp"
                         android:layout_marginVertical="12dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/bg_purple_btn"
                         android:gravity="center"
                         android:onClick="onApplyBtn"
                         android:text="立即应征"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/countText" />
+
+                    <TextView
+                        android:id="@+id/onApplyBtn2"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_purple_btn"
+                        android:gravity="center"
+                        android:onClick="onApplyBtn"
+                        android:visibility="gone"
+                        android:text="需求变更"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"

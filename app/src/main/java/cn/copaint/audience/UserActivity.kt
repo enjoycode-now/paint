@@ -25,10 +25,7 @@ import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Exception
 import kotlin.math.abs
@@ -110,7 +107,6 @@ class UserActivity : AppCompatActivity() {
                         UserPageInitQuery(
                             input =
                                 FollowInfoInput(userID = user.id ?:"")
-
                         )
                     ).execute()
                 } catch (e: Exception){
@@ -130,7 +126,7 @@ class UserActivity : AppCompatActivity() {
                     .uppercase()
             binding.blockchainAddress.text = displayAddress
             binding.biography.setText(biography)
-            Glide.with(this@UserActivity).load(user.photo).into(binding.userAvatar)
+            user.photo?.let { GlideEngine.loadImage(this@UserActivity, it,binding.userAvatar) }
             binding.editProfileButton.isEnabled = true
         }
     }

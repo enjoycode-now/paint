@@ -228,7 +228,7 @@
 
 
             <LinearLayout
-                android:id="@+id/colorMode"
+                android:id="@+id/colorModeNote"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
@@ -270,7 +270,7 @@
                 android:onClick="onNULL"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/uploadPicTip"
-                app:layout_constraintTop_toBottomOf="@+id/colorMode">
+                app:layout_constraintTop_toBottomOf="@+id/colorModeNote">
 
                 <ImageView
                     android:layout_width="30dp"

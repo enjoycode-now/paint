@@ -27,7 +27,6 @@ import cn.copaint.audience.utils.ToastUtils.toastNetError
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.lang.Exception
 
@@ -52,16 +51,16 @@ class SquareActivity : AppCompatActivity() {
         setContentView(binding.root)
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
-
-
+        GlideEngine.config(this)
 
         lastReloadTimeMillis = 0L
         binding.proposalList.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL, false
         )
-        binding.proposalList.adapter = SquareAppointmentAdapter(this)
         GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
+        binding.proposalList.adapter = SquareAppointmentAdapter(this)
+
 
         binding.swipeRefreshLayout.setProgressViewOffset(true, -50, 50)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
@@ -73,7 +72,6 @@ class SquareActivity : AppCompatActivity() {
                 } else {
                     toast("拉到底了，客官哎...")
                 }
-
             }
 
             override fun refresh() {
@@ -139,6 +137,7 @@ class SquareActivity : AppCompatActivity() {
                         ).execute()
 
                         return@let Proposal(
+                            it.node?.id,
                             it.node?.title,
                             it.node?.description,
                             it.node?.colorModel,

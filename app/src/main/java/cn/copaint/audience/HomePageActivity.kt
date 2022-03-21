@@ -25,6 +25,7 @@ import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.DialogUtils
+import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
@@ -52,7 +53,6 @@ class HomePageActivity : AppCompatActivity() {
         StatusBarUtils.initSystemBar(window, "#303030", false)
         setContentView(binding.root)
         app = this
-
         buildStub()
         binding.mainViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@HomePageActivity)

@@ -1,9 +1,6 @@
 package cn.copaint.audience.adapter
 
-import android.R.attr.path
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +10,8 @@ import cn.copaint.audience.R
 import cn.copaint.audience.SquareActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.utils.DateUtils
+import cn.copaint.audience.utils.GlideEngine
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import java.lang.Appendable
 
 
 class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerView.Adapter<SquareAppointmentAdapter.ViewHolder>() {
@@ -36,17 +31,15 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
 
             binding.yuanbeiText.text = "${(activity.dataList[position].balance ?:0) * (activity.dataList[position].stock ?:0)}"
 
-            Glide.with(activity)
-                .load(activity.dataList[position].avatar)
-                .into(binding.avatar)
+            activity.dataList[position].avatar?.let {
+                GlideEngine.loadImage(activity,
+                    it,binding.avatar)
+            }
 
             if(activity.dataList[position].example?.size ?:0 > 0){
                 val coverPicUrl =  activity.resources.getString(R.string.PicUrlPrefix)+(activity.dataList[position].example?.get(0)?.key ?: "")
                 binding.coverPic.visibility = View.VISIBLE
-                Glide.with(activity)
-                    .load(coverPicUrl)
-                    .error(R.drawable.loading_failed)
-                    .into(binding.coverPic)
+                GlideEngine.loadImage(activity,coverPicUrl,binding.coverPic)
 
                 // 例图的数量
                 if (activity.dataList[position].example?.size?:0 > 1){
@@ -62,17 +55,12 @@ class SquareAppointmentAdapter(private val activity: SquareActivity): RecyclerVi
                 binding.picCount.visibility = View.GONE
             }
 
-            binding.description.setOnClickListener {
-                if (binding.description.ellipsize == null ){
-                    binding.description.ellipsize = TextUtils.TruncateAt.END
-                    binding.description.setLines(2)
-                }else{
-                    binding.description.ellipsize = null
-                    binding.description.isSingleLine = false
-                }
-            }
             binding.root.setOnClickListener {
-                activity.startActivity(Intent(activity,AppointmentDetailsActivity::class.java))
+                val intent = Intent(activity,AppointmentDetailsActivity::class.java)
+                intent.putExtra("proposalId",activity.dataList[position].id)
+                intent.putExtra("creatorNickName",activity.dataList[position].nickname)
+                intent.putExtra("creatorAvatarUri",activity.dataList[position].avatar)
+                activity.startActivity(intent)
             }
         }
     }

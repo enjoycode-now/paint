@@ -1,8 +1,10 @@
 package cn.copaint.audience.model
 
 import cn.copaint.audience.FindProposalsQuery
+import java.io.Serializable
 
-data class Proposal (
+data class Proposal(
+    var id: String? = "",
     val title: String? = "",
     val description: String? = "",
     var requirementType: String? = "", //需求类型

@@ -6,16 +6,31 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.databinding.ActivityAppointmentDetailsBinding
-import cn.copaint.audience.databinding.DialogSharepageMoreBinding
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import cn.copaint.audience.adapter.VericalLinearPhotoAdapter
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
+import cn.copaint.audience.databinding.*
+import cn.copaint.audience.listener.swipeRefreshListener
+import cn.copaint.audience.type.ProposalWhereInput
+import cn.copaint.audience.utils.AuthingUtils
+import cn.copaint.audience.utils.DateUtils
+import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.mpp.currentTimeMillis
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AppointmentDetailsActivity : AppCompatActivity() {
     lateinit var binding:ActivityAppointmentDetailsBinding
-
+    var proposalId:String = ""
+    var creatorNickName :String?=""
+    var creatorAvatarUri:String?=""
+    var myProposalDetail : GetProposalsDetailByIdQuery.Data? = null
+    var picUrlList = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +45,40 @@ class AppointmentDetailsActivity : AppCompatActivity() {
             this,
             LinearLayoutManager.VERTICAL, false
         )
-        binding.picRecyclerview.adapter = VericalLinearPhotoAdapter()
-        binding.swipeRefreshLayout.setProgressViewOffset(true, -50, 50)
+        binding.picRecyclerview.adapter = VericalLinearPhotoAdapter(this)
+        binding.swipeRefreshLayout.setProgressViewOffset(true, -100, 100)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(100)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            onResume()
+            binding.swipeRefreshLayout.isRefreshing = false
+            toast("refresh done")
+        }
+        proposalId = intent.getStringExtra("proposalId")?:""
+        creatorNickName = intent.getStringExtra("creatorNickName")?:""
+        creatorAvatarUri =intent.getStringExtra("creatorAvatarUri")?:""
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (proposalId.isBlank()){
+            return
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = apolloClient(this@AppointmentDetailsActivity).query(
+                GetProposalsDetailByIdQuery(
+                    where = Optional.presentIfNotNull(ProposalWhereInput(id = Optional.presentIfNotNull(proposalId)))
+                )
+            ).execute()
+
+            response.data?.let {
+                myProposalDetail = it
+                picUrlList.clear()
+                myProposalDetail?.proposals?.edges?.get(0)?.node?.examples?.forEach { it2->picUrlList.add(resources.getString(R.string.PicUrlPrefix).plus(it2.key)) }
+            }
+            bindUiInfo()
+        }
+    }
     fun onBackPress(view: View) {
         finish()
     }
@@ -48,6 +92,35 @@ class AppointmentDetailsActivity : AppCompatActivity() {
         toast("暂无操作")
     }
 
+    fun bindUiInfo(){
+        runOnUiThread{
+            val node = myProposalDetail?.proposals?.edges?.get(0)?.node
+            if (AuthingUtils.user.id == node?.id){
+                binding.onApplyBtn2.visibility = View.VISIBLE
+                binding.onApplyBtn.visibility = View.GONE
+            }else{
+                binding.onApplyBtn2.visibility = View.GONE
+                binding.onApplyBtn.visibility = View.VISIBLE
+            }
+            binding.title.text = node?.title
+            binding.appointmentType.text = node?.colorModel
+            binding.description.text = node?.description
+
+            binding.createAt.text = DateUtils.rcfDateStr2StandardDateStr(node?.createdAt.toString())
+            binding.expiredAt.text = DateUtils.rcfDateStr2StandardDateStrWithoutTime(node?.expiredAt.toString())
+            binding.workType.text = node?.proposalType.toString()
+            binding.colorMode.text = node?.colorModel
+            binding.workSize.text = node?.size
+            binding.workFormat.text = "JPG"
+            binding.picRecyclerview.adapter?.notifyDataSetChanged()
+            binding.publisherName.text = creatorNickName
+            creatorAvatarUri?.let { GlideEngine.loadGridImage(this, it,binding.avatar) }
+            if (node?.stock != null ){
+                binding.countText.text = "买入份额 ${node?.stock}%,出价 ${node?.stock * node?.balance}元贝"
+            }
+            binding.assessmentPainterList.text = "已有${node?.waitingList?.size} 位画师应征"
+        }
+    }
 
     private fun popupShareDialog(window: Window) {
         val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(this))
@@ -70,18 +143,5 @@ class AppointmentDetailsActivity : AppCompatActivity() {
         }
 
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
-    }
-
-    class VericalLinearPhotoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            TODO("Not yet implemented")
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            TODO("Not yet implemented")
-        }
-
-        override fun getItemCount(): Int=0
-
     }
 }

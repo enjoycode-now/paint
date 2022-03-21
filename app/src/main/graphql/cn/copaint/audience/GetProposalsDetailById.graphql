@@ -1,0 +1,76 @@
+query GetProposalsDetailById($where: ProposalWhereInput) {
+    proposals(where: $where) {
+        edges {
+            node {
+                id
+                proposalStatus
+                proposalType
+                creator
+                title
+                description
+                colorModel
+                size
+                balance
+                stock
+                proposalUserID
+                expiredAt
+                updatedAt
+                createdAt
+                inviteUserID
+                waitingList {
+                    id
+                    userID
+                    createdAt
+                }
+                examples {
+                    id
+                    key
+                }
+
+                currentPhase {
+                    id
+                    phaseStatus
+                    auditTimes
+                    name
+                    depositPercent
+                    attachments {
+                        id
+                        key
+                    }
+                    comments {
+                        id
+                        reason
+                        attachments {
+                            key
+                            id
+                        }
+                    }
+                    updatedAt
+                    createdAt
+                }
+                phases {
+                    id
+                    phaseStatus
+                    auditTimes
+                    name
+                    depositPercent
+                    attachments {
+                        id
+                        key
+                    }
+                    comments {
+                        attachments {
+                            key
+                            id
+                        }
+                        id
+                        reason
+                    }
+                    updatedAt
+                    createdAt
+                }
+            }
+            cursor
+        }
+    }
+}

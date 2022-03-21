@@ -23,6 +23,13 @@ import com.luck.picture.lib.utils.ActivityCompatHelper
 object GlideEngine: ImageEngine {
 
 
+    fun config(context: Context){
+        if (!ActivityCompatHelper.assertValidRequest(context)) {
+            return
+        }
+        Glide.with(context)
+    }
+
     /**
      * 加载图片
      *
