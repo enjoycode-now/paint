@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
@@ -23,14 +22,10 @@ import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.viewmodel.UserViewModel
+import cn.copaint.audience.views.MyPhotoView
 import com.apollographql.apollo3.api.ApolloResponse
 import com.bugsnag.android.Bugsnag
-import com.bumptech.glide.Glide
-import com.wanglu.photoviewerlibrary.OnLongClickListener
 import com.wanglu.photoviewerlibrary.PhotoViewer
-import kotlinx.coroutines.*
-import kotlin.math.abs
-import kotlin.random.Random
 
 class UserActivity : BaseActivity() {
 
@@ -81,6 +76,7 @@ class UserActivity : BaseActivity() {
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height =
             screenHeight - statusBarHeight - 96.dp
+
         // 点击头像监听器
         binding.userAvatar.setOnClickListener { previewPhoto() }
         // 解决嵌套滑动冲突

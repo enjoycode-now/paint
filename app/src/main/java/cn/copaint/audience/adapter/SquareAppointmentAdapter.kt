@@ -11,9 +11,9 @@ import cn.copaint.audience.R
 import cn.copaint.audience.activity.SquareActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.databinding.ItemFootViewBinding
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.DateUtils
 import cn.copaint.audience.utils.GlideEngine
+import cn.copaint.audience.views.MyPhotoView
 import com.wanglu.photoviewerlibrary.PhotoViewer
 
 
@@ -54,7 +54,7 @@ class SquareAppointmentAdapter(private val activity: SquareActivity) :
                 GlideEngine.loadImage(activity, coverPicUrl, binding.coverPic)
                 binding.coverPicCardView.setOnClickListener {
                     if (coverPicUrl.isNotBlank()) {
-                        PhotoViewer.setClickSingleImg(
+                        MyPhotoView.setClickSingleImg(
                             coverPicUrl,
                             binding.coverPic
                         )

@@ -35,7 +35,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     fun onBackPress(view: View) {
-        startActivity(Intent(this, HomePageActivity::class.java))
+        finish()
     }
 
     fun buyScallop(view: View) {

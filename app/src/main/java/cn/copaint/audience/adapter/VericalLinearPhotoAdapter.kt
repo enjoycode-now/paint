@@ -11,9 +11,11 @@ import cn.copaint.audience.databinding.ItemPicProposalDetailBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
 import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.views.MyPhotoView
 import com.bumptech.glide.Glide
 import com.wanglu.photoviewerlibrary.OnLongClickListener
 import com.wanglu.photoviewerlibrary.PhotoViewer
+
 
 class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val EMPTY_TYPE = 0
@@ -67,8 +69,9 @@ class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : Recy
             Glide.with(activity).load(activity.picUrlList[position]).into(binding.image)
 
             binding.image.setOnClickListener{
-                PhotoViewer.setData(activity.picUrlList)
-                    .setClickSingleImg(activity.picUrlList[position],binding.image)
+
+                MyPhotoView
+                    .setData(activity.picUrlList)
                     .setCurrentPage(position)
                     .setImgContainer(activity.binding.picRecyclerview)
                     .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {

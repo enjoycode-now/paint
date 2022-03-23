@@ -3,6 +3,7 @@ package cn.copaint.audience.adapter
 import android.graphics.Color
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
@@ -11,16 +12,20 @@ import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.databinding.ItemFansBinding
 import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
+import cn.copaint.audience.views.MyPhotoView
 import com.bumptech.glide.Glide
+import com.wanglu.photoviewerlibrary.PhotoViewer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class FansAdapter(private val activity: FansActivity) : RecyclerView.Adapter<FansAdapter.ViewHolder>() {
-    val fansList :ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo> = arrayListOf()
+class FansAdapter(private val activity: FansActivity) :
+    RecyclerView.Adapter<FansAdapter.ViewHolder>() {
+    val fansList: ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo> = arrayListOf()
     val isFollowList = ArrayList<Boolean>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,34 +34,60 @@ class FansAdapter(private val activity: FansActivity) : RecyclerView.Adapter<Fan
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(fansList[position], isFollowList[position],activity,this)
+        holder.bind(fansList[position], isFollowList[position], activity, this)
     }
 
-    override fun getItemCount() = activity.fansList.size
+    override fun getItemCount() = activity.fansViewModel.fansList.value?.size ?: 0
 
     inner class ViewHolder(val itemBind: ItemFansBinding) : RecyclerView.ViewHolder(itemBind.root) {
-        fun bind(fans: GetAuthingUsersInfoQuery.AuthingUsersInfo, isFollow:Boolean, activity: FansActivity, adapter: FansAdapter) {
+        fun bind(
+            fans: GetAuthingUsersInfoQuery.AuthingUsersInfo,
+            isFollow: Boolean,
+            activity: FansActivity,
+            adapter: FansAdapter
+        ) {
             itemBind.nicikname.text = fans.nickname ?: "此用户未命名"
             if (fans.photo == "" || fans.photo?.endsWith("svg") == true) {
                 Glide.with(activity).load(R.drawable.avatar_sample).into(itemBind.avatar)
             } else {
                 Glide.with(activity).load(fans.photo).into(itemBind.avatar)
             }
-            if(user.id == activity.currentUserID){
+            if (user.id == activity.fansViewModel.currentUserID) {
                 itemBind.status.visibility = View.VISIBLE
                 itemBind.unsubscribe.visibility = View.VISIBLE
-                itemBind.status.text = if (isFollow) "互相关注" else "回关"
-                itemBind.status.setOnClickListener{
-                    if (itemBind.status.text == "互相关注"){
-                        unFollowUser(fans.id,itemBind)
-                    }else{
-                        followUser(fans.id,itemBind)
+
+                if (isFollow) {
+                    itemBind.status.text = "互相关注"
+                    itemBind.status.setTextColor(Color.parseColor("#A9A9A9"))
+                } else {
+                    itemBind.status.text = "回关"
+                    itemBind.status.setTextColor(Color.parseColor("#8767E2"))
+                }
+                itemBind.status.setOnClickListener {
+                    if (itemBind.status.text == "互相关注") {
+                        unFollowUser(fans.id, itemBind)
+                    } else {
+                        followUser(fans.id, itemBind)
                     }
                 }
-                itemBind.unsubscribe.setOnClickListener{
-                    onConfirmRemoveDialog(activity,fans.id,fans.photo)
+                itemBind.avatar.setOnClickListener {
+                    fans.photo.let {
+                        PhotoViewer.setClickSingleImg(
+                            it ?: "",
+                            itemBind.avatar
+                        )   //因为本框架不参与加载图片，所以还是要写回调方法
+                            .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                                override fun show(iv: ImageView, url: String) {
+                                    GlideEngine.loadImage(activity, url, iv)
+                                }
+                            })
+                            .start(activity)
+                    }
                 }
-            }else{
+                itemBind.unsubscribe.setOnClickListener {
+                    onConfirmRemoveDialog(activity, fans.id, fans.photo)
+                }
+            } else {
                 itemBind.status.visibility = View.GONE
                 itemBind.unsubscribe.visibility = View.GONE
             }
@@ -158,17 +189,18 @@ fun onConfirmRemoveDialog(activity: FansActivity, id: String, photo: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
                 apolloClient(activity).mutation(RemoveFollowerMutation(id)).execute()
-            }catch ( e: Exception){
-                Log.e("FansAdapter", e.toString() )
+            } catch (e: Exception) {
+                Log.e("FansAdapter", e.toString())
                 return@launch
             }
-            if ( response.data?.removeFollower == 1){
+            if (response.data?.removeFollower == 1) {
                 activity.runOnUiThread{
-                    activity.updateUiInfo()
+                    activity.binding.animationView.visibility = View.VISIBLE
+                    activity.fansViewModel.askData()
+                    toast("删除成功")
                 }
-                toast("删除成功")
             }
-            Log.i("adpater", id+"\n"+ response.data?.removeFollower)
+            Log.i("adpater", id + "\n" + response.data?.removeFollower)
         }
         layerDetailWindow.dismiss()
     }

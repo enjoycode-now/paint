@@ -9,6 +9,8 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.GetAuthingUsersInfoQuery
 import cn.copaint.audience.GetFollowersListQuery
@@ -21,6 +23,7 @@ import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.viewmodel.FollowsViewModel
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
@@ -28,16 +31,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FollowsActivity : AppCompatActivity() {
-
-    var cursor: Any? = null
-    var first = 20
-    var hasNextPage = false
-    lateinit var where: FollowerWhereInput
+class FollowsActivity : BaseActivity() {
     lateinit var binding: ActivityFollowsBinding
-    val followList = ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>()
     val followAdapter = FollowAdapter(this)
-    var currentUserId: String? = null
+    val followsViewModel : FollowsViewModel by lazy{
+        ViewModelProvider(this)[FollowsViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,10 @@ class FollowsActivity : AppCompatActivity() {
         setContentView(binding.root)
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
+        initView()
+    }
 
+    override fun initView() {
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
@@ -54,15 +56,16 @@ class FollowsActivity : AppCompatActivity() {
         binding.followRecycle.adapter = followAdapter
         binding.followRecycle.setListener(this, object : RecyclerListener {
             override fun loadMore() {
-                if (hasNextPage) {
+                if (followsViewModel.hasNextPage) {
                     toast("加载更多...")
-                    updateUiInfo()
+                    binding.animationView.visibility = View.VISIBLE
+                    followsViewModel.askData()
                 }
             }
 
             override fun refresh() {
                 toast("刷新")
-                cursor = null
+                followsViewModel.cursor = null
                 binding.swipeRefreshLayout.isRefreshing = false
                 onResume()
             }
@@ -82,16 +85,26 @@ class FollowsActivity : AppCompatActivity() {
             false;
         }
 
-        currentUserId = intent.getStringExtra("userId")
-        where = FollowerWhereInput(followerID = Optional.presentIfNotNull(currentUserId))
+        followsViewModel.currentUserId = intent.getStringExtra("userId")
+        followsViewModel.where = FollowerWhereInput(followerID = Optional.presentIfNotNull(followsViewModel.currentUserId))
+
+
+        val followsListObserver = Observer<ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>>{
+            followAdapter.followList.clear()
+            followAdapter.followList.addAll(it)
+            binding.fansCount.text = "关注 ${followAdapter.followList.size}"
+            followAdapter.notifyDataSetChanged()
+            binding.animationView.visibility = View.GONE
+        }
+        followsViewModel.followList.observe(this,followsListObserver)
     }
 
     private fun filterUser(text: String) {
         followAdapter.followList.clear()
         if(text == ""){
-            followAdapter.followList.addAll(followList)
+            followAdapter.followList.addAll(followsViewModel.followList.value!!)
         }else{
-            followList.forEach {
+            followsViewModel.followList.value?.forEach {
                 if (it.nickname?.contains(text) == true) {
                     followAdapter.followList.add(it)
                 }
@@ -102,59 +115,12 @@ class FollowsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        followList.clear()
+        followsViewModel.followList.value?.clear()
         binding.searchEdit.setText("")
-        updateUiInfo()
-    }
-
-    fun updateUiInfo() {
         binding.animationView.visibility = View.VISIBLE
-        CoroutineScope(Dispatchers.IO).launch {
-            // 获取关注列表
-            val response = try {
-                apolloClient(this@FollowsActivity).query(
-                    GetFollowersListQuery(
-                        after = Optional.presentIfNotNull(
-                            cursor
-                        ),
-                        first = Optional.presentIfNotNull(first),
-                        where = Optional.presentIfNotNull(where)
-                    )
-                )
-                    .execute().data
-            } catch (e: ApolloException) {
-                Log.d("FollowsActivity", "Failure", e)
-                return@launch
-            }
-            response?.followers?.pageInfo?.endCursor?.let { it -> cursor = it }
-            response?.followers?.pageInfo?.hasNextPage.let { hasNextPage = it ?: false }
-            Log.i("FollowsActivity", response.toString())
-
-            // 获取全部关注对象的userid
-            val userIdList = mutableListOf<String>()
-            response?.followers?.edges?.forEach {
-                it?.node?.userID?.let { it1 -> userIdList.add(it1) }
-            }
-
-            // 根据id调用authing接口获取用户信息
-            try {
-                apolloClient(this@FollowsActivity).query(GetAuthingUsersInfoQuery(userIdList))
-                    .execute().data?.authingUsersInfo?.forEach {
-                        followList.add(it)
-                    }
-
-            } catch (e: Exception) {
-                toast(e.toString())
-            }
-            runOnUiThread {
-                followAdapter.followList.clear()
-                followAdapter.followList.addAll(followList)
-                binding.fansCount.text = "关注 ${followAdapter.followList.size}"
-                followAdapter.notifyDataSetChanged()
-                binding.animationView.visibility = View.GONE
-            }
-        }
+        followsViewModel.askData()
     }
+
 
     fun onBackPress(view: View) = onBackPressed()
 }

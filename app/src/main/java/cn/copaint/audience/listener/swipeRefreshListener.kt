@@ -24,6 +24,7 @@ object swipeRefreshListener {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
+                // 在手指拖动或屏幕滚动时
                 if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
 
                     if (lastVisibleItem + 1 === recyclerView.adapter?.itemCount) {
@@ -36,7 +37,10 @@ object swipeRefreshListener {
                             l.loadMore()
                         }
                     }
-                }else{
+                }
+                // 在滚动空闲时
+                else{
+                    // 还没浏览的item数量不到10个时，开启协程静默加载新数据
                     if (lastVisibleItem + 10 >= recyclerView.adapter?.itemCount ?: Int.MAX_VALUE) {
                         //下拉刷新的时候不可以加载更多
                         if (swipeRefreshLayout is SwipeRefreshLayout) {
