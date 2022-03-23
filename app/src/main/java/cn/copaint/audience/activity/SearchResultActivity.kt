@@ -1,7 +1,6 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,8 +11,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import cn.copaint.audience.R
 import cn.copaint.audience.databinding.ActivitySearchResultBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.fragment.SearchFilterFragment
@@ -84,21 +83,21 @@ class SearchResultActivity : AppCompatActivity() {
         currentFragment = 2
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
     fun onWorkBtn(view: View) {
         currentFragment = 0
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
     fun onAppointmentsBtn(view: View) {
         currentFragment = 1
         cancelHighLight()
         (view as TextView).setTextColor(Color.WHITE)
-        view.background = ResourcesCompat.getDrawable(resources,R.drawable.bg_purple_btn,null)
+        view.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_purple_btn,null)
         replaceFragment(fragmentList[currentFragment])
     }
 

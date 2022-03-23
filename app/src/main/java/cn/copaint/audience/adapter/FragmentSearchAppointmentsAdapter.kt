@@ -1,23 +1,15 @@
 package cn.copaint.audience.adapter
 
-import android.content.Intent
 import android.text.TextUtils
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.R
-import cn.copaint.audience.SearchResultActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
-import cn.copaint.audience.databinding.FragmentItemSearchWorkBinding
-import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
-import cn.copaint.audience.utils.DateUtils.rcfDateStr2DateStr
-import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStr
 import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStrWithoutTime
-import cn.copaint.audience.utils.ToastUtils
 import com.bumptech.glide.Glide
 
 class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<RecyclerView.ViewHolder>() {

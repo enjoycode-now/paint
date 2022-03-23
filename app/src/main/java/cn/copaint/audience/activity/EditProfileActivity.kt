@@ -1,9 +1,8 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -22,7 +21,6 @@ import cn.copaint.audience.utils.AuthingUtils.uploadAvatar
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.StatusBarUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag

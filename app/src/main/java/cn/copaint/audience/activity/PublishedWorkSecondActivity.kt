@@ -1,25 +1,21 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.CreatePaintingMutation
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPublishedWorkSecondBinding
 import cn.copaint.audience.type.CreatePaintingInput
-import cn.copaint.audience.type.FollowInfoInput
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.StatusBarUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.api.Optional
@@ -186,7 +182,7 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
                     Log.i("PublishedWorkSecondActivity", response.toString())
                     if (progressDialog.isShowing)
                         progressDialog.dismiss()
-                    startActivity(Intent(this@PublishedWorkSecondActivity,HomePageActivity::class.java))
+                    startActivity(Intent(this@PublishedWorkSecondActivity, HomePageActivity::class.java))
                 }
 
             }

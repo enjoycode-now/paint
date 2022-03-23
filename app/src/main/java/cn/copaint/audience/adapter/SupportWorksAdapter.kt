@@ -3,7 +3,7 @@ package cn.copaint.audience.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.UserActivity
+import cn.copaint.audience.activity.UserActivity
 import cn.copaint.audience.databinding.ItemSupportWorksBinding
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bumptech.glide.Glide
@@ -17,10 +17,10 @@ class SupportWorksAdapter(private val activity: UserActivity) : RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(activity.sponsorList[position], position, activity)
+        holder.bind(activity.userViewModel.picUrlList.value?.get(position) ?: "", position, activity)
     }
 
-    override fun getItemCount() = activity.sponsorList.size
+    override fun getItemCount() = activity.userViewModel.picUrlList.value?.size ?: 0
 
     class ViewHolder(val binding: ItemSupportWorksBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(url: String, position: Int, activity: UserActivity) {

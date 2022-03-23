@@ -1,14 +1,11 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import cn.copaint.audience.databinding.ActivityPayStatusBinding
-import cn.copaint.audience.utils.ToastUtils
 
 class PayStatusActivity : AppCompatActivity() {
 
@@ -22,7 +19,7 @@ class PayStatusActivity : AppCompatActivity() {
             if (it.base - SystemClock.elapsedRealtime() <= 0){
                 it.stop()
                 // SquareActivity的启动模式是singleTask
-                startActivity(Intent(this,SquareActivity::class.java))
+                startActivity(Intent(this, SquareActivity::class.java))
             }
         }
 
@@ -52,6 +49,6 @@ class PayStatusActivity : AppCompatActivity() {
 
     fun onBackPress(view: View) {
         binding.chronometer.stop()
-        startActivity(Intent(this,SquareActivity::class.java))
+        startActivity(Intent(this, SquareActivity::class.java))
     }
 }

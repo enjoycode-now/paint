@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
+import cn.copaint.audience.activity.SearchResultActivity
 import cn.copaint.audience.adapter.FragmentSearchWorkAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentItemSearchWorksBinding
@@ -18,7 +19,6 @@ import cn.copaint.audience.type.*
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
@@ -50,8 +50,6 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
                 if (hasNextPage) {
                     ToastUtils.toast("加载更多...")
                     updateUiInfo()
-                } else {
-                    ToastUtils.toast("拉到底了，客官哎...")
                 }
             }
 

@@ -3,7 +3,7 @@ package cn.copaint.audience.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.MyWorksActivity
+import cn.copaint.audience.activity.MyWorksActivity
 import cn.copaint.audience.databinding.ItemSupportWorksBinding
 import cn.copaint.audience.utils.ToastUtils
 import com.bumptech.glide.Glide

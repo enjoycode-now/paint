@@ -3,7 +3,7 @@ package cn.copaint.audience.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.DrawActivity
+import cn.copaint.audience.activity.DrawActivity
 import cn.copaint.audience.R
 import cn.copaint.audience.databinding.ItemLayerSmallBinding
 import cn.copaint.audience.model.RoomLayer

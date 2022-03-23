@@ -1,9 +1,8 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -11,22 +10,19 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.GetRandomTagsQuery
 import cn.copaint.audience.adapter.FlowAdapter
 import cn.copaint.audience.adapter.SearchHistoryAdapter
-import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.apollographql.apollo3.ApolloClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 import java.lang.Exception
 
 val searchHistoryList =

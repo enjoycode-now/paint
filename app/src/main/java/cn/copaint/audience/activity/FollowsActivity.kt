@@ -1,7 +1,6 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -10,25 +9,21 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.GetAuthingUsersInfoQuery
+import cn.copaint.audience.GetFollowersListQuery
 import cn.copaint.audience.adapter.FollowAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityFollowsBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.type.FollowerWhereInput
-import cn.copaint.audience.utils.AuthingUtils
-import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.StatusBarUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,8 +57,6 @@ class FollowsActivity : AppCompatActivity() {
                 if (hasNextPage) {
                     toast("加载更多...")
                     updateUiInfo()
-                } else {
-                    toast("拉到底了，客官哎...")
                 }
             }
 

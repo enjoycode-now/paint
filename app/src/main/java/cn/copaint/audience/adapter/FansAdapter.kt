@@ -4,19 +4,15 @@ import android.graphics.Color
 import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
+import cn.copaint.audience.activity.FansActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
-import cn.copaint.audience.databinding.DialogCreatorMoreBinding
 import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.databinding.ItemFansBinding
-import cn.copaint.audience.databinding.ItemFollowBinding
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.dp
-import com.apollographql.apollo3.ApolloClient
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +35,7 @@ class FansAdapter(private val activity: FansActivity) : RecyclerView.Adapter<Fan
     override fun getItemCount() = activity.fansList.size
 
     inner class ViewHolder(val itemBind: ItemFansBinding) : RecyclerView.ViewHolder(itemBind.root) {
-        fun bind(fans: GetAuthingUsersInfoQuery.AuthingUsersInfo,isFollow:Boolean, activity: FansActivity,adapter: FansAdapter) {
+        fun bind(fans: GetAuthingUsersInfoQuery.AuthingUsersInfo, isFollow:Boolean, activity: FansActivity, adapter: FansAdapter) {
             itemBind.nicikname.text = fans.nickname ?: "此用户未命名"
             if (fans.photo == "" || fans.photo?.endsWith("svg") == true) {
                 Glide.with(activity).load(R.drawable.avatar_sample).into(itemBind.avatar)

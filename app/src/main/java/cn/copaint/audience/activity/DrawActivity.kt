@@ -1,8 +1,7 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -12,6 +11,7 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.LayerAdapter
 import cn.copaint.audience.databinding.ActivityDrawBinding
 import cn.copaint.audience.databinding.ItemToolsmenuBinding

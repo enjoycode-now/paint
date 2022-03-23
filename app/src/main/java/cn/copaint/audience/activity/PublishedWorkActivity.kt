@@ -1,4 +1,4 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.app.Dialog
 import android.content.Context
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.FlowAdapter
 import cn.copaint.audience.databinding.ActivityPublishedWorkBinding
 import cn.copaint.audience.databinding.ItemLabelCustomBinding
@@ -22,7 +23,6 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.ToastUtils.toastNetError
 import com.bugsnag.android.Bugsnag
-import com.bumptech.glide.Glide
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia

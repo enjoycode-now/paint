@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SquareActivity">
+    tools:context=".activity.SquareActivity">
 
     <TextView
         android:id="@+id/textView7"
@@ -19,8 +19,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userAvatar"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
@@ -52,6 +52,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/proposalList"
+            android:overScrollMode="never"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

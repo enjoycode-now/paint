@@ -1,16 +1,17 @@
 package cn.copaint.audience.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.AppointmentDetailsActivity
-import cn.copaint.audience.R
+import cn.copaint.audience.activity.AppointmentDetailsActivity
 import cn.copaint.audience.databinding.ItemPicProposalDetailBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
+import cn.copaint.audience.utils.GlideEngine
+import cn.copaint.audience.utils.ToastUtils.app
 import com.bumptech.glide.Glide
-import com.luck.picture.lib.photoview.PhotoView
 import com.wanglu.photoviewerlibrary.OnLongClickListener
 import com.wanglu.photoviewerlibrary.PhotoViewer
 
@@ -19,11 +20,11 @@ class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : Recy
     val NORMAL_TYPE = 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        return when (viewType) {
             NORMAL_TYPE -> {
                 val binding =
                     ItemPicProposalDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolder(binding)
+                ViewHolder(binding)
             }
             else -> {
                 val binding = ItemUserpageEmptyViewBinding.inflate(
@@ -31,7 +32,7 @@ class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : Recy
                     parent,
                     false
                 )
-                return object : RecyclerView.ViewHolder(binding.root){}
+                object : RecyclerView.ViewHolder(binding.root){}
             }
         }
     }
@@ -61,17 +62,19 @@ class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : Recy
 
     class ViewHolder(val binding: ItemPicProposalDetailBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(activity: AppointmentDetailsActivity,position: Int){
+        fun bind(activity: AppointmentDetailsActivity, position: Int){
+            Log.i("chen", app.packageName)
             Glide.with(activity).load(activity.picUrlList[position]).into(binding.image)
 
             binding.image.setOnClickListener{
                 PhotoViewer.setData(activity.picUrlList)
+                    .setClickSingleImg(activity.picUrlList[position],binding.image)
                     .setCurrentPage(position)
                     .setImgContainer(activity.binding.picRecyclerview)
                     .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
                         override fun show(iv: ImageView, url: String) {
                             // 设置自己加载图片的框架来加载图片
-                            Glide.with(activity).load(url).into(iv)
+                            GlideEngine.loadImage(activity,url,iv)
                         }
                     })
                     .setOnLongClickListener(object : OnLongClickListener {

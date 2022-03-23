@@ -1,10 +1,9 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import cn.authing.core.auth.AuthenticationClient
 import cn.authing.core.graphql.GraphQLException
 import cn.authing.core.types.LoginByPhoneCodeInput
 import cn.copaint.audience.databinding.ActivityVerificationcodeBinding
@@ -19,16 +18,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class VerificationCodeActivity : AppCompatActivity() {
+class VerificationCodeActivity : BaseActivity() {
 
     var phoneNumber = ""
+    lateinit var binding:ActivityVerificationcodeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
-        val binding = ActivityVerificationcodeBinding.inflate(layoutInflater)
+        binding = ActivityVerificationcodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
 
+        initView()
+    }
+
+    override fun initView() {
         phoneNumber = intent.getStringExtra("phoneNumber") ?: ""
 
         binding.vcivCode.setOnInputListener(object : OnInputListener {

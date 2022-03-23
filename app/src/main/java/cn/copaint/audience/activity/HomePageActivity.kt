@@ -1,23 +1,14 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
-import android.widget.OverScroller
-import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import cn.copaint.audience.databinding.ActivityHomePageBinding
-import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.fragment.FollowFragment
 import cn.copaint.audience.fragment.RecommendFragment
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
@@ -25,12 +16,10 @@ import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.AuthingUtils.update
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.DialogUtils
-import cn.copaint.audience.utils.GlideEngine
 import cn.copaint.audience.utils.GrpcUtils.buildStub
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.dp
 import com.bugsnag.android.Bugsnag
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.CoroutineScope

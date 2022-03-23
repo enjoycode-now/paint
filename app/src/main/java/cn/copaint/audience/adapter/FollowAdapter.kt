@@ -2,19 +2,14 @@ package cn.copaint.audience.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
-import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.activity.FollowsActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ItemFollowBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
-import cn.copaint.audience.model.Follow
 import cn.copaint.audience.utils.AuthingUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope

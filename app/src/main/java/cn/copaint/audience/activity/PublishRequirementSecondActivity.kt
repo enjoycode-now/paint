@@ -1,26 +1,18 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
-import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPublishRequirementSecondBinding
 import cn.copaint.audience.type.*
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.StatusBarUtils
-import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.*
 import java.lang.Exception
@@ -137,7 +129,7 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
                 toast("发布份额区间[1-100]")
                 return
             }
-            intent.setClass(this,PayOrderActivity::class.java)
+            intent.setClass(this, PayOrderActivity::class.java)
             intent.putExtra("stock",stock)
             intent.putExtra("perPrice",perPrice)
             startActivity(intent)

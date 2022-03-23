@@ -5,8 +5,7 @@ import android.content.Intent
 import cn.authing.core.auth.AuthenticationClient
 import cn.authing.core.graphql.GraphQLException
 import cn.authing.core.types.User
-import cn.copaint.audience.LoginActivity
-import cn.copaint.audience.apollo.myOkHttpClient
+import cn.copaint.audience.activity.LoginActivity
 import cn.copaint.audience.apollo.myOkHttpClient.myOkHttpClient
 import cn.copaint.audience.utils.GrpcUtils.setToken
 import cn.copaint.audience.utils.ToastUtils.app

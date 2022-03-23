@@ -1,13 +1,13 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
-import android.widget.Chronometer
+import cn.copaint.audience.CreateProposalMutation
+import cn.copaint.audience.GetWalletQuery
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPayOrderBinding
 import cn.copaint.audience.type.AttachmentKeysInput
@@ -18,7 +18,6 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.ToastUtils.toastNetError
 import cn.copaint.audience.utils.aliPayUtils
-import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.*

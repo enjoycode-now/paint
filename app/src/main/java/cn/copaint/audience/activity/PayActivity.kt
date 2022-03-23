@@ -1,4 +1,4 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.PayActivityInitQuery
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.YuanbeiDetailAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPayBinding
@@ -17,22 +19,17 @@ import cn.copaint.audience.model.PayResult
 import cn.copaint.audience.repo.api
 import cn.copaint.audience.type.BalanceRecordOrder
 import cn.copaint.audience.type.OrderDirection
-import cn.copaint.audience.type.TopUpOrderPaymentMethod
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.aliPayUtils
 import com.alipay.sdk.app.EnvUtils
-import com.alipay.sdk.app.PayTask
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PayActivity : AppCompatActivity() {
 

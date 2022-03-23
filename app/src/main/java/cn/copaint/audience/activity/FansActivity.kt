@@ -1,39 +1,31 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
-import android.accounts.NetworkErrorException
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.FindIsFollowQuery
+import cn.copaint.audience.GetAuthingUsersInfoQuery
+import cn.copaint.audience.GetFollowersListQuery
 import cn.copaint.audience.adapter.FansAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityFansBinding
-import cn.copaint.audience.databinding.ActivityFollowsBinding
-import cn.copaint.audience.databinding.DialogCreatorMoreBinding
-import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
-import cn.copaint.audience.model.Follow
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.dp
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.bugsnag.android.Bugsnag
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,8 +65,6 @@ class FansActivity : AppCompatActivity() {
                 if (hasNextPage) {
                     toast("加载更多...")
                     updateUiInfo()
-                } else {
-                    toast("拉到底了，客官哎...")
                 }
             }
 
@@ -149,7 +139,8 @@ class FansActivity : AppCompatActivity() {
             }
 
             userIdList.forEach{
-                val followResponse = apolloClient(this@FansActivity).query(FindIsFollowQuery(where = Optional.presentIfNotNull(
+                val followResponse = apolloClient(this@FansActivity).query(
+                    FindIsFollowQuery(where = Optional.presentIfNotNull(
                     FollowerWhereInput(userID = Optional.presentIfNotNull(it),followerID = Optional.presentIfNotNull(currentUserID))))
                 ).execute().data
                 if (followResponse?.followers?.totalCount == 1){

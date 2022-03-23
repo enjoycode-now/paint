@@ -5,13 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp">
+    android:background="@drawable/ic_border"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/multiple_shadows_background"
+        android:layout_marginHorizontal="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +31,7 @@
             android:textSize="16sp"
             android:fontFamily="sans-serif-condensed-medium"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintEnd_toStartOf="@+id/coverPic"
+            app:layout_constraintEnd_toStartOf="@+id/coverPicCardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,7 +72,7 @@
             android:textColor="#CC000000"
             android:textSize="13sp"
             android:lineHeight="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/coverPic"
+            app:layout_constraintEnd_toStartOf="@+id/coverPicCardView"
             app:layout_constraintStart_toStartOf="@id/avatar"
             app:layout_constraintTop_toBottomOf="@id/authorName" />
 
@@ -151,19 +153,24 @@
             app:layout_constraintBottom_toBottomOf="@id/viewers"
             app:layout_constraintStart_toEndOf="@id/viewers"/>
 
-
-        <ImageView
-            android:id="@+id/coverPic"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/coverPicCardView"
             android:layout_width="111dp"
             android:layout_height="111dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
-            android:background="@drawable/ic_border"
-            android:elevation="2dp"
-            android:scaleType="centerCrop"
+            app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toTopOf="@+id/date"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/coverPic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="2dp"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
+
 
         <TextView
             android:id="@+id/picCount"
@@ -181,8 +188,8 @@
             android:layout_marginBottom="2dp"
             android:visibility="gone"
             android:textColorHighlight="@color/teal_700"
-            app:layout_constraintBottom_toBottomOf="@id/coverPic"
-            app:layout_constraintEnd_toEndOf="@+id/coverPic"
+            app:layout_constraintBottom_toBottomOf="@id/coverPicCardView"
+            app:layout_constraintEnd_toEndOf="@+id/coverPicCardView"
             app:drawableStartCompat="@drawable/ic_small_pic" />
 
         <TextView
@@ -192,7 +199,8 @@
             android:text="1970-12-30"
             android:textColor="#939393"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/coverPic"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/viewersText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

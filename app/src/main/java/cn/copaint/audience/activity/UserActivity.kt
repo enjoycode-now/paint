@@ -1,51 +1,74 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.EditText
-import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ImageView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import cn.copaint.audience.UserPageInitQuery
 import cn.copaint.audience.adapter.SupportWorksAdapter
-import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityUserBinding
-import cn.copaint.audience.databinding.DialogHomepageAddBinding
-import cn.copaint.audience.type.FollowInfoInput
 import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.viewmodel.UserViewModel
+import com.apollographql.apollo3.api.ApolloResponse
 import com.bugsnag.android.Bugsnag
+import com.bumptech.glide.Glide
+import com.wanglu.photoviewerlibrary.OnLongClickListener
+import com.wanglu.photoviewerlibrary.PhotoViewer
 import kotlinx.coroutines.*
-import java.lang.Exception
 import kotlin.math.abs
 import kotlin.random.Random
 
-class UserActivity : AppCompatActivity() {
+class UserActivity : BaseActivity() {
 
-    val sponsorList = mutableListOf<String>()
     lateinit var binding: ActivityUserBinding
     var lastBackPressedTimeMillis = 0L
     val adapter = SupportWorksAdapter(this)
+    val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(this)[UserViewModel::class.java]
+    }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Bugsnag.start(this)
         binding = ActivityUserBinding.inflate(layoutInflater)
-        StatusBarUtils.initSystemBar(window,"#dacdd8",false)
+        StatusBarUtils.initSystemBar(window, "#dacdd8", false)
         setContentView(binding.root)
         app = this
+        initView()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun initView() {
+        val picUrlListObserver = Observer<ArrayList<String>> {
+            adapter.notifyDataSetChanged()
+            if (userViewModel.picUrlList.value?.size == 0) {
+                binding.supportWorksRecyclerView.visibility = View.GONE
+                binding.emptyView.emptyLayout.visibility = View.VISIBLE
+            } else {
+                binding.supportWorksRecyclerView.visibility = View.VISIBLE
+                binding.emptyView.emptyLayout.visibility = View.GONE
+            }
+        }
+        val responseObserver = Observer<ApolloResponse<UserPageInitQuery.Data>> {
+            binding.followText.text = it.data?.followInfo?.followingCount.toString()
+            binding.fansText.text = it.data?.followInfo?.followersCount.toString()
+        }
+        userViewModel.picUrlList.observe(this, picUrlListObserver)
+        userViewModel.response.observe(this, responseObserver)
 
         binding.supportWorksRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.supportWorksRecyclerView.adapter = adapter
@@ -58,11 +81,12 @@ class UserActivity : AppCompatActivity() {
         val screenHeight = displayMetrics.heightPixels
         binding.supportWorksRecyclerView.layoutParams.height =
             screenHeight - statusBarHeight - 96.dp
-
+        // 点击头像监听器
+        binding.userAvatar.setOnClickListener { previewPhoto() }
         // 解决嵌套滑动冲突
         // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
         binding.biography.setOnTouchListener { v, event ->
-            if(v == binding.biography && canVerticalScroll(v as EditText)){
+            if (v == binding.biography && canVerticalScroll(v as EditText)) {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 // 否则将事件交由其父类处理
                 if (event.action == MotionEvent.ACTION_UP) {
@@ -73,64 +97,31 @@ class UserActivity : AppCompatActivity() {
         }
 
         // 模拟用户的作品数据
-        CoroutineScope(Dispatchers.Default).launch {
-            val count: Int = abs(Random(System.currentTimeMillis()).nextInt())%10
-            for (i in 0..count) {
-                sponsorList.add("https://api.ghser.com/random/pe.php")
-                delay(125)
-                runOnUiThread { adapter.notifyItemChanged(i) }
-            }
-            if(sponsorList.size == 0){
-                binding.supportWorksRecyclerView.visibility = View.GONE
-                binding.emptyView.emptyLayout.visibility = View.VISIBLE
-            }else{
-                binding.supportWorksRecyclerView.visibility = View.VISIBLE
-                binding.emptyView.emptyLayout.visibility = View.GONE
-            }
-        }
-        Log.i("user_token", user.token?:"")
+        userViewModel.getUserWorksUrlList()
     }
 
     override fun onResume() {
         super.onResume()
+        app = this
         updateUiInfo()
     }
 
 
-
     private fun updateUiInfo() {
-        runOnUiThread {
+        userViewModel.getUserInfo()
 
-            CoroutineScope(Dispatchers.IO).launch {
-                val response = try {
-                    apolloClient(this@UserActivity).query(
-                        UserPageInitQuery(
-                            input =
-                                FollowInfoInput(userID = user.id ?:"")
-                        )
-                    ).execute()
-                } catch (e: Exception){
-                    toast(e.toString())
-                    return@launch
-                }
-                runOnUiThread {
-                    binding.followText.text = response.data?.followInfo?.followingCount.toString()
-                    binding.fansText.text = response.data?.followInfo?.followersCount.toString()
-                }
-            }
-            binding.authorName.text = user.nickname
-            binding.authorId.text = user.id.uppercase()
-            val blockChainAddress = user.id.getDigest("SHA-256")
-            val displayAddress =
-                "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...")
-                    .uppercase()
-            binding.blockchainAddress.text = displayAddress
-            binding.biography.setText(biography)
-            user.photo?.let { GlideEngine.loadImage(this@UserActivity, it,binding.userAvatar) }
-            binding.editProfileButton.isEnabled = true
-        }
+        binding.authorName.text = user.nickname
+        binding.authorId.text = user.id.uppercase()
+        val blockChainAddress = user.id.getDigest("SHA-256")
+        val displayAddress =
+            "0x" + blockChainAddress.replaceRange(8, blockChainAddress.length - 8, "...")
+                .uppercase()
+        binding.blockchainAddress.text = displayAddress
+        binding.biography.setText(biography)
+        user.photo?.let { GlideEngine.loadImage(this@UserActivity, it, binding.userAvatar) }
+        binding.editProfileButton.isEnabled = true
+
     }
-
 
 
     fun editProfile(view: View) {
@@ -143,7 +134,7 @@ class UserActivity : AppCompatActivity() {
 
     fun onFollows(view: View) {
         val intent = Intent(this, FollowsActivity::class.java)
-        intent.putExtra("userId",user.id)
+        intent.putExtra("userId", user.id)
         startActivity(intent)
     }
 
@@ -188,7 +179,7 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onAddDialog(view: View) {
-        DialogUtils.onAddDialog(binding.root,this)
+        DialogUtils.onAddDialog(binding.root, this)
     }
 
     // 判断当前EditText是否可滚动
@@ -197,13 +188,29 @@ class UserActivity : AppCompatActivity() {
     }
 
     fun onFans(view: View) {
-        if (user.id.isNotBlank()){
+        if (user.id.isNotBlank()) {
             val intent = Intent(this, FansActivity::class.java)
-            intent.putExtra("currentUserID",user.id)
+            intent.putExtra("currentUserID", user.id)
             startActivity(intent)
         }
     }
+
     fun onLikes(view: View) {
         toast("后端尚无接口")
+    }
+
+    fun previewPhoto() {
+        if (!user.photo.isNullOrBlank()) {
+            PhotoViewer.setClickSingleImg(
+                user.photo!!,
+                binding.userAvatar
+            )   //因为本框架不参与加载图片，所以还是要写回调方法
+                .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                    override fun show(iv: ImageView, url: String) {
+                        GlideEngine.loadImage(this@UserActivity, url, iv)
+                    }
+                })
+                .start(this)
+        }
     }
 }

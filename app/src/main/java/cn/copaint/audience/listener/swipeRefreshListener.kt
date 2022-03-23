@@ -11,8 +11,6 @@ import com.bumptech.glide.GlideContext
 
 object swipeRefreshListener {
 
-    var sIsScrolling = false
-
     // 实现下拉刷新上拉加载更多
     fun RecyclerView.setListener(context: Context, l: RecyclerListener) {
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -26,16 +24,7 @@ object swipeRefreshListener {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if ( newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    sIsScrolling = true
-//                    Glide.with(context).pauseRequests()
-
-                }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    if (sIsScrolling) {
-//                        Glide.with(context).resumeRequests()
-                    }
-                    sIsScrolling = false
 
                     if (lastVisibleItem + 1 === recyclerView.adapter?.itemCount) {
                         //下拉刷新的时候不可以加载更多
@@ -47,7 +36,17 @@ object swipeRefreshListener {
                             l.loadMore()
                         }
                     }
-
+                }else{
+                    if (lastVisibleItem + 10 >= recyclerView.adapter?.itemCount ?: Int.MAX_VALUE) {
+                        //下拉刷新的时候不可以加载更多
+                        if (swipeRefreshLayout is SwipeRefreshLayout) {
+                            if (!swipeRefreshLayout.isRefreshing) {
+                                l.loadMoreSilent()
+                            }
+                        } else {
+                            l.loadMoreSilent()
+                        }
+                    }
                 }
             }
 

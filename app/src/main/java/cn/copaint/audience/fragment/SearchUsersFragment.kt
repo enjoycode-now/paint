@@ -9,25 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
-import cn.copaint.audience.adapter.FollowAdapter
+import cn.copaint.audience.activity.SearchResultActivity
 import cn.copaint.audience.adapter.FragmentSearchUserAdapter
-import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentItemSearchUsersBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
-import cn.copaint.audience.type.BalanceRecordOrder
 import cn.copaint.audience.type.FollowerWhereInput
-import cn.copaint.audience.type.OrderDirection
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -58,8 +53,6 @@ class SearchUsersFragment(val activity: SearchResultActivity) : Fragment() {
                     Snackbar.make(binding.root,"加载更多...",Snackbar.LENGTH_SHORT).show()
                     page += 1
                     updateUiInfo()
-                } else {
-                    ToastUtils.toast("拉到底了，客官哎...")
                 }
             }
 

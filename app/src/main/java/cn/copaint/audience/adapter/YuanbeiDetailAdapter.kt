@@ -4,19 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.PayActivity
+import cn.copaint.audience.activity.PayActivity
 import cn.copaint.audience.databinding.ItemYuanbeiDetailBinding
 import cn.copaint.audience.type.BalanceRecordAction
 import cn.copaint.audience.type.BalanceRecordType
 import cn.copaint.audience.utils.ToastUtils.toast
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.regex.Pattern
-import java.text.SimpleDateFormat as SimpleDateFormat1
 
 class YuanbeiDetailAdapter(private var activity: PayActivity) :
     RecyclerView.Adapter<YuanbeiDetailAdapter.ViewHolder>() {

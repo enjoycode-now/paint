@@ -1,9 +1,8 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cn.authing.core.types.User
@@ -36,7 +35,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     fun onBackPress(view: View) {
-        startActivity(Intent(this,HomePageActivity::class.java))
+        startActivity(Intent(this, HomePageActivity::class.java))
     }
 
     fun buyScallop(view: View) {

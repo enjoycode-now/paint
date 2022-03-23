@@ -6,19 +6,18 @@ import android.view.*
 import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import cn.copaint.audience.*
-import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.activity.UserPageCreatorActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.BitmapUtils.picQueue
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.dp
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.luck.picture.lib.animators.AnimationType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -59,6 +58,10 @@ class ItemRecommendFragment : Fragment() {
                     unFollowUser(creatorId)
                 }
             }
+        }
+
+        binding.toolbar.sponsorBtn.setOnClickListener {
+            toast("应援")
         }
 
         binding.toolbar.shareBtn.setOnClickListener{ activity?.let { it -> popupShareDialog(it.window) } }
@@ -108,7 +111,6 @@ class ItemRecommendFragment : Fragment() {
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             window.attributes = layoutParams
         }
-
         layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
     }
 

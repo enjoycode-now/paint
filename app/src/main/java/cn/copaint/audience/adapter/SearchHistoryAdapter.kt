@@ -4,11 +4,10 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import cn.copaint.audience.SearchActivity
-import cn.copaint.audience.SearchResultActivity
-import cn.copaint.audience.databinding.ItemFansBinding
+import cn.copaint.audience.activity.SearchActivity
+import cn.copaint.audience.activity.SearchResultActivity
 import cn.copaint.audience.databinding.ItemSearchHistoryBinding
-import cn.copaint.audience.searchHistoryList
+import cn.copaint.audience.activity.searchHistoryList
 
 class SearchHistoryAdapter(private val activity: SearchActivity) :
     RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {

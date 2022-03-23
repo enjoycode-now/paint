@@ -48,59 +48,56 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity
-            android:name=".AppointmentDetailsActivity"
+            android:name=".activity.AppointmentDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".PayStatusActivity"
+            android:name=".activity.PayStatusActivity"
             android:exported="false" />
         <activity
-            android:name=".PayOrderActivity"
+            android:name=".activity.PayOrderActivity"
             android:exported="false" />
         <activity
-            android:name=".SquareActivity"
+            android:name=".activity.SquareActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
-            android:name=".PublishRequirementSecondActivity"
+            android:name=".activity.PublishRequirementSecondActivity"
             android:exported="false" />
         <activity
-            android:name=".PublishedWorkSecondActivity"
+            android:name=".activity.PublishedWorkSecondActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchResultActivity"
+            android:name=".activity.SearchResultActivity"
             android:exported="false" />
         <activity
-            android:name=".PublishRequirementActivity"
+            android:name=".activity.PublishRequirementActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".TransactionOrderDetialActivity"
+            android:name=".activity.PublishedWorkActivity"
             android:exported="false" />
         <activity
-            android:name=".PublishedWorkActivity"
+            android:name=".activity.MyWorksActivity"
             android:exported="false" />
         <activity
-            android:name=".MyWorksActivity"
+            android:name=".activity.FollowsActivity"
             android:exported="false" />
         <activity
-            android:name=".FollowsActivity"
+            android:name=".activity.UserPageCreatorActivity"
             android:exported="false" />
+        <activity android:name=".activity.EditProfileActivity" />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.PayActivity" />
+        <activity android:name=".activity.FansActivity" />
+        <activity android:name=".activity.VerificationCodeActivity" />
         <activity
-            android:name=".UserPageCreatorActivity"
-            android:exported="false" />
-        <activity android:name=".EditProfileActivity" />
-        <activity android:name=".SettingActivity" />
-        <activity android:name=".PayActivity" />
-        <activity android:name=".FansActivity" />
-        <activity android:name=".VerificationCodeActivity" />
-        <activity
-            android:name=".UserActivity"
+            android:name=".activity.UserActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar" />
         <activity
-            android:name=".HomePageActivity"
+            android:name=".activity.HomePageActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar">
@@ -109,9 +106,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".activity.LoginActivity" />
         <activity
-            android:name=".DrawActivity"
+            android:name=".activity.DrawActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
 

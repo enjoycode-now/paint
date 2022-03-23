@@ -1,4 +1,4 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import cn.copaint.audience.GetProposalsDetailByIdQuery
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.VericalLinearPhotoAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
-import cn.copaint.audience.listener.swipeRefreshListener
 import cn.copaint.audience.type.ProposalWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.DateUtils
@@ -19,7 +19,6 @@ import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.api.Optional
-import com.apollographql.apollo3.mpp.currentTimeMillis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,7 +73,9 @@ class AppointmentDetailsActivity : AppCompatActivity() {
             response.data?.let {
                 myProposalDetail = it
                 picUrlList.clear()
-                myProposalDetail?.proposals?.edges?.get(0)?.node?.examples?.forEach { it2->picUrlList.add(resources.getString(R.string.PicUrlPrefix).plus(it2.key)) }
+                myProposalDetail?.proposals?.edges?.get(0)?.node?.examples?.forEach { it2->picUrlList.add(resources.getString(
+                    R.string.PicUrlPrefix
+                ).plus(it2.key)) }
             }
             bindUiInfo()
         }

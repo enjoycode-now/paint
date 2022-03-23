@@ -1,18 +1,15 @@
 package cn.copaint.audience.utils
 
-import android.R
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import cn.copaint.audience.PublishRequirementActivity
-import cn.copaint.audience.PublishedWorkActivity
+import cn.copaint.audience.activity.PublishRequirementActivity
+import cn.copaint.audience.activity.PublishedWorkActivity
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.databinding.DialogLoadingBinding
 

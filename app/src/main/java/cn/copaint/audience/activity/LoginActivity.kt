@@ -1,4 +1,4 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Intent
 import android.graphics.Color

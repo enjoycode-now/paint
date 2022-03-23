@@ -1,12 +1,10 @@
 package cn.copaint.audience.utils
 
-import android.content.Context
 import android.os.Handler
 import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import cn.copaint.audience.CreateTopUpOrderMutation
-import cn.copaint.audience.PayOrderActivity
 import cn.copaint.audience.TopUpOrderPaymentQuery
 import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient

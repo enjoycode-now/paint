@@ -1,4 +1,4 @@
-package cn.copaint.audience
+package cn.copaint.audience.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -32,9 +32,6 @@ import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.MediaUtils
 import kotlinx.coroutines.*
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.wait
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
@@ -256,7 +253,8 @@ class PublishRequirementActivity : AppCompatActivity() {
                 progressDialog.dismiss()
                 delay(1000)
                 runOnUiThread{
-                    val intent = Intent(this@PublishRequirementActivity,PublishRequirementSecondActivity::class.java)
+                    val intent = Intent(this@PublishRequirementActivity,
+                        PublishRequirementSecondActivity::class.java)
                     intent.putExtra("example",example)
                     intent.putExtra("proposalTitle",proposalTitle)
                     intent.putExtra("proposalDescription",proposalDescription)

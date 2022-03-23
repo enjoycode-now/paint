@@ -11,7 +11,7 @@ import android.graphics.SurfaceTexture
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.TextureView
-import cn.copaint.audience.DrawActivity
+import cn.copaint.audience.activity.DrawActivity
 import cn.copaint.audience.model.Step
 import cn.copaint.audience.raster.RasterInkBuilder
 import cn.copaint.audience.tools.raster.*

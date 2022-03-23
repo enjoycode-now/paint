@@ -100,6 +100,9 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.5.0'
 
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+
     // Bugsnag
     implementation "com.bugsnag:bugsnag-android:5.+"
 

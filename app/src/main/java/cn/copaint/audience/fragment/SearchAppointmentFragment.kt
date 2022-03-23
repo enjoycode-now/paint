@@ -9,16 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.*
+import cn.copaint.audience.activity.SearchResultActivity
 import cn.copaint.audience.adapter.FragmentSearchAppointmentsAdapter
-import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentSearchAppointmentsBinding
 import cn.copaint.audience.interfaces.RecyclerListener
 import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.type.*
-import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
@@ -56,8 +54,6 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
                 if (hasNextPage) {
                     ToastUtils.toast("加载更多...")
                     updateUiInfo()
-                } else {
-                    ToastUtils.toast("拉到底了，客官哎...")
                 }
             }
 
