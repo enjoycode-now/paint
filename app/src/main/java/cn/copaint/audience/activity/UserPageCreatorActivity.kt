@@ -6,9 +6,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.*
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
@@ -30,6 +33,8 @@ import cn.copaint.audience.viewmodel.UserCreatorViewModel
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import com.bumptech.glide.Glide
+import com.wacom.ink.utils.Bounds
+import com.wanglu.photoviewerlibrary.PhotoViewer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,15 +62,48 @@ class UserPageCreatorActivity : BaseActivity() {
     override fun initView() {
         StatusBarUtils.initSystemBar(window, "#dacdd8", true)
         // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
-        binding.biography.setOnTouchListener { v, event ->
-            if (v == binding.biography && canVerticalScroll(v as EditText)) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                // 否则将事件交由其父类处理
-                if (event.action == MotionEvent.ACTION_UP) {
-                    v.parent.requestDisallowInterceptTouchEvent(false);
-                }
+//        binding.biography.setOnTouchListener { v, event ->
+//            if (v == binding.biography && canVerticalScroll(v as EditText)) {
+//                v.getParent().requestDisallowInterceptTouchEvent(true);
+//                // 否则将事件交由其父类处理
+//                if (event.action == MotionEvent.ACTION_UP) {
+//                    v.parent.requestDisallowInterceptTouchEvent(false);
+//                }
+//            }
+//            false
+//        }
+        binding.biography.setOnClickListener {
+            if (binding.biography.ellipsize == null ){
+                binding.biography.ellipsize = TextUtils.TruncateAt.END
+                binding.biography.setLines(3)
+                val drawable = ResourcesCompat.getDrawable(resources,R.drawable.ic_expand_textview,null)
+                drawable?.setBounds(0,0,drawable.minimumWidth,drawable.minimumWidth)
+                binding.biography.setCompoundDrawablesRelative(null,null,null,drawable)
+            }else{
+                binding.biography.ellipsize = null
+                binding.biography.isSingleLine = false
+                val drawable = ResourcesCompat.getDrawable(resources,R.drawable.ic_close_textview,null)
+                drawable?.setBounds(0,0,drawable.minimumWidth,drawable.minimumWidth)
+                binding.biography.setCompoundDrawablesRelative(null,null,null,drawable)
             }
-            false
+        }
+        binding.biography.setOnLongClickListener {
+            copyBiography(it as TextView)
+            true
+        }
+        binding.userAvatar.setOnClickListener {
+            userCreatorViewModel.userPageCreatorData.value?.authingUsersInfo?.get(0)?.photo.let  {
+                PhotoViewer.setClickSingleImg(
+                    it ?: "",
+                    binding.userAvatar
+                )   //因为本框架不参与加载图片，所以还是要写回调方法
+                    .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                        override fun show(iv: ImageView, url: String) {
+                            GlideEngine.loadImage(this@UserPageCreatorActivity, url, iv)
+                        }
+                    })
+                    .start(this)
+            }
         }
 
         val userPageCreatorDataObserver = Observer<UserPageCreatorActivityInitQuery.Data> {
@@ -155,6 +193,13 @@ class UserPageCreatorActivity : BaseActivity() {
         val clipData = ClipData.newPlainText("authorId", id)
         clipboardManager.setPrimaryClip(clipData)
         toast("用户ID复制成功")
+    }
+
+    fun copyBiography(view: TextView){
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("biography", view.text)
+        clipboardManager.setPrimaryClip(clipData)
+        toast("用户个性签名复制成功")
     }
 
     fun onFollowAction(view: View) {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.R
 import com.bumptech.glide.Glide
@@ -107,7 +108,8 @@ class GridImageAdapter(context: Context?, result: List<LocalMedia>?) :
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         //少于MaxSize张，显示继续添加的图标
         if (getItemViewType(position) == TYPE_CAMERA) {
-            viewHolder.mImg.setImageResource(R.drawable.add_example_pic)
+            viewHolder.mImg.setImageResource(R.drawable.ic_add_light)
+            viewHolder.mImg.setPadding(25)
             viewHolder.mImg.setOnClickListener {
                 if (mItemClickListener != null) {
                     mItemClickListener!!.openPicture()
@@ -116,6 +118,7 @@ class GridImageAdapter(context: Context?, result: List<LocalMedia>?) :
             viewHolder.mIvDel.visibility = View.INVISIBLE
         } else {
             viewHolder.mIvDel.visibility = View.VISIBLE
+            viewHolder.mImg.setPadding(0)
             viewHolder.mIvDel.setOnClickListener { view: View? ->
                 val index = viewHolder.absoluteAdapterPosition
                 if (index != RecyclerView.NO_POSITION && list.size > index) {

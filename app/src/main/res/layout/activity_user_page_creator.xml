@@ -68,7 +68,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
                 android:layout_width="0dp"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
                 android:padding="4dp"
                 app:cardCornerRadius="8dp"
@@ -285,26 +285,42 @@
                         app:layout_constraintTop_toBottomOf="@+id/authorId" />
 
 
-                    <EditText
+<!--                    <EditText-->
+<!--                        android:id="@+id/biography"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="0dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:layout_marginBottom="11dp"-->
+<!--                        android:text="@string/initial_author_biography"-->
+<!--                        android:textColor="#cc000000"-->
+<!--                        android:textSize="12sp"-->
+<!--                        android:focusable="false"-->
+<!--                        android:inputType="textMultiLine"-->
+<!--                        android:minLines="3"-->
+<!--                        android:maxLines="11"-->
+<!--                        android:lineHeight="19.5dp"-->
+<!--                        android:background="@null"-->
+<!--                        android:scrollbars="vertical"-->
+<!--                        app:layout_constraintBottom_toTopOf="@+id/grayBackground"-->
+<!--                        app:layout_constraintEnd_toEndOf="@+id/lineView"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/lineView"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/lineView" />-->
+                    <TextView
                         android:id="@+id/biography"
                         android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="11dp"
-                        android:text="@string/initial_author_biography"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="4dp"
                         android:textColor="#cc000000"
                         android:textSize="12sp"
-                        android:focusable="false"
-                        android:inputType="textMultiLine"
-                        android:minLines="3"
-                        android:maxLines="11"
+                        android:lines="3"
                         android:lineHeight="19.5dp"
-                        android:background="@null"
-                        android:scrollbars="vertical"
+                        android:ellipsize="end"
                         app:layout_constraintBottom_toTopOf="@+id/grayBackground"
                         app:layout_constraintEnd_toEndOf="@+id/lineView"
                         app:layout_constraintStart_toStartOf="@+id/lineView"
-                        app:layout_constraintTop_toBottomOf="@+id/lineView" />
+                        app:layout_constraintTop_toBottomOf="@+id/lineView"
+                        app:drawableBottomCompat="@drawable/ic_expand_textview" />
 
                     <View
                         android:id="@+id/grayBackground"

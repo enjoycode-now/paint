@@ -54,7 +54,7 @@ class SquareAppointmentAdapter(private val activity: SquareActivity) :
                 GlideEngine.loadImage(activity, coverPicUrl, binding.coverPic)
                 binding.coverPicCardView.setOnClickListener {
                     if (coverPicUrl.isNotBlank()) {
-                        MyPhotoView.setClickSingleImg(
+                        PhotoViewer.setClickSingleImg(
                             coverPicUrl,
                             binding.coverPic
                         )

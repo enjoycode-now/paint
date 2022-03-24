@@ -57,6 +57,7 @@ class UserActivity : BaseActivity() {
                 binding.supportWorksRecyclerView.visibility = View.VISIBLE
                 binding.emptyView.emptyLayout.visibility = View.GONE
             }
+            binding.Works.text = "作品 ${it.size}"
         }
         val responseObserver = Observer<ApolloResponse<UserPageInitQuery.Data>> {
             binding.followText.text = it.data?.followInfo?.followingCount.toString()
