@@ -23,10 +23,11 @@ import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
 
-class SearchResultActivity : AppCompatActivity() {
+class SearchResultActivity : BaseActivity() {
     lateinit var binding: ActivitySearchResultBinding
     val fragmentList = mutableListOf<Fragment>(SearchWorksFragment(this),SearchAppointmentFragment(this),SearchUsersFragment(this))
     var currentFragment = 0
+    private val searchHistoryList = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -35,11 +36,18 @@ class SearchResultActivity : AppCompatActivity() {
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         setContentView(binding.root)
         app = this
+        initView()
+
+    }
+
+    override fun initView() {
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         binding.searchEdit.setText(intent.getStringExtra("SearchContent"))
         //默认页为作品页
         replaceFragment(fragmentList[currentFragment])
+        getSearchHistory()
+
 
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -51,7 +59,8 @@ class SearchResultActivity : AppCompatActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-
+                searchHistoryList.remove(textview.text.toString())
+                searchHistoryList.add(0,textview.text.toString())
                 fragmentList[currentFragment].onResume()
             }
             false;
@@ -113,5 +122,22 @@ class SearchResultActivity : AppCompatActivity() {
             binding.filter.setImageResource(R.drawable.ic_filter_unselected)
             binding.filter.isSelected = false
         }
+    }
+
+    private fun getSearchHistory() {
+        searchHistoryList.clear()
+        val saveData = getSharedPreferences("search", MODE_PRIVATE).getStringSet("searchHistory",null)
+        saveData?.forEach { s -> searchHistoryList.add(s) }
+    }
+
+    private fun saveSearchHistory(){
+        var editor = getSharedPreferences("search",MODE_PRIVATE).edit()
+        editor.putStringSet("searchHistory", searchHistoryList.toSet())
+        editor.apply()
+    }
+
+    override fun onStop() {
+        saveSearchHistory()
+        super.onStop()
     }
 }

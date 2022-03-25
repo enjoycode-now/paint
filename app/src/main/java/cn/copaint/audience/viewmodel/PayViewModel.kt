@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class PayViewModel : BaseViewModel() {
+object PayViewModel : BaseViewModel() {
 
     val first = 25
     var cursor: Any? = null

@@ -1,13 +1,13 @@
 package cn.copaint.audience.adapter
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.activity.SearchActivity
 import cn.copaint.audience.activity.SearchResultActivity
 import cn.copaint.audience.databinding.ItemSearchHistoryBinding
-import cn.copaint.audience.activity.searchHistoryList
 
 class SearchHistoryAdapter(private val activity: SearchActivity) :
     RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {
@@ -21,6 +21,9 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
             searchHistoryAdapter: SearchHistoryAdapter
         ) {
             binding.root.setOnClickListener {
+                activity.searchHistoryList.remove(searchHistoryString)
+                activity.searchHistoryList.add(0,searchHistoryString)
+                searchHistoryAdapter.notifyItemRemoved(0)
                 activity.startActivity(
                     Intent(
                         activity,
@@ -30,7 +33,7 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
             }
             binding.historyTv.text = searchHistoryString
             binding.historyDelete.setOnClickListener {
-                searchHistoryList.removeAt(position)
+                activity.searchHistoryList.removeAt(position)
                 searchHistoryAdapter.notifyDataSetChanged()
             }
         }
@@ -43,10 +46,10 @@ class SearchHistoryAdapter(private val activity: SearchActivity) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(searchHistoryList[position], position, activity, this)
+        holder.bind(activity.searchHistoryList[position], position, activity, this)
     }
 
     override fun getItemCount(): Int {
-        return if (searchHistoryList.size > 6) 6 else searchHistoryList.size
+        return if (activity.searchHistoryList.size > 6) 6 else activity.searchHistoryList.size
     }
 }

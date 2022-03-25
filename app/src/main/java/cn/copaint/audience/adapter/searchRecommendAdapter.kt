@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.activity.SearchActivity
 import cn.copaint.audience.databinding.ItemSearchHistoryBinding
-import cn.copaint.audience.activity.searchHistoryList
 
 class searchRecommendAdapter(private val activity: SearchActivity) : RecyclerView.Adapter<searchRecommendAdapter.ViewHolder>()  {
     class ViewHolder (val binding: ItemSearchHistoryBinding): RecyclerView.ViewHolder(binding.root){
@@ -21,10 +20,10 @@ class searchRecommendAdapter(private val activity: SearchActivity) : RecyclerVie
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(searchHistoryList[position])
+        holder.bind(activity.searchHistoryList[position])
     }
 
     override fun getItemCount(): Int {
-        return searchHistoryList.size
+        return activity.searchHistoryList.size
     }
 }

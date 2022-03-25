@@ -18,7 +18,7 @@ import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.*
 import java.lang.Exception
 
-class SquareViewModel : BaseViewModel() {
+object SquareViewModel : BaseViewModel() {
     val first = 20
     var cursor: Any? = null
     var hasNextPage = true

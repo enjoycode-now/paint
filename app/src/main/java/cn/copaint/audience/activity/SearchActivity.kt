@@ -3,6 +3,7 @@ package cn.copaint.audience.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -19,35 +20,37 @@ import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.lang.Exception
 
-val searchHistoryList =
-    mutableListOf<String>()
-val recommendList =
-    mutableListOf<RecommendTag>()
 
-
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : BaseActivity() {
     lateinit var binding: ActivitySearchBinding
     lateinit var recommendTagAdapter: MyFlowAdapter
-
     val searchHistoryAdapter = SearchHistoryAdapter(this)
+    val searchHistoryList =
+        mutableListOf<String>()
+    val recommendList =
+        mutableListOf<RecommendTag>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
+        initView()
 
+    }
+
+    override fun initView() {
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-
-        // 取出搜索缓存记录
-        getSearchHistory()
 
         getRecommendTagsList()
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -63,7 +66,10 @@ class SearchActivity : AppCompatActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-                searchHistoryList.add(0, textview.text.toString())
+                searchHistoryList.remove(textview.text.toString())
+                searchHistoryList.add(0,textview.text.toString())
+
+                searchHistoryAdapter.notifyItemRemoved(0)
                 startActivity(
                     Intent(
                         this,
@@ -85,11 +91,19 @@ class SearchActivity : AppCompatActivity() {
                 val response = apolloClient(this@SearchActivity).query(
                     GetRandomTagsQuery()
                 ).execute()
-                response.data?.randomTags?.forEach { recommendList.add(RecommendTag(it.id,it.name,it.createdAt.toString())) }
+                response.data?.randomTags?.forEach {
+                    recommendList.add(
+                        RecommendTag(
+                            it.id,
+                            it.name,
+                            it.createdAt.toString()
+                        )
+                    )
+                }
             } catch (e: Exception) {
                 toast(e.toString())
-            }finally {
-                runOnUiThread{
+            } finally {
+                runOnUiThread {
                     binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
                 }
             }
@@ -99,14 +113,21 @@ class SearchActivity : AppCompatActivity() {
 
     private fun getSearchHistory() {
         searchHistoryList.clear()
-        var saveData = getPreferences(Context.MODE_PRIVATE).getStringSet("searchHistory", null)
-        saveData?.forEach { s -> searchHistoryList.add(s) }
+        val saveData =
+            getSharedPreferences("search", MODE_PRIVATE).getStringSet("searchHistory", null)
+        saveData?.forEach { s ->
+            searchHistoryList.add(s)
+        }
+    }
+
+    private fun saveSearchHistory() {
+        val editor = getSharedPreferences("search", MODE_PRIVATE).edit()
+        editor.putStringSet("searchHistory", searchHistoryList.toSet())
+        editor.apply()
     }
 
     override fun onStop() {
-        var editor = getPreferences(Context.MODE_PRIVATE).edit()
-        editor.putStringSet("searchHistory", searchHistoryList.toSet())
-        editor.apply()
+        saveSearchHistory()
         super.onStop()
     }
 
@@ -117,9 +138,9 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        getSearchHistory()
         searchHistoryAdapter.notifyDataSetChanged()
     }
-
 
 
     fun refreshRecommend() {
@@ -157,5 +178,5 @@ class SearchActivity : AppCompatActivity() {
     }
 }
 
-data class RecommendTag(val id:String,val name: String,val createAt: String)
+data class RecommendTag(val id: String, val name: String, val createAt: String)
 

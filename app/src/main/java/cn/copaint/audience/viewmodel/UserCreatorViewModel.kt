@@ -18,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserCreatorViewModel : BaseViewModel() {
+object UserCreatorViewModel : BaseViewModel() {
 
     val userPageCreatorData = MutableLiveData<UserPageCreatorActivityInitQuery.Data>()
 

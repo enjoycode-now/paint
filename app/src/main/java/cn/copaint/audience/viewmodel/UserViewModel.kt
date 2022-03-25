@@ -17,7 +17,7 @@ import java.lang.Exception
 import kotlin.math.abs
 import kotlin.random.Random
 
-class UserViewModel : BaseViewModel() {
+object UserViewModel : BaseViewModel() {
     val picUrlList = MutableLiveData<ArrayList<String>>()
 
     var response =  MutableLiveData<ApolloResponse<UserPageInitQuery.Data>>()
