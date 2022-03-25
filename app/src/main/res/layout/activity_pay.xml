@@ -247,7 +247,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="980元"
+                android:text="980元贝"
                 android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -282,10 +282,11 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/LastGearText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="最低1元"
+                android:text="最低0.1元"
                 android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

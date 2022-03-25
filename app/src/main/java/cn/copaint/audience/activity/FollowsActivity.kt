@@ -46,6 +46,7 @@ class FollowsActivity : BaseActivity() {
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
         initView()
+        followsViewModel.askData()
     }
 
     override fun initView() {
@@ -67,7 +68,10 @@ class FollowsActivity : BaseActivity() {
                 toast("刷新")
                 followsViewModel.cursor = null
                 binding.swipeRefreshLayout.isRefreshing = false
-                onResume()
+                followsViewModel.followList.value?.clear()
+                binding.searchEdit.setText("")
+                binding.animationView.visibility = View.VISIBLE
+                followsViewModel.askData()
             }
         })
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
@@ -77,7 +81,7 @@ class FollowsActivity : BaseActivity() {
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
                 if (textview.text == "") {
-                    onResume()
+
                 } else {
                     filterUser(textview.text.toString())
                 }
@@ -113,13 +117,6 @@ class FollowsActivity : BaseActivity() {
         followAdapter.notifyDataSetChanged()
     }
 
-    override fun onResume() {
-        super.onResume()
-        followsViewModel.followList.value?.clear()
-        binding.searchEdit.setText("")
-        binding.animationView.visibility = View.VISIBLE
-        followsViewModel.askData()
-    }
 
 
     fun onBackPress(view: View) = onBackPressed()

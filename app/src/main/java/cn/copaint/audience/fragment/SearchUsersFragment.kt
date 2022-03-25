@@ -70,6 +70,7 @@ class SearchUsersFragment(val activity: SearchResultActivity) : Fragment() {
         super.onResume()
         userList.clear()
         page = 1
+        adapter.notifyDataSetChanged()
         updateUiInfo()
     }
 

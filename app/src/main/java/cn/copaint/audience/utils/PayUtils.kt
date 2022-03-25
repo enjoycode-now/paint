@@ -1,7 +1,10 @@
 package cn.copaint.audience.utils
 
+import android.app.Dialog
 import android.os.Handler
 import android.os.Message
+import android.text.InputFilter
+import android.text.Spanned
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import cn.copaint.audience.CreateTopUpOrderMutation
@@ -10,25 +13,34 @@ import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.repo.api
 import cn.copaint.audience.type.TopUpOrderPaymentMethod
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.alipay.sdk.app.PayTask
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object aliPayUtils {
+
+object PayUtils {
     val SDK_PAY_FLAG = 1
-    val yuanbeiExchangeRate = 10  // 10 元贝 = 1 人民币
+    const val yuanbeiExchangeRate = 10  // 10 元贝 = 1 人民币
 
     fun aliPay(activity: AppCompatActivity, currentNum: Double, mHandler: Handler) {
         //若支付金额不在0.1~10000元之间，不允许支付
         if (currentNum !in 0.1..10000.0) {
+            toast("充值金额不得低于0.1元，不高于10000元")
             return
         }
         var orderInfo = ""
+        lateinit var dialog:Dialog
+        activity.runOnUiThread{
+            dialog = DialogUtils.getLoadingDialog(activity, false, "正在申请订单...")
+            dialog.show()
+        }
 
 
         CoroutineScope(Dispatchers.IO).launch {
+
             // 发送充值金额，获取订单编号
             val topUpOrderId = try {
                 apolloClient(activity)
@@ -36,12 +48,13 @@ object aliPayUtils {
                     .execute().data?.createTopUpOrder?.id ?: ""
             } catch (e: ApolloException) {
                 Log.d("PayActivity", "Failure", e)
+                if (dialog.isShowing) dialog.dismiss()
                 return@launch
             }
 
             // 获取orderInfo
             orderInfo = try {
-                myApolloClient.apolloClient(activity).query(
+                apolloClient(activity).query(
                     TopUpOrderPaymentQuery(
                         topUpOrderId,
                         TopUpOrderPaymentMethod.ALIPAY
@@ -49,8 +62,11 @@ object aliPayUtils {
                 ).execute().data?.topUpOrderPayment?.result.toString()
             } catch (e: ApolloException) {
                 Log.d("PayActivity", "Failure", e)
+                if (dialog.isShowing) dialog.dismiss()
                 return@launch
             }
+            if (dialog.isShowing)
+                dialog.dismiss()
 
             Log.i("PayActivity1", "TopUpOrderId: $topUpOrderId\norderInfo: $orderInfo")
             // 异步调起支付
@@ -76,4 +92,5 @@ object aliPayUtils {
             payThread.start()
         }
     }
+
 }

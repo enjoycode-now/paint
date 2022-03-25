@@ -1,13 +1,16 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.PopupWindow
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
 import cn.copaint.audience.activity.FansActivity
+import cn.copaint.audience.activity.UserPageCreatorActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.DialogRemoveFanBinding
 import cn.copaint.audience.databinding.ItemFansBinding
@@ -37,7 +40,7 @@ class FansAdapter(private val activity: FansActivity) :
         holder.bind(fansList[position], isFollowList[position], activity, this)
     }
 
-    override fun getItemCount() = activity.fansViewModel.fansList.value?.size ?: 0
+    override fun getItemCount() = if (activity.binding.animationView.isVisible) 0 else activity.fansViewModel.fansList.value?.size ?: 0
 
     inner class ViewHolder(val itemBind: ItemFansBinding) : RecyclerView.ViewHolder(itemBind.root) {
         fun bind(
@@ -52,7 +55,11 @@ class FansAdapter(private val activity: FansActivity) :
             } else {
                 Glide.with(activity).load(fans.photo).into(itemBind.avatar)
             }
-            if (user.id == activity.fansViewModel.currentUserID) {
+
+            itemBind.root.setOnClickListener {
+                activity.startActivity(Intent(activity, UserPageCreatorActivity::class.java).putExtra("creatorId",fans.id))
+            }
+            if (user.id != fans.id) {
                 itemBind.status.visibility = View.VISIBLE
                 itemBind.unsubscribe.visibility = View.VISIBLE
 

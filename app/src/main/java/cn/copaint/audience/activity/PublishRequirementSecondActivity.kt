@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import cn.copaint.audience.databinding.ActivityPublishRequirementSecondBinding
 import cn.copaint.audience.type.*
+import cn.copaint.audience.utils.MoneyInputFilter
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -56,6 +57,9 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
                 else ->{}
             }
         }
+
+        bind.shareEditText.filters = arrayOf(MoneyInputFilter)
+        bind.priceEditText.filters = arrayOf(MoneyInputFilter)
     }
 
 

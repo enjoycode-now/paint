@@ -1,12 +1,17 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.FollowUserMutation
 import cn.copaint.audience.R
 import cn.copaint.audience.UnfollowUserMutation
+import cn.copaint.audience.activity.UserPageCreatorActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.FragmentItemSearchWorkBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
@@ -20,6 +25,7 @@ import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.luck.picture.lib.thread.PictureThreadUtils.runOnUiThread
+import com.wanglu.photoviewerlibrary.PhotoViewer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +38,6 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
-
             NORMAL_TYPE -> {
                 val binding = FragmentItemSearchWorkBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -56,8 +61,6 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             holder.bind(fragment.workList[position], fragment)
-        } else {
-
         }
 
     }
@@ -69,17 +72,21 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
             NORMAL_TYPE
     }
 
-    override fun getItemCount() = if (fragment.workList.size == 0) 1 else fragment.workList.size
+    override fun getItemCount() =
+        if (fragment.binding.animationView.isVisible) 0 else if (fragment.workList.size == 0) 1 else fragment.workList.size
 
-    inner class ViewHolder(val itemBind: FragmentItemSearchWorkBinding) :
+    inner class ViewHolder(private val itemBind: FragmentItemSearchWorkBinding) :
         RecyclerView.ViewHolder(itemBind.root) {
         fun bind(workInfo: SearchWorksFragment.searchWorkInfo, fragment: SearchWorksFragment) {
-            itemBind.userName.text = workInfo.userName ?: "此用户未命名"
+            itemBind.userName.text =
+                workInfo.userName ?: fragment.activity.resources.getString(R.string.un_give_name)
             itemBind.biography.text = workInfo.work.node?.description
             itemBind.fansCount.text = "粉丝: ${workInfo.fansCount ?: "加载出错"}"
             Glide.with(fragment).load(workInfo.avatar ?: "").into(itemBind.userAvatar)
-            val imageUri = fragment.resources.getString(R.string.PicUrlPrefix) + workInfo.work.node?.image?.key
-            Glide.with(fragment).load(imageUri).error(R.drawable.loading_failed).into(itemBind.workImage)
+            val imageUri =
+                fragment.resources.getString(R.string.PicUrlPrefix) + workInfo.work.node?.image?.key
+            Glide.with(fragment).load(imageUri).error(R.drawable.loading_failed)
+                .into(itemBind.workImage)
             if (workInfo.isFollow) {
                 itemBind.followBtn.text = "已关注"
                 itemBind.followBtn.setTextColor(Color.parseColor("#A9A9A9"))
@@ -88,9 +95,45 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
                 itemBind.followBtn.text = "关注"
                 itemBind.followBtn.setTextColor(Color.parseColor("#8767E2"))
                 itemBind.followBtn.background =
-                    fragment.resources.getDrawable(R.drawable.btn_edit, null)
+                    ResourcesCompat.getDrawable(fragment.resources, R.drawable.btn_edit, null)
+            }
+            itemBind.userName.setOnClickListener {
+                fragment.activity.startActivity(
+                    Intent(
+                        fragment.activity,
+                        UserPageCreatorActivity::class.java
+                    ).putExtra("creatorId", workInfo.work.node?.creator)
+                )
+            }
+            itemBind.userAvatar.setOnClickListener {
+                workInfo.avatar?.let {
+                    PhotoViewer.setClickSingleImg(
+                        it,
+                        itemBind.userAvatar
+                    )   //因为本框架不参与加载图片，所以还是要写回调方法
+                        .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                            override fun show(iv: ImageView, url: String) {
+                                GlideEngine.loadImage(fragment.activity, url, iv)
+                            }
+                        })
+                        .start(fragment.activity)
+                }
             }
 
+            itemBind.workImage.setOnClickListener {
+                imageUri.let {
+                    PhotoViewer.setClickSingleImg(
+                        it,
+                        itemBind.workImage
+                    )   //因为本框架不参与加载图片，所以还是要写回调方法
+                        .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                            override fun show(iv: ImageView, url: String) {
+                                GlideEngine.loadImage(fragment.activity, url, iv)
+                            }
+                        })
+                        .start(fragment.activity)
+                }
+            }
             itemBind.followBtn.setOnClickListener {
                 AuthingUtils.loginCheck()
                 if (itemBind.followBtn.text.equals("已关注")) {
@@ -102,9 +145,8 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
         }
     }
 
-    inner class EmptyViewHolder(val itemBind: ItemUserpageEmptyViewBinding) :
+    inner class EmptyViewHolder(itemBind: ItemUserpageEmptyViewBinding) :
         RecyclerView.ViewHolder(itemBind.root) {}
-
 
 
     /**
@@ -131,9 +173,7 @@ class FragmentSearchWorkAdapter(private val fragment: SearchWorksFragment) :
                     itemBind.followBtn.text = "关注"
                     itemBind.followBtn.setTextColor(Color.parseColor("#8767E2"))
                     itemBind.followBtn.background =
-                        fragment.resources.getDrawable(R.drawable.btn_edit, null)
-                    itemBind.followBtn.background =
-                        fragment.activity?.getDrawable(R.drawable.btn_edit)
+                        ResourcesCompat.getDrawable(fragment.resources, R.drawable.btn_edit, null)
                 }
             }
         }

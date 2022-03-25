@@ -1,11 +1,15 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
+import cn.copaint.audience.activity.UserPageCreatorActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.fragment.SearchUsersFragment
@@ -27,11 +31,11 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        when (viewType) {
-
+        return when (viewType) {
             NORMAL_TYPE -> {
-                val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolder(binding)
+                val binding =
+                    ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ViewHolder(binding)
             }
             else -> {
                 val binding = ItemUserpageEmptyViewBinding.inflate(
@@ -39,7 +43,7 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
                     parent,
                     false
                 )
-                return EmptyViewHolder(binding)
+                EmptyViewHolder(binding)
             }
         }
     }
@@ -47,8 +51,6 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             holder.bind(fragment.userList[position], fragment)
-        } else {
-
         }
     }
 
@@ -59,19 +61,23 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
             NORMAL_TYPE
     }
 
-    override fun getItemCount() = if(fragment.userList.size == 0) 1 else fragment.userList.size
+    override fun getItemCount() =
+        if (fragment.binding.animationView.isVisible) 0 else if (fragment.userList.size == 0) 1 else fragment.userList.size
 
-    inner class ViewHolder(val itemBind: ItemFollowBinding) : RecyclerView.ViewHolder(itemBind.root) {
+    inner class ViewHolder(private val itemBind: ItemFollowBinding) :
+        RecyclerView.ViewHolder(itemBind.root) {
         fun bind(userInfo: SearchUsersFragment.searchUserInfo, fragment: SearchUsersFragment) {
-            itemBind.nicikname.text = userInfo.nickName ?: "此用户未命名"
-            if (userInfo.isFollow){
+            itemBind.nicikname.text =
+                userInfo.nickName ?: fragment.resources.getString(R.string.un_give_name)
+            if (userInfo.isFollow) {
                 itemBind.unsubscribe.text = "已关注"
                 itemBind.unsubscribe.setTextColor(Color.parseColor("#A9A9A9"))
                 itemBind.unsubscribe.background = null
-            }else{
+            } else {
                 itemBind.unsubscribe.text = "关注"
                 itemBind.unsubscribe.setTextColor(Color.parseColor("#8767E2"))
-                itemBind.unsubscribe.background = fragment.activity?.getDrawable(R.drawable.btn_edit)
+                itemBind.unsubscribe.background =
+                    AppCompatResources.getDrawable(fragment.activity, R.drawable.btn_edit)
             }
 
             if (userInfo.avatar == "" || userInfo.avatar?.endsWith("svg") == true) {
@@ -79,19 +85,26 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
             } else {
                 Glide.with(fragment).load(userInfo.avatar).into(itemBind.avatar)
             }
-
-            itemBind.unsubscribeTouchHelpView.setOnClickListener{
+            itemBind.root.setOnClickListener {
+                fragment.activity.startActivity(
+                    Intent(
+                        fragment.activity,
+                        UserPageCreatorActivity::class.java
+                    ).putExtra("creatorId", userInfo.id)
+                )
+            }
+            itemBind.unsubscribeTouchHelpView.setOnClickListener {
                 AuthingUtils.loginCheck()
                 if (itemBind.unsubscribe.text.equals("已关注")) {
-                    unFollowUser(userInfo.id,itemBind)
-                }else{
-                    followUser(userInfo.id,itemBind)
+                    unFollowUser(userInfo.id, itemBind)
+                } else {
+                    followUser(userInfo.id, itemBind)
                 }
             }
         }
     }
 
-    inner class EmptyViewHolder(val itemBind: ItemUserpageEmptyViewBinding) :
+    inner class EmptyViewHolder(itemBind: ItemUserpageEmptyViewBinding) :
         RecyclerView.ViewHolder(itemBind.root) {}
 
     /**
@@ -99,7 +112,7 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
      * @param 目标用户id
      */
     fun followUser(userid: String, itemBind: ItemFollowBinding) {
-        if (userid == AuthingUtils.user.id){
+        if (userid == AuthingUtils.user.id) {
             ToastUtils.toast("不能关注自己")
             return
         }
@@ -130,7 +143,7 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
      * @param 目标用户id
      */
     fun unFollowUser(userid: String, itemBind: ItemFollowBinding) {
-        if (userid == AuthingUtils.user.id){
+        if (userid == AuthingUtils.user.id) {
             ToastUtils.toast("不能关注自己")
             return
         }
@@ -149,7 +162,8 @@ class FragmentSearchUserAdapter(private val fragment: SearchUsersFragment) :
                 runOnUiThread {
                     itemBind.unsubscribe.text = "关注"
                     itemBind.unsubscribe.setTextColor(Color.parseColor("#8767E2"))
-                    itemBind.unsubscribe.background = fragment.activity?.getDrawable(R.drawable.btn_edit)
+                    itemBind.unsubscribe.background =
+                        AppCompatResources.getDrawable(fragment.activity, R.drawable.btn_edit)
                 }
             }
         }

@@ -64,7 +64,10 @@
     <string name="recharge_second">60</string>
     <string name="recharge_third">300</string>
     <string name="recharge_fourth">980</string>
-    <string name="recharge_fifth">2980</string>
+    <string name="recharge_fifth">9800</string>
+    <string name="recharge_note">%s 元</string>
+    <string name="un_give_name">此用户未命名</string>
+    <string name="un_give_biography">这个人没有填简介啊</string>
     <string name="button">Button</string>
     <string name="purchase_prompt_field">购买即代表已阅读并同意</string>
     <string name="YuanBei_Purchase_Agreement">《元贝购买协议》</string>

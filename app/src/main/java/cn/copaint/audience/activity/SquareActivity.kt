@@ -72,7 +72,6 @@ class SquareActivity : BaseActivity() {
             }
 
             override fun refresh() {
-                toast("刷新")
                 binding.swipeRefreshLayout.isRefreshing = false
                 lastReloadTimeMillis = 0L
                 onResume()

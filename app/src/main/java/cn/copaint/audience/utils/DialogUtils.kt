@@ -4,14 +4,20 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.text.InputFilter
 import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
+import cn.copaint.audience.activity.PayActivity
 import cn.copaint.audience.activity.PublishRequirementActivity
 import cn.copaint.audience.activity.PublishedWorkActivity
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.databinding.DialogLoadingBinding
+import cn.copaint.audience.databinding.DialogPayInputCustomNumBinding
+import cn.copaint.audience.utils.ToastUtils.toast
+import okhttp3.Response
 
 
 object DialogUtils {
@@ -92,6 +98,51 @@ object DialogUtils {
             layerDetailWindow.dismiss()
         }
         popBind.root.setOnClickListener {
+            layerDetailWindow.dismiss()
+        }
+    }
+
+
+    fun onMoneyInputDialog(view: View,activity: PayActivity){
+        val popBind = DialogPayInputCustomNumBinding.inflate(LayoutInflater.from(activity))
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = activity.window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        activity.window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = activity.window.attributes
+            layoutParams.alpha = 1f
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            activity.window.attributes = layoutParams
+            toast("你取消了输入")
+        }
+        layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+        popBind.moneyEditText.filters = arrayOf(MoneyInputFilter)
+        popBind.tv.setOnClickListener{
+            popBind.moneyEditText.requestFocus()
+        }
+        popBind.submitBtn.setOnClickListener {
+            // 重新设置监听器，取消toast提示
+            layerDetailWindow.setOnDismissListener {
+                layoutParams = activity.window.attributes
+                layoutParams.alpha = 1f
+                activity.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                activity.window.attributes = layoutParams
+            }
+            activity.payViewModel.currentNum.value = popBind.moneyEditText.text.toString().toDouble()
             layerDetailWindow.dismiss()
         }
     }

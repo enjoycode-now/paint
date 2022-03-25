@@ -17,7 +17,7 @@ import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.utils.ToastUtils.toastNetError
-import cn.copaint.audience.utils.aliPayUtils
+import cn.copaint.audience.utils.PayUtils
 import com.apollographql.apollo3.api.Optional
 import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.*
@@ -74,7 +74,7 @@ class PayOrderActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     if (response.data?.wallet?.balance != null) {
-                        balance = response.data?.wallet?.balance!!.toFloat() * aliPayUtils.yuanbeiExchangeRate
+                        balance = response.data?.wallet?.balance!!.toFloat() * PayUtils.yuanbeiExchangeRate
                         binding.balance.text = "$balance 元贝"
                     } else {
                         toastNetError()

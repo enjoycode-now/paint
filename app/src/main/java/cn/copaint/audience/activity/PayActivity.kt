@@ -4,44 +4,43 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import cn.copaint.audience.PayActivityInitQuery
 import cn.copaint.audience.R
 import cn.copaint.audience.adapter.YuanbeiDetailAdapter
-import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPayBinding
+import cn.copaint.audience.interfaces.RecyclerListener
+import cn.copaint.audience.listener.swipeRefreshListener.setListener
 import cn.copaint.audience.model.BalanceRecord
 import cn.copaint.audience.model.PayResult
 import cn.copaint.audience.repo.api
-import cn.copaint.audience.type.BalanceRecordOrder
-import cn.copaint.audience.type.OrderDirection
 import cn.copaint.audience.utils.AuthingUtils.loginCheck
+import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.utils.aliPayUtils
+import cn.copaint.audience.utils.PayUtils
+import cn.copaint.audience.utils.PayUtils.yuanbeiExchangeRate
+import cn.copaint.audience.viewmodel.PayViewModel
 import com.alipay.sdk.app.EnvUtils
-import com.apollographql.apollo3.api.Optional
-import com.apollographql.apollo3.exception.ApolloException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class PayActivity : AppCompatActivity() {
+class PayActivity : BaseActivity() {
 
-    //    lateinit var mHandler: Handler
     val SDK_PAY_FLAG = 1
     private val TAG = "PayActivity"
-    lateinit var topUpOrderId: String
     lateinit var binding: ActivityPayBinding
     lateinit var ryAdpater: YuanbeiDetailAdapter
-    var currentNum: Double = 1.0
-    val YuanbeiDetailList = mutableListOf<BalanceRecord>()
-
+    val payViewModel : PayViewModel by lazy {
+        ViewModelProvider(this)[PayViewModel::class.java]
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         EnvUtils.setEnv(EnvUtils.EnvEnum.SANDBOX)
         super.onCreate(savedInstanceState)
@@ -54,22 +53,55 @@ class PayActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        updateUiInfo()
+        if (loginCheck()) {
+            payViewModel.cursor = null
+            payViewModel.YuanbeiDetailList.value?.clear()
+            payViewModel.askYuanBeiDetailsInfo()
+        }
     }
 
-    private fun initView() {
-        binding.firstGear.background = getDrawable(R.drawable.cardview_checked_paypage)
+    override fun initView() {
+        binding.firstGear.background =  AppCompatResources.getDrawable(this,R.drawable.cardview_checked_paypage)
         ryAdpater = YuanbeiDetailAdapter(this)
         binding.YuanbeiDetailRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.YuanbeiDetailRecyclerview.adapter = ryAdpater
+        binding.YuanbeiDetailRecyclerview.setListener(this, object : RecyclerListener {
+            override fun loadMoreSilent() {
+                if (payViewModel.hasNextPage) {
+                    payViewModel.askYuanBeiDetailsInfo()
+                }
+            }
+
+            override fun refresh() {
+                toast("刷新")
+                onResume()
+            }
+        })
+
+        val spannableString = SpannableString("立即购买".plus(resources.getString(R.string.recharge_first).plus("元贝")))
+        spannableString.setSpan(RelativeSizeSpan(0.7F),4,spannableString.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+        binding.submitButton.text = spannableString
+
+        val currentNumObserver = Observer<Double>{
+            updateBtnText(it.times(PayUtils.yuanbeiExchangeRate).toString())
+        }
+        val remainYuanbeiObserver  = Observer<Double> {
+            binding.remainYuanbei.text = "元贝余额：$it"
+        }
+        val yuanbeiDetailListObserver = Observer<MutableList<BalanceRecord>> {
+            ryAdpater.notifyDataSetChanged()
+        }
+        payViewModel.currentNum.observe(this,currentNumObserver)
+        payViewModel.remainYuanbei.observe(this,remainYuanbeiObserver)
+        payViewModel.YuanbeiDetailList.observe(this,yuanbeiDetailListObserver)
     }
 
     fun aliPay(view: View) {
-        aliPayUtils.aliPay(this, currentNum, mHandler)
+        payViewModel.currentNum.value?.let { PayUtils.aliPay(this, it, mHandler) }
     }
 
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+
     fun onSelectNum(view: View) {
         val cardviewId = mutableListOf<Int>(
             R.id.firstGear,
@@ -80,32 +112,39 @@ class PayActivity : AppCompatActivity() {
             R.id.LastGear
         )
         for (id in cardviewId) {
-            findViewById<View>(id).background = getDrawable(R.drawable.cardview_unchecked_paypage)
+            findViewById<View>(id).background = AppCompatResources.getDrawable(this,R.drawable.cardview_unchecked_paypage)
         }
-        view.background = getDrawable(R.drawable.cardview_checked_paypage)
+        view.background = AppCompatResources.getDrawable(this,R.drawable.cardview_checked_paypage)
         when (view.id) {
             R.id.firstGear -> {
-                binding.submitButton.setText("立即购买" + "10元贝")
-                currentNum = 1.0
+                val str = resources.getString(R.string.recharge_first)
+                updateBtnText(str)
+                payViewModel.currentNum.value = str.toDouble()/yuanbeiExchangeRate
             }
             R.id.SecondGear -> {
-                binding.submitButton.setText("立即购买" + "60元贝")
-                currentNum = 6.0
+                val str = resources.getString(R.string.recharge_second)
+                updateBtnText(str)
+                payViewModel.currentNum.value = str.toDouble()/yuanbeiExchangeRate
             }
             R.id.ThirdGear -> {
-                binding.submitButton.setText("立即购买" + "300元贝")
-                currentNum = 30.0
+                val str = resources.getString(R.string.recharge_third)
+                updateBtnText(str)
+                payViewModel.currentNum.value = str.toDouble()/yuanbeiExchangeRate
             }
             R.id.fourthGear -> {
-                binding.submitButton.setText("立即购买" + "980元贝")
-                currentNum = 98.0
+                val str = resources.getString(R.string.recharge_fourth)
+                updateBtnText(str)
+                payViewModel.currentNum.value = str.toDouble()/yuanbeiExchangeRate
             }
             R.id.fifthGear -> {
-                binding.submitButton.setText("立即购买" + "9800元贝")
-                currentNum = 98.0
+                val str = resources.getString(R.string.recharge_fifth)
+                updateBtnText(str)
+                payViewModel.currentNum.value = str.toDouble()/yuanbeiExchangeRate
             }
             else -> {
-                binding.submitButton.setText("立即购买")
+                updateBtnText(payViewModel.currentNum.value?.times(yuanbeiExchangeRate).toString())
+                DialogUtils.onMoneyInputDialog(binding.root,this)
+                binding.submitButton.text = "立即购买"
             }
         }
     }
@@ -121,7 +160,7 @@ class PayActivity : AppCompatActivity() {
             when (msg.what) {
                 SDK_PAY_FLAG -> { // 支付回调
                     Log.i(TAG, "aliPay: $msg")
-                    val payResult = PayResult(msg.obj as Map<String, String>)
+                    val payResult = PayResult(msg.obj as Map<*, *>)
                     val resultStatus = payResult.resultStatus
                     // 判断resultStatus 为9000则代表支付成功
                     when {
@@ -142,45 +181,10 @@ class PayActivity : AppCompatActivity() {
         }
     }
 
-    fun updateUiInfo() {
-        if (loginCheck()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val response = try {
-                    apolloClient(this@PayActivity).query(
-                        PayActivityInitQuery(
-                            Optional.presentIfNotNull(
-                                BalanceRecordOrder(OrderDirection.DESC)
-                            )
-                        )
-                    ).execute()
-                } catch (e: ApolloException) {
-                    Log.d("PayActivity", "Failure", e)
-                    return@launch
-                }
-                val yuanbeiCount = (response.data?.wallet?.balance ?: 0.0)*aliPayUtils.yuanbeiExchangeRate
-                binding.remainYuanbei.text = "元贝余额：$yuanbeiCount"
-                YuanbeiDetailList.clear()
-                var balanceRecord: BalanceRecord
-                var i = 0
-                while (i < response.data?.balanceRecords?.totalCount!!) {
-                    var node = response.data?.balanceRecords?.edges?.get(i)
-                    balanceRecord = BalanceRecord(
-                        node?.node?.id!!,
-                        node.node?.balance!! * aliPayUtils.yuanbeiExchangeRate,
-                        node.node?.balanceRecordAction!!,
-                        node.node?.balanceRecordType!!,
-                        node.node?.createdAt.toString()
-                    )
-                    YuanbeiDetailList.add(balanceRecord)
-                    i++
-                }
 
-                runOnUiThread {
-                    ryAdpater.notifyDataSetChanged()
-                    Log.i("PayActivity2", YuanbeiDetailList.size.toString())
-                }
-            }
-
-        }
+    fun updateBtnText(str: String){
+        val spannableString = SpannableString("立即购买".plus(str.plus("元贝")))
+        spannableString.setSpan(RelativeSizeSpan(0.7F),4,spannableString.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+        binding.submitButton.text = spannableString
     }
 }

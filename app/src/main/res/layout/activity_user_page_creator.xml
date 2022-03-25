@@ -378,7 +378,7 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:gravity="center"
-                android:text="作品 234"
+                android:text="作品 0"
                 android:textColor="#FF333333"
                 android:textSize="13sp"
                 android:textStyle="bold"

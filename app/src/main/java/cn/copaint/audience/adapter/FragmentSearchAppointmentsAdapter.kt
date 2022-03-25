@@ -1,69 +1,76 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.R
+import cn.copaint.audience.activity.AppointmentDetailsActivity
 import cn.copaint.audience.databinding.FragmentItemSearchAppointmentsBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
 import cn.copaint.audience.fragment.SearchAppointmentFragment
 import cn.copaint.audience.utils.DateUtils.rcfDateStr2StandardDateStrWithoutTime
 import com.bumptech.glide.Glide
 
-class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val EMPTY_TYPE = 0
     val NORMAL_TYPE = 1
 
-    class ViewHolder(val binding: FragmentItemSearchAppointmentsBinding):RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(val binding: FragmentItemSearchAppointmentsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, fragment: SearchAppointmentFragment) {
             binding.authorName.text = fragment.dataList[position].nickname
             binding.title.text = fragment.dataList[position].title
             binding.description.text = fragment.dataList[position].description
-            binding.date.text = rcfDateStr2StandardDateStrWithoutTime(fragment.dataList[position].createAt?:"")
-            if (fragment.dataList[position].colorMode == ""){
+            binding.date.text =
+                rcfDateStr2StandardDateStrWithoutTime(fragment.dataList[position].createAt ?: "")
+            if (fragment.dataList[position].colorMode == "") {
                 binding.workType.visibility = View.INVISIBLE
-            }else{
+            } else {
                 binding.workType.text = fragment.dataList[position].colorMode
             }
 
-
-            binding.yuanbeiText.text = "${(fragment.dataList[position].balance ?:0) * (fragment.dataList[position].stock ?:0)}"
+            binding.yuanbeiText.text =
+                "${(fragment.dataList[position].balance ?: 0) * (fragment.dataList[position].stock ?: 0)}"
             Glide.with(fragment)
                 .load(fragment.dataList[position].avatar)
                 .into(binding.avatar)
 
             // 将例图列表的首图作为封面图
-            if(fragment.dataList[position].example?.size?:0 > 0){
+            if (fragment.dataList[position].example?.size ?: 0 > 0) {
                 binding.coverPic.visibility = View.VISIBLE
-                val coverPicUrl =  fragment.resources.getString(R.string.PicUrlPrefix)+(fragment.dataList[position].example?.get(0)?.key ?: "")
+                val coverPicUrl =
+                    fragment.resources.getString(R.string.PicUrlPrefix) + (fragment.dataList[position].example?.get(
+                        0
+                    )?.key ?: "")
                 Glide.with(fragment)
                     .load(coverPicUrl)
                     .error(R.drawable.loading_failed)
                     .into(binding.coverPic)
 
                 // 例图的数量
-                if (fragment.dataList[position].example?.size?:0 > 1){
+                if (fragment.dataList[position].example?.size ?: 0 > 1) {
                     val num = fragment.dataList[position].example?.size!! - 1
                     binding.picCount.visibility = View.VISIBLE
                     binding.picCount.text = "+$num"
-                }else{
+                } else {
                     binding.picCount.visibility = View.GONE
                 }
-            }else{
+            } else {
                 // 用户没有上传例图
-                binding.coverPic.visibility = View.GONE
+                binding.coverPicCardView.visibility = View.GONE
                 binding.picCount.visibility = View.GONE
             }
             binding.description.setOnClickListener {
-                if (binding.description.ellipsize == null ){
-                    binding.description.ellipsize = TextUtils.TruncateAt.END
-                    binding.description.setLines(2)
-                }else{
-                    binding.description.ellipsize = null
-                    binding.description.isSingleLine = false
-                }
+                val intent = Intent(fragment.activity,AppointmentDetailsActivity::class.java)
+                intent.putExtra("proposalId",fragment.dataList[position].proposalId)
+                intent.putExtra("creatorNickName",fragment.dataList[position].nickname)
+                intent.putExtra("creatorAvatarUri",fragment.dataList[position].avatar)
+                fragment.activity.startActivity(intent)
             }
         }
 
@@ -83,6 +90,7 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
 //            }
 //        }
     }
+
     inner class EmptyViewHolder(val itemBind: ItemUserpageEmptyViewBinding) :
         RecyclerView.ViewHolder(itemBind.root) {}
 
@@ -92,7 +100,11 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
 
             NORMAL_TYPE -> {
                 val binding =
-                    FragmentItemSearchAppointmentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    FragmentItemSearchAppointmentsBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 return ViewHolder(binding)
             }
             else -> {
@@ -116,12 +128,10 @@ class FragmentSearchAppointmentsAdapter(val fragment: SearchAppointmentFragment)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
             holder.bind(position, fragment)
-        } else {
-
         }
     }
 
-    override fun getItemCount() = if (fragment.dataList.size == 0) 1 else fragment.dataList.size
-
+    override fun getItemCount() =
+        if (fragment.binding.animationView.isVisible) 0 else if (fragment.dataList.size == 0) 1 else fragment.dataList.size
 
 }

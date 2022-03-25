@@ -58,33 +58,42 @@ class UserPageCreatorActivity : BaseActivity() {
         initView()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         StatusBarUtils.initSystemBar(window, "#dacdd8", true)
-        // 当触摸的是TextView & 当前TextView可滚动时，则将事件交给TextView处理
-//        binding.biography.setOnTouchListener { v, event ->
-//            if (v == binding.biography && canVerticalScroll(v as EditText)) {
-//                v.getParent().requestDisallowInterceptTouchEvent(true);
-//                // 否则将事件交由其父类处理
-//                if (event.action == MotionEvent.ACTION_UP) {
-//                    v.parent.requestDisallowInterceptTouchEvent(false);
-//                }
-//            }
-//            false
-//        }
+        creatorId = intent.getStringExtra("creatorId") ?: ""
+        if (creatorId.isNotBlank()) {
+            userCreatorViewModel.askUserPageCreatorData(creatorId)
+            val blockChainAddress = user.id.getDigest("SHA-256")
+            val displayAddress =
+                "0x" + blockChainAddress.replaceRange(
+                    8,
+                    blockChainAddress.length - 8,
+                    "..."
+                ).uppercase()
+            binding.blockchainAddress.text = displayAddress
+        } else {
+            toast("error:creatorId is null")
+        }
+
+        if (creatorId == user.id) {
+            binding.followBtn.visibility = View.GONE
+        }
+
         binding.biography.setOnClickListener {
-            if (binding.biography.ellipsize == null ){
+            if (binding.biography.ellipsize == null) {
                 binding.biography.ellipsize = TextUtils.TruncateAt.END
                 binding.biography.setLines(3)
-                val drawable = ResourcesCompat.getDrawable(resources,R.drawable.ic_expand_textview,null)
-                drawable?.setBounds(0,0,drawable.minimumWidth,drawable.minimumWidth)
-                binding.biography.setCompoundDrawablesRelative(null,null,null,drawable)
-            }else{
+                val drawable =
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_expand_textview, null)
+                drawable?.setBounds(0, 0, drawable.minimumWidth, drawable.minimumWidth)
+                binding.biography.setCompoundDrawablesRelative(null, null, null, drawable)
+            } else {
                 binding.biography.ellipsize = null
                 binding.biography.isSingleLine = false
-                val drawable = ResourcesCompat.getDrawable(resources,R.drawable.ic_close_textview,null)
-                drawable?.setBounds(0,0,drawable.minimumWidth,drawable.minimumWidth)
-                binding.biography.setCompoundDrawablesRelative(null,null,null,drawable)
+                val drawable =
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_close_textview, null)
+                drawable?.setBounds(0, 0, drawable.minimumWidth, drawable.minimumWidth)
+                binding.biography.setCompoundDrawablesRelative(null, null, null, drawable)
             }
         }
         binding.biography.setOnLongClickListener {
@@ -92,7 +101,7 @@ class UserPageCreatorActivity : BaseActivity() {
             true
         }
         binding.userAvatar.setOnClickListener {
-            userCreatorViewModel.userPageCreatorData.value?.authingUsersInfo?.get(0)?.photo.let  {
+            userCreatorViewModel.userPageCreatorData.value?.authingUsersInfo?.get(0)?.photo.let {
                 PhotoViewer.setClickSingleImg(
                     it ?: "",
                     binding.userAvatar
@@ -109,9 +118,12 @@ class UserPageCreatorActivity : BaseActivity() {
         val userPageCreatorDataObserver = Observer<UserPageCreatorActivityInitQuery.Data> {
             binding.followText.text = it.followInfo.followingCount.toString()
             binding.fansText.text = it.followInfo.followersCount.toString()
-            binding.authorName.text = it.authingUsersInfo[0].nickname
+            binding.authorName.text =
+                if (it.authingUsersInfo[0].nickname.isNullOrBlank()) it.authingUsersInfo[0].nickname
+                else resources.getString(R.string.un_give_name)
             binding.authorId.text = it.authingUsersInfo[0].id
-            binding.biography.setText(it.authingUsersInfo[0].biography)
+            binding.biography.text =
+                if (it.authingUsersInfo[0].biography.isNullOrBlank()) resources.getString(R.string.un_give_biography) else it.authingUsersInfo[0].biography
             Glide.with(this@UserPageCreatorActivity).load(it.authingUsersInfo[0].photo)
                 .into(binding.userAvatar)
         }
@@ -130,27 +142,6 @@ class UserPageCreatorActivity : BaseActivity() {
         userCreatorViewModel.is_follow.observe(this, isFollowObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateUiInfo()
-    }
-
-    private fun updateUiInfo() {
-        creatorId = intent.getStringExtra("creatorId") ?: ""
-        if (creatorId.isNotBlank()) {
-            userCreatorViewModel.askUserPageCreatorData(creatorId)
-            val blockChainAddress = user.id.getDigest("SHA-256")
-            val displayAddress =
-                "0x" + blockChainAddress.replaceRange(
-                    8,
-                    blockChainAddress.length - 8,
-                    "..."
-                ).uppercase()
-            binding.blockchainAddress.text = displayAddress
-        } else {
-
-        }
-    }
 
     fun onFollows(view: View) {
         val intent = Intent(this, FollowsActivity::class.java)
@@ -195,7 +186,7 @@ class UserPageCreatorActivity : BaseActivity() {
         toast("用户ID复制成功")
     }
 
-    fun copyBiography(view: TextView){
+    fun copyBiography(view: TextView) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("biography", view.text)
         clipboardManager.setPrimaryClip(clipData)

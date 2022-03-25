@@ -56,20 +56,17 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
             override fun refresh() {
                 ToastUtils.toast("刷新")
                 binding.swipeRefreshLayout.isRefreshing = false
-                onResume()
+                workList.clear()
+                cursor = null
+                adapter.notifyDataSetChanged()
+                updateUiInfo()
             }
         })
-
+        updateUiInfo()
         return binding.root
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        workList.clear()
-        cursor = null
-        updateUiInfo()
-    }
 
     fun updateUiInfo() {
 

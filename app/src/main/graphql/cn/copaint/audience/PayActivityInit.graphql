@@ -1,11 +1,11 @@
-query PayActivityInit($orderBy: BalanceRecordOrder) {
+query PayActivityInit($orderBy: BalanceRecordOrder, $after: Cursor, $first: Int) {
     wallet {
         id
         userID
         income
         balance
     }
-    balanceRecords(orderBy: $orderBy) {
+    balanceRecords(orderBy: $orderBy, after: $after, first: $first) {
         edges {
             node {
                 id
@@ -15,6 +15,9 @@ query PayActivityInit($orderBy: BalanceRecordOrder) {
                 createdAt
             }
         }
-        totalCount
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
     }
 }

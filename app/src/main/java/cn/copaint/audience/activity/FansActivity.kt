@@ -49,6 +49,7 @@ class FansActivity : BaseActivity() {
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
         app = this
         initView()
+        fansViewModel.askData()
     }
 
     override fun initView() {
@@ -70,7 +71,11 @@ class FansActivity : BaseActivity() {
                 toast("刷新")
                 fansViewModel.cursor = null
                 binding.swipeRefreshLayout.isRefreshing = false
-                onResume()
+                fansViewModel.fansList.value?.clear()
+                fansViewModel.isFollowList.clear()
+                binding.searchEdit.setText("")
+                binding.animationView.visibility = View.VISIBLE
+                fansViewModel.askData()
             }
         })
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
@@ -80,7 +85,7 @@ class FansActivity : BaseActivity() {
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
                 if (textview.text == "") {
-                    onResume()
+
                 } else {
                     filterUser(textview.text.toString())
                 }
@@ -103,14 +108,6 @@ class FansActivity : BaseActivity() {
 
     fun onBackPress(view: View) = onBackPressed()
 
-    override fun onResume() {
-        super.onResume()
-        fansViewModel.fansList.value?.clear()
-        fansViewModel.isFollowList.clear()
-        binding.searchEdit.setText("")
-        binding.animationView.visibility = View.VISIBLE
-        fansViewModel.askData()
-    }
 
     private fun filterUser(text: String) {
         fansAdapter.fansList.clear()

@@ -1,13 +1,16 @@
 package cn.copaint.audience.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import cn.copaint.audience.*
 import cn.copaint.audience.activity.FollowsActivity
+import cn.copaint.audience.activity.UserPageCreatorActivity
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ItemFollowBinding
 import cn.copaint.audience.databinding.ItemUserpageEmptyViewBinding
@@ -27,11 +30,11 @@ class FollowAdapter(private val activity: FollowsActivity) :
     val NORMAL_TYPE = 1
     var followList: ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo> = arrayListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
+        return when (viewType) {
             NORMAL_TYPE -> {
                 val binding =
                     ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolder(binding)
+                ViewHolder(binding)
             }
             else -> {
                 val binding = ItemUserpageEmptyViewBinding.inflate(
@@ -39,7 +42,7 @@ class FollowAdapter(private val activity: FollowsActivity) :
                     parent,
                     false
                 )
-                return EmptyViewHolder(binding)
+                EmptyViewHolder(binding)
             }
         }
     }
@@ -58,7 +61,9 @@ class FollowAdapter(private val activity: FollowsActivity) :
     }
 
     override fun getItemCount(): Int {
-        return if (followList.size == 0)
+        return if (activity.binding.animationView.isVisible)
+            0
+        else if (followList.size == 0)
             1
         else
             followList.size
@@ -73,7 +78,14 @@ class FollowAdapter(private val activity: FollowsActivity) :
             } else {
                 Glide.with(activity).load(follow.photo).into(itemBind.avatar)
             }
-
+            itemBind.root.setOnClickListener {
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        UserPageCreatorActivity::class.java
+                    ).putExtra("creatorId", follow.id)
+                )
+            }
             itemBind.unsubscribeTouchHelpView.setOnClickListener {
                 if (itemBind.unsubscribe.text.equals("已关注")) {
                     unFollowUser(follow.id, itemBind)
@@ -85,9 +97,9 @@ class FollowAdapter(private val activity: FollowsActivity) :
                 follow.photo.let {
                     PhotoViewer
                         .setClickSingleImg(
-                        it ?: "",
-                        itemBind.avatar
-                    )   //因为本框架不参与加载图片，所以还是要写回调方法
+                            it ?: "",
+                            itemBind.avatar
+                        )   //因为本框架不参与加载图片，所以还是要写回调方法
                         .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
                             override fun show(iv: ImageView, url: String) {
                                 GlideEngine.loadImage(activity, url, iv)

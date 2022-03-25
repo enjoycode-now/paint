@@ -60,22 +60,18 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
             override fun refresh() {
                 ToastUtils.toast("刷新")
                 binding.swipeRefreshLayout.isRefreshing = false
-                onResume()
+                dataList.clear()
+                cursor = null
+                adapter.notifyDataSetChanged()
+                updateUiInfo()
             }
         })
 
 
-
+        updateUiInfo()
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        dataList.clear()
-        cursor = null
-        adapter.notifyDataSetChanged()
-        updateUiInfo()
-    }
 
     private fun updateUiInfo() {
 
@@ -134,6 +130,7 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
                         ).execute()
 
                         return@let searchAppointmentInfo(
+                            it.node?.id,
                             it.node?.title,
                             it.node?.description,
                             it.node?.colorModel,
@@ -175,6 +172,7 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
 
 
     data class searchAppointmentInfo(
+        val proposalId:String? = "",
         val title: String? = "",
         val description: String? = "",
         var requirementType: String? = "", //需求类型

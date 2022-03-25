@@ -27,24 +27,23 @@ class YuanbeiDetailAdapter(private var activity: PayActivity) :
     }
 
     override fun getItemCount(): Int {
-        return activity.YuanbeiDetailList.size
+        return activity.payViewModel.YuanbeiDetailList.value?.size ?: 0
     }
 
     class ViewHolder(val binding: ItemYuanbeiDetailBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, activity: PayActivity) {
 
-            val list = activity.YuanbeiDetailList
-            lateinit var type: String
-            if (list[position].balanceRecordType == BalanceRecordType.OBTAIN) {
-                type = "+"
+            val list = activity.payViewModel.YuanbeiDetailList.value
+            var type: String = if (list?.get(position)?.balanceRecordType == BalanceRecordType.OBTAIN) {
+                "+"
             } else {
-                type = "-"
+                "-"
             }
-            binding.detailNum.text = type + list[position].balance.toString()
-            binding.createAt.text = rcfDateStr2DateStr(list[position].createAt)
+            binding.detailNum.text = type + list?.get(position)?.balance.toString()
+            binding.createAt.text = list?.get(position)?.let { rcfDateStr2DateStr(it.createAt) }
 
-            when (list[position].balanceRecordAction) {
+            when (list?.get(position)?.balanceRecordAction) {
                 BalanceRecordAction.TOP_UP -> {
                     binding.purchasedWorkName.text = "元贝充值"
                     binding.purchasedWorkShareText.text = ""

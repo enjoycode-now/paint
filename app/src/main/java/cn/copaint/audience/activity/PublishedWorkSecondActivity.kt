@@ -15,6 +15,7 @@ import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityPublishedWorkSecondBinding
 import cn.copaint.audience.type.CreatePaintingInput
 import cn.copaint.audience.utils.DialogUtils
+import cn.copaint.audience.utils.MoneyInputFilter
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -64,6 +65,9 @@ class PublishedWorkSecondActivity : AppCompatActivity() {
                 else ->{}
             }
         }
+
+        bind.shareEditText.filters = arrayOf(MoneyInputFilter)
+        bind.priceEditText.filters = arrayOf(MoneyInputFilter)
     }
 
     fun onMinusReleaseShareNum(view: View) {
