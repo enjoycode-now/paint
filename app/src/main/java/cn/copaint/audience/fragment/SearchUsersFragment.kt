@@ -59,20 +59,17 @@ class SearchUsersFragment(val activity: SearchResultActivity) : Fragment() {
             override fun refresh() {
                 ToastUtils.toast("刷新")
                 binding.swipeRefreshLayout.isRefreshing = false
-                onResume()
+                userList.clear()
+                page = 1
+                adapter.notifyDataSetChanged()
+                updateUiInfo()
             }
         })
-
+        updateUiInfo()
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        userList.clear()
-        page = 1
-        adapter.notifyDataSetChanged()
-        updateUiInfo()
-    }
+
 
     private fun updateUiInfo() {
 

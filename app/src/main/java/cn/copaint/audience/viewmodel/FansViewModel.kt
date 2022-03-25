@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-object FansViewModel : BaseViewModel() {
+class FansViewModel : BaseViewModel() {
     val fansList: MutableLiveData<ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>> =
         MutableLiveData<ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>>()
 

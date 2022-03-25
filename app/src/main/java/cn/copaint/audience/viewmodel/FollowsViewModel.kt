@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object FollowsViewModel : BaseViewModel(){
+class FollowsViewModel : BaseViewModel(){
 
     var cursor: Any? = null
     var first = 20

@@ -63,7 +63,7 @@ class UserPageCreatorActivity : BaseActivity() {
         creatorId = intent.getStringExtra("creatorId") ?: ""
         if (creatorId.isNotBlank()) {
             userCreatorViewModel.askUserPageCreatorData(creatorId)
-            val blockChainAddress = user.id.getDigest("SHA-256")
+            val blockChainAddress = creatorId.getDigest("SHA-256")
             val displayAddress =
                 "0x" + blockChainAddress.replaceRange(
                     8,
@@ -119,8 +119,8 @@ class UserPageCreatorActivity : BaseActivity() {
             binding.followText.text = it.followInfo.followingCount.toString()
             binding.fansText.text = it.followInfo.followersCount.toString()
             binding.authorName.text =
-                if (it.authingUsersInfo[0].nickname.isNullOrBlank()) it.authingUsersInfo[0].nickname
-                else resources.getString(R.string.un_give_name)
+                if (it.authingUsersInfo[0].nickname.isNullOrBlank()) resources.getString(R.string.un_give_name)
+                else it.authingUsersInfo[0].nickname
             binding.authorId.text = it.authingUsersInfo[0].id
             binding.biography.text =
                 if (it.authingUsersInfo[0].biography.isNullOrBlank()) resources.getString(R.string.un_give_biography) else it.authingUsersInfo[0].biography
