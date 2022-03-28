@@ -41,51 +41,53 @@ class VericalLinearPhotoAdapter(val activity: AppointmentDetailsActivity) : Recy
 
 
     override fun getItemViewType(position: Int): Int {
-        return if (activity.picUrlList.size == 0)
-            EMPTY_TYPE
-        else
+        return if (activity.appointmentDetailsViewModel.picUrlList.value?.size != 0)
             NORMAL_TYPE
+        else
+            EMPTY_TYPE
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder){
-            activity.picUrlList[position].let {
-                holder.bind(activity,position)
+            activity.appointmentDetailsViewModel.picUrlList.value?.get(position).let {
+                holder.bind(activity,it,position)
             }
         }
     }
 
     override fun getItemCount(): Int{
-        return if (activity.picUrlList.isEmpty())
+        return if (activity.appointmentDetailsViewModel.picUrlList.value!!.isEmpty())
             1
         else
-            activity.picUrlList.size
+            activity.appointmentDetailsViewModel.picUrlList.value!!.size
     }
 
 
     class ViewHolder(val binding: ItemPicProposalDetailBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(activity: AppointmentDetailsActivity, position: Int){
+        fun bind(activity: AppointmentDetailsActivity, picUrl: String?,position: Int){
             Log.i("chen", app.packageName)
-            Glide.with(activity).load(activity.picUrlList[position]).into(binding.image)
+            Glide.with(activity).load(picUrl).into(binding.image)
 
             binding.image.setOnClickListener{
 
-                MyPhotoView
-                    .setData(activity.picUrlList)
-                    .setCurrentPage(position)
-                    .setImgContainer(activity.binding.picRecyclerview)
-                    .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
-                        override fun show(iv: ImageView, url: String) {
-                            // 设置自己加载图片的框架来加载图片
-                            GlideEngine.loadImage(activity,url,iv)
-                        }
-                    })
-                    .setOnLongClickListener(object : OnLongClickListener {
-                        override fun onLongClick(view: View) {
-                            // 长按图片的逻辑
-                        }
-                    })
-                    .start(activity)
+                activity.appointmentDetailsViewModel.picUrlList.value?.let { it1 ->
+                    MyPhotoView
+                        .setData(it1)
+                        .setCurrentPage(position)
+                        .setImgContainer(activity.binding.picRecyclerview)
+                        .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                            override fun show(iv: ImageView, url: String) {
+                                // 设置自己加载图片的框架来加载图片
+                                GlideEngine.loadImage(activity,url,iv)
+                            }
+                        })
+                        .setOnLongClickListener(object : OnLongClickListener {
+                            override fun onLongClick(view: View) {
+                                // 长按图片的逻辑
+                            }
+                        })
+                        .start(activity)
+                }
             }
         }
     }

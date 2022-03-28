@@ -12,8 +12,8 @@ import java.util.*
 object DateUtils {
 
     // 将rcf339时间字符串 转换为 自定义时间字符串
-    fun rcfDateStr2DateStr(str: String): String {
-        if (str == ""){
+    fun rcfDateStr2DateStr(str: String?): String {
+        if (str.isNullOrBlank() || str == "null") {
             return ""
         }
         val instant = Instant.parse(str)
@@ -24,8 +24,8 @@ object DateUtils {
     }
 
     // 将rcf339时间字符串 转换为 标准时间字符串
-    fun rcfDateStr2StandardDateStr(str: String): String {
-        if (str == ""){
+    fun rcfDateStr2StandardDateStr(str: String?): String {
+        if (str.isNullOrBlank() || str == "null") {
             return ""
         }
         val instant = Instant.parse(str)
@@ -36,8 +36,8 @@ object DateUtils {
     }
 
     // 将rcf339时间字符串 转换为 自定义日期字符串
-    fun rcfDateStr2StandardDateStrWithoutTime(str: String): String {
-        if (str == ""){
+    fun rcfDateStr2StandardDateStrWithoutTime(str: String?): String {
+        if (str.isNullOrBlank() || str == "null") {
             return ""
         }
         val instant = Instant.parse(str)
@@ -52,6 +52,19 @@ object DateUtils {
     fun getCurrentRcfDateStr(): String {
         val instant = Instant.now()
         instant.atZone(ZoneId.systemDefault())
-        return  instant.toString()
+        return instant.toString()
+    }
+
+    /**
+     * @param str rcf339时间字符串
+     * @return  true-已过期 false-未过期
+     */
+    fun judgeIsExpired(str: String?): Boolean {
+        if (str.isNullOrBlank() || str == "null") {
+            return false
+        }
+        val instantExpired = Instant.parse(str)
+        val instantNow = Instant.now()
+        return instantExpired < instantNow
     }
 }

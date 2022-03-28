@@ -16,6 +16,7 @@ import cn.copaint.audience.activity.PublishedWorkActivity
 import cn.copaint.audience.databinding.DialogHomepageAddBinding
 import cn.copaint.audience.databinding.DialogLoadingBinding
 import cn.copaint.audience.databinding.DialogPayInputCustomNumBinding
+import cn.copaint.audience.databinding.DialogSharepageMoreBinding
 import cn.copaint.audience.utils.ToastUtils.toast
 import okhttp3.Response
 
@@ -145,6 +146,34 @@ object DialogUtils {
             activity.payViewModel.currentNum.value = popBind.moneyEditText.text.toString().toDouble()
             layerDetailWindow.dismiss()
         }
+    }
+
+    fun popupShareDialog(context: Context,view: View,window: Window) {
+        val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(context))
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
     }
 
 }

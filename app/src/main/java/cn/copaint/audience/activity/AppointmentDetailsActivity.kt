@@ -1,10 +1,14 @@
 package cn.copaint.audience.activity
 
+import android.content.Context
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupWindow
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.GetProposalsDetailByIdQuery
 import cn.copaint.audience.R
@@ -12,33 +16,38 @@ import cn.copaint.audience.adapter.VericalLinearPhotoAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.ProposalWhereInput
-import cn.copaint.audience.utils.AuthingUtils
-import cn.copaint.audience.utils.DateUtils
-import cn.copaint.audience.utils.GlideEngine
-import cn.copaint.audience.utils.StatusBarUtils
+import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.viewmodel.AppointmentDetailsViewModel
 import com.apollographql.apollo3.api.Optional
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AppointmentDetailsActivity : AppCompatActivity() {
-    lateinit var binding:ActivityAppointmentDetailsBinding
-    var proposalId:String = ""
-    var creatorNickName :String?=""
-    var creatorAvatarUri:String?=""
-    var myProposalDetail : GetProposalsDetailByIdQuery.Data? = null
-    var picUrlList = arrayListOf<String>()
+class AppointmentDetailsActivity : BaseActivity() {
+    lateinit var binding: ActivityAppointmentDetailsBinding
+
+    val appointmentDetailsViewModel: AppointmentDetailsViewModel by lazy {
+        ViewModelProvider(this)[AppointmentDetailsViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAppointmentDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         app = this
+        initView()
+    }
 
+    override fun initView() {
         StatusBarUtils.initSystemBar(window, "#FAFBFF", true)
-
+        appointmentDetailsViewModel.proposalId.value = intent.getStringExtra("proposalId") ?: ""
+        appointmentDetailsViewModel.creatorNickName.value =
+            intent.getStringExtra("creatorNickName") ?: ""
+        appointmentDetailsViewModel.creatorAvatarUri.value =
+            intent.getStringExtra("creatorAvatarUri") ?: ""
+        appointmentDetailsViewModel.askData()
 
         binding.picRecyclerview.layoutManager = LinearLayoutManager(
             this,
@@ -49,100 +58,93 @@ class AppointmentDetailsActivity : AppCompatActivity() {
         binding.swipeRefreshLayout.setDistanceToTriggerSync(100)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.swipeRefreshLayout.setOnRefreshListener {
-            onResume()
+            appointmentDetailsViewModel.askData()
             binding.swipeRefreshLayout.isRefreshing = false
             toast("刷新成功")
         }
-        proposalId = intent.getStringExtra("proposalId")?:""
-        creatorNickName = intent.getStringExtra("creatorNickName")?:""
-        creatorAvatarUri =intent.getStringExtra("creatorAvatarUri")?:""
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (proposalId.isBlank()){
-            return
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = apolloClient(this@AppointmentDetailsActivity).query(
-                GetProposalsDetailByIdQuery(
-                    where = Optional.presentIfNotNull(ProposalWhereInput(id = Optional.presentIfNotNull(proposalId)))
-                )
-            ).execute()
-
-            response.data?.let {
-                myProposalDetail = it
-                picUrlList.clear()
-                myProposalDetail?.proposals?.edges?.get(0)?.node?.examples?.forEach { it2->picUrlList.add(resources.getString(
-                    R.string.PicUrlPrefix
-                ).plus(it2.key)) }
-            }
+        val proposalIdObserver = Observer<String> {
             bindUiInfo()
         }
+        val creatorNickNameObserver = Observer<String> {
+            bindName()
+        }
+        val creatorAvatarUriObserver = Observer<String> {
+            bindAvatar()
+        }
+        val picUrlListObserver = Observer<ArrayList<String>> {
+            bindPic()
+        }
+        val myProposalDetailObserver = Observer<GetProposalsDetailByIdQuery.Data> {
+            bindUiInfo()
+        }
+        appointmentDetailsViewModel.proposalId.observe(this, proposalIdObserver)
+        appointmentDetailsViewModel.creatorNickName.observe(this, creatorNickNameObserver)
+        appointmentDetailsViewModel.creatorAvatarUri.observe(this, creatorAvatarUriObserver)
+        appointmentDetailsViewModel.picUrlList.observe(this, picUrlListObserver)
+        appointmentDetailsViewModel.myProposalDetail.observe(this, myProposalDetailObserver)
     }
+
     fun onBackPress(view: View) {
         finish()
     }
+
     fun onMoreDialog(view: View) {
-        popupShareDialog(window)
+        DialogUtils.popupShareDialog(this, binding.root, window)
     }
+
     fun onApplyBtn(view: View) {
         toast("暂无操作")
     }
+
     fun onAssessmentPainterList(view: View) {
         toast("暂无操作")
     }
 
-    fun bindUiInfo(){
-        runOnUiThread{
-            val node = myProposalDetail?.proposals?.edges?.get(0)?.node
-            if (AuthingUtils.user.id == node?.id){
-                binding.onApplyBtn2.visibility = View.VISIBLE
-                binding.onApplyBtn.visibility = View.GONE
-            }else{
-                binding.onApplyBtn2.visibility = View.GONE
-                binding.onApplyBtn.visibility = View.VISIBLE
-            }
-            binding.title.text = node?.title
-            binding.appointmentType.text = node?.colorModel
-            binding.description.text = node?.description
+    private fun bindName() {
+        binding.publisherName.text = appointmentDetailsViewModel.creatorNickName.value
+    }
 
-            binding.createAt.text = DateUtils.rcfDateStr2StandardDateStr(node?.createdAt.toString())
-            binding.expiredAt.text = DateUtils.rcfDateStr2StandardDateStrWithoutTime(node?.expiredAt.toString())
-            binding.workType.text = node?.proposalType.toString()
-            binding.colorMode.text = node?.colorModel
-            binding.workSize.text = node?.size
-            binding.workFormat.text = "JPG"
-            binding.picRecyclerview.adapter?.notifyDataSetChanged()
-            binding.publisherName.text = creatorNickName
-            creatorAvatarUri?.let { GlideEngine.loadGridImage(this, it,binding.avatar) }
-            if (node?.stock != null ){
-                binding.countText.text = "买入份额 ${node?.stock}%,出价 ${node?.stock * node?.balance}元贝"
-            }
-            binding.assessmentPainterList.text = "已有${node?.waitingList?.size} 位画师应征"
+    private fun bindAvatar() {
+        appointmentDetailsViewModel.creatorAvatarUri.value?.let {
+            GlideEngine.loadGridImage(
+                this,
+                it,
+                binding.avatar
+            )
         }
     }
 
-    private fun popupShareDialog(window: Window) {
-        val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(this))
-        // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(popBind.root, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true)
-        layerDetailWindow.isOutsideTouchable = true
-
-        // 设置弹窗时背景变暗
-        var layoutParams = window.attributes
-        layoutParams.alpha = 0.4f // 设置透明度
-        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        window.attributes = layoutParams
-
-        // 弹窗消失时背景恢复
-        layerDetailWindow.setOnDismissListener {
-            layoutParams = window.attributes
-            layoutParams.alpha = 1f
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            window.attributes = layoutParams
-        }
-
-        layerDetailWindow.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
+    private fun bindPic() {
+        binding.picRecyclerview.adapter?.notifyDataSetChanged()
     }
+
+    fun bindUiInfo() {
+        val node =
+            appointmentDetailsViewModel.myProposalDetail.value?.proposals?.edges?.get(0)?.node
+        if (AuthingUtils.user.id == node?.id) {
+            binding.onApplyBtn2.visibility = View.VISIBLE
+            binding.onApplyBtn.visibility = View.GONE
+        } else {
+            binding.onApplyBtn2.visibility = View.GONE
+            binding.onApplyBtn.visibility = View.VISIBLE
+        }
+        binding.title.text = node?.title
+        binding.appointmentType.text = node?.colorModel
+        binding.description.text = node?.description
+
+        binding.createAt.text = DateUtils.rcfDateStr2StandardDateStr(node?.createdAt.toString())
+        binding.expiredAt.text =
+            DateUtils.rcfDateStr2StandardDateStrWithoutTime(node?.expiredAt.toString())
+        binding.expiredLabel.visibility =
+            if (DateUtils.judgeIsExpired(node?.expiredAt.toString())) View.VISIBLE else View.GONE
+        binding.workType.text = node?.proposalType.toString()
+        binding.colorMode.text = node?.colorModel
+        binding.workSize.text = node?.size
+        binding.workFormat.text = "JPG"
+        if (node?.stock != null) {
+            binding.countText.text = "买入份额 ${node?.stock}%,出价 ${node?.stock * node?.balance}元贝"
+        }
+        binding.assessmentPainterList.text = "已有${node?.waitingList?.size} 位画师应征"
+    }
+
 }

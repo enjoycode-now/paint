@@ -132,6 +132,22 @@
                     app:layout_constraintStart_toStartOf="@id/createAt"
                     app:layout_constraintTop_toBottomOf="@id/createAt" />
 
+                <TextView
+                    android:id="@+id/expiredLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_purple_rectangle"
+                    android:gravity="center"
+                    android:paddingHorizontal="5dp"
+                    android:text="已过期"
+                    android:visibility="gone"
+                    android:textColor="#80ff0000"
+                    android:textSize="12sp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toEndOf="@id/appointmentType"
+                    app:layout_constraintTop_toBottomOf="@id/createAt" />
+
 
                 <TextView
                     android:id="@+id/expiredAt"
@@ -181,12 +197,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4dp"
-                    android:layout_marginTop="10dp"
-                    android:minLines="7"
-                    android:lineHeight="14.5dp"
+                    android:layout_marginTop="8dp"
                     android:textColor="#939393"
+                    android:lineHeight="14.5dp"
+                    android:minLines="7"
+                    android:textIsSelectable="true"
                     android:textSize="12sp"
-                    app:layout_constraintTop_toBottomOf="@id/descriptionNote" />
+                    app:layout_constraintTop_toBottomOf="@id/descriptionNote"/>
 
                 <TextView
                     android:id="@+id/picNote"
@@ -223,6 +240,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:textSize="13sp"
                     android:text="作品风格"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/appointmentRequirements" />
@@ -234,6 +252,7 @@
                     android:layout_marginStart="12dp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@id/workTypeNote"
                     app:layout_constraintStart_toEndOf="@id/workTypeNote"
                     app:layout_constraintTop_toTopOf="@+id/workTypeNote" />
@@ -243,6 +262,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textSize="13sp"
                     android:text="颜色模式"
                     app:layout_constraintStart_toStartOf="@id/workTypeNote"
                     app:layout_constraintTop_toBottomOf="@id/workTypeNote" />
@@ -252,6 +272,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:textSize="12sp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@id/colorModeNote"
@@ -263,6 +284,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textSize="13sp"
                     android:text="尺寸格式"
                     app:layout_constraintStart_toStartOf="@id/colorModeNote"
                     app:layout_constraintTop_toBottomOf="@id/colorModeNote" />
@@ -272,6 +294,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:textSize="12sp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@id/workSizeNote"
@@ -283,6 +306,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textSize="13sp"
                     android:text="稿件格式"
                     app:layout_constraintStart_toStartOf="@id/workSizeNote"
                     app:layout_constraintTop_toBottomOf="@id/workSizeNote" />
@@ -292,6 +316,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:textSize="12sp"
                     android:text="@string/loading"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@id/workFormatNote"
@@ -310,7 +335,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#B8B8B8"
+                    android:background="#FAFBFF"
                     android:paddingBottom="12dp"
                     android:layout_marginBottom="8dp"
                     app:layout_constraintVertical_bias="1"
@@ -353,6 +378,7 @@
                         android:onClick="onAssessmentPainterList"
                         android:text="已有loading...画师应征"
                         android:textSize="11sp"
+                        android:gravity="center"
                         app:drawableEndCompat="@drawable/ic_more_arrow_small"
                         app:layout_constraintBottom_toBottomOf="@id/onApplyBtn"
                         app:layout_constraintStart_toStartOf="@+id/avatar"
