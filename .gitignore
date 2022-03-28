@@ -39,3 +39,5 @@ build
 *.ipr
 *~
 *.sw
+/app/release/app-release.apk.zip
+/app/release/output-metadata.json

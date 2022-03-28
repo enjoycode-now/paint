@@ -7,6 +7,7 @@ import cn.copaint.audience.GetAuthingUsersInfoQuery
 import cn.copaint.audience.GetFollowersListQuery
 import cn.copaint.audience.adapter.FollowAdapter
 import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivityFollowsBinding
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.ToastUtils
@@ -57,11 +58,10 @@ class FollowsViewModel : BaseViewModel(){
             val tempList = ArrayList< GetAuthingUsersInfoQuery.AuthingUsersInfo>()
             // 根据id调用authing接口获取用户信息
             try {
-                myApolloClient.apolloClient(app).query(GetAuthingUsersInfoQuery(userIdList))
+                apolloClient(app).query(GetAuthingUsersInfoQuery(userIdList))
                     .execute().data?.authingUsersInfo?.forEach {
                         tempList.add(it)
                     }
-
             } catch (e: Exception) {
                 ToastUtils.toast(e.toString())
             }

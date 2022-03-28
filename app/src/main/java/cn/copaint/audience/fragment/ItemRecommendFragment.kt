@@ -27,7 +27,7 @@ import java.lang.Exception
 class ItemRecommendFragment : Fragment() {
     lateinit var binding: FragmentItemRecommendBinding
 
-    //这个页面的画师的id
+    //这个页面的画师的id（目前先写死）
     val creatorId = "61e6083930d0d5c19dcfa947"
 
     //关注状态位

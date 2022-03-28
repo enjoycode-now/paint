@@ -51,7 +51,7 @@ class AppointmentDetailsActivity : AppCompatActivity() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             onResume()
             binding.swipeRefreshLayout.isRefreshing = false
-            toast("refresh done")
+            toast("刷新成功")
         }
         proposalId = intent.getStringExtra("proposalId")?:""
         creatorNickName = intent.getStringExtra("creatorNickName")?:""

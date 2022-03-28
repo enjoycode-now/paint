@@ -29,11 +29,8 @@ class FansViewModel : BaseViewModel() {
     var first = 20
     lateinit var currentUserID: String
     var hasNextPage = false
-    var where = FollowerWhereInput(
-        userID = Optional.presentIfNotNull(
-            AuthingUtils.user.id
-        )
-    )
+    var where : FollowerWhereInput = FollowerWhereInput(Optional.presentIfNotNull(null))
+
 
 
     fun askData(){

@@ -59,45 +59,51 @@ class FansAdapter(private val activity: FansActivity) :
             itemBind.root.setOnClickListener {
                 activity.startActivity(Intent(activity, UserPageCreatorActivity::class.java).putExtra("creatorId",fans.id))
             }
-            if (user.id != fans.id) {
-                itemBind.status.visibility = View.VISIBLE
-                itemBind.unsubscribe.visibility = View.VISIBLE
+            if(user.id == activity.fansViewModel.currentUserID){
+                if (user.id != fans.id) {
+                    itemBind.status.visibility = View.VISIBLE
+                    itemBind.unsubscribe.visibility = View.VISIBLE
 
-                if (isFollow) {
-                    itemBind.status.text = "互相关注"
-                    itemBind.status.setTextColor(Color.parseColor("#A9A9A9"))
-                } else {
-                    itemBind.status.text = "回关"
-                    itemBind.status.setTextColor(Color.parseColor("#8767E2"))
-                }
-                itemBind.status.setOnClickListener {
-                    if (itemBind.status.text == "互相关注") {
-                        unFollowUser(fans.id, itemBind)
+                    if (isFollow) {
+                        itemBind.status.text = "互相关注"
+                        itemBind.status.setTextColor(Color.parseColor("#A9A9A9"))
                     } else {
-                        followUser(fans.id, itemBind)
+                        itemBind.status.text = "回关"
+                        itemBind.status.setTextColor(Color.parseColor("#8767E2"))
                     }
-                }
-                itemBind.avatar.setOnClickListener {
-                    fans.photo.let {
-                        PhotoViewer.setClickSingleImg(
-                            it ?: "",
-                            itemBind.avatar
-                        )   //因为本框架不参与加载图片，所以还是要写回调方法
-                            .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
-                                override fun show(iv: ImageView, url: String) {
-                                    GlideEngine.loadImage(activity, url, iv)
-                                }
-                            })
-                            .start(activity)
+                    itemBind.status.setOnClickListener {
+                        if (itemBind.status.text == "互相关注") {
+                            unFollowUser(fans.id, itemBind)
+                        } else {
+                            followUser(fans.id, itemBind)
+                        }
                     }
+                    itemBind.avatar.setOnClickListener {
+                        fans.photo.let {
+                            PhotoViewer.setClickSingleImg(
+                                it ?: "",
+                                itemBind.avatar
+                            )   //因为本框架不参与加载图片，所以还是要写回调方法
+                                .setShowImageViewInterface(object : PhotoViewer.ShowImageViewInterface {
+                                    override fun show(iv: ImageView, url: String) {
+                                        GlideEngine.loadImage(activity, url, iv)
+                                    }
+                                })
+                                .start(activity)
+                        }
+                    }
+                    itemBind.unsubscribe.setOnClickListener {
+                        onConfirmRemoveDialog(activity, fans.id, fans.photo)
+                    }
+                } else {
+                    itemBind.status.visibility = View.GONE
+                    itemBind.unsubscribe.visibility = View.GONE
                 }
-                itemBind.unsubscribe.setOnClickListener {
-                    onConfirmRemoveDialog(activity, fans.id, fans.photo)
-                }
-            } else {
+            }else{
                 itemBind.status.visibility = View.GONE
                 itemBind.unsubscribe.visibility = View.GONE
             }
+
 
         }
     }

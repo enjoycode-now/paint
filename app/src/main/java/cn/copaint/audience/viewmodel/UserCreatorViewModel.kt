@@ -21,21 +21,19 @@ import kotlinx.coroutines.launch
 class UserCreatorViewModel : BaseViewModel() {
 
     val userPageCreatorData = MutableLiveData<UserPageCreatorActivityInitQuery.Data>()
-
-    var is_follow: MutableLiveData<Boolean> = MutableLiveData(false)
+    var is_follow: MutableLiveData<Boolean> = MutableLiveData(false)  // 是否已经关注当前页的作者
 
     fun askUserPageCreatorData(creatorId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = try {
                 myApolloClient.apolloClient(app).query(
                     UserPageCreatorActivityInitQuery(
-                        input =
-                        FollowInfoInput(userID = user.id),
-                        listOf(creatorId),
+                        input = FollowInfoInput(userID = creatorId),
+                        authingIDs = listOf(creatorId),
                         where = Optional.presentIfNotNull(
                             FollowerWhereInput(
                                 userID = Optional.presentIfNotNull(creatorId),
-                                followerID = Optional.presentIfNotNull(AuthingUtils.user.id)
+                                followerID = Optional.presentIfNotNull(user.id)
                             )
                         )
                     )

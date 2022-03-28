@@ -61,6 +61,7 @@ class UserPageCreatorActivity : BaseActivity() {
     override fun initView() {
         StatusBarUtils.initSystemBar(window, "#dacdd8", true)
         creatorId = intent.getStringExtra("creatorId") ?: ""
+
         if (creatorId.isNotBlank()) {
             userCreatorViewModel.askUserPageCreatorData(creatorId)
             val blockChainAddress = creatorId.getDigest("SHA-256")

@@ -3,9 +3,6 @@ query UserPageCreatorActivityInit($input: FollowInfoInput!, $authingIDs: [String
         followingCount
         followersCount
     }
-    wallet {
-        balance
-    }
     authingUsersInfo(authingIDs: $authingIDs) {
         id
         nickname

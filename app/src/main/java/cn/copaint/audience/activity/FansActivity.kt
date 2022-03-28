@@ -92,9 +92,14 @@ class FansActivity : BaseActivity() {
             }
             false;
         }
-        fansViewModel.currentUserID = intent.getStringExtra("currentUserID")?:""
+        fansViewModel.currentUserID = intent.getStringExtra("currentUserID") ?: ""
+        fansViewModel.where = FollowerWhereInput(
+            userID = Optional.presentIfNotNull(
+                fansViewModel.currentUserID
+            )
+        )
 
-        val fansListObserver = Observer<ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>>{
+        val fansListObserver = Observer<ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>> {
             fansAdapter.fansList.clear()
             fansAdapter.isFollowList.clear()
             fansAdapter.fansList.addAll(it)
@@ -103,7 +108,7 @@ class FansActivity : BaseActivity() {
             fansAdapter.notifyDataSetChanged()
             binding.animationView.visibility = View.GONE
         }
-        fansViewModel.fansList.observe(this,fansListObserver)
+        fansViewModel.fansList.observe(this, fansListObserver)
     }
 
     fun onBackPress(view: View) = onBackPressed()
@@ -112,10 +117,10 @@ class FansActivity : BaseActivity() {
     private fun filterUser(text: String) {
         fansAdapter.fansList.clear()
         fansAdapter.isFollowList.clear()
-        if(text == ""){
+        if (text == "") {
             fansAdapter.fansList.addAll(fansViewModel.fansList.value!!)
             fansAdapter.isFollowList.addAll(fansViewModel.isFollowList)
-        }else{
+        } else {
             fansViewModel.fansList.value?.forEachIndexed { index, authingUsersInfo ->
                 if (authingUsersInfo.nickname?.contains(text) == true) {
                     fansAdapter.fansList.add(authingUsersInfo)
