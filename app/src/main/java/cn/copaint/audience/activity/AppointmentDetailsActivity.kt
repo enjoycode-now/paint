@@ -115,7 +115,9 @@ class AppointmentDetailsActivity : BaseActivity() {
     }
 
     fun onAssessmentPainterList(view: View) {
-        toast("暂无操作")
+        val waitingUserList : ArrayList<String> = arrayListOf()
+        appointmentDetailsViewModel.myProposalDetail?.value?.proposals?.edges?.get(0)?.node?.waitingList?.forEach { waitingUserList.add(it.userID) }
+        DialogUtils.checkWaitingUserList(waitingUserList,this,binding.root,window)
     }
 
     private fun bindName() {

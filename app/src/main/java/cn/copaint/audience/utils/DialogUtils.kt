@@ -10,14 +10,24 @@ import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.FindIsFollowQuery
+import cn.copaint.audience.GetAuthingUsersInfoQuery
 import cn.copaint.audience.activity.PayActivity
 import cn.copaint.audience.activity.PublishRequirementActivity
 import cn.copaint.audience.activity.PublishedWorkActivity
-import cn.copaint.audience.databinding.DialogHomepageAddBinding
-import cn.copaint.audience.databinding.DialogLoadingBinding
-import cn.copaint.audience.databinding.DialogPayInputCustomNumBinding
-import cn.copaint.audience.databinding.DialogSharepageMoreBinding
+import cn.copaint.audience.adapter.CheckWaitingUserListAdapter
+import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.databinding.*
+import cn.copaint.audience.type.FollowerWhereInput
+import cn.copaint.audience.utils.AuthingUtils.user
+import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import com.apollographql.apollo3.api.Optional
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import okhttp3.Response
 
 
@@ -174,6 +184,75 @@ object DialogUtils {
         }
 
         layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
+    }
+
+    fun checkWaitingUserList(userIdList: ArrayList<String>,context: Context,view: View,window: Window){
+        val tempList = ArrayList< GetAuthingUsersInfoQuery.AuthingUsersInfo>()
+        val isFollowList = ArrayList<Boolean>()
+
+        val popBind = DialogCheckWaitingUserListBinding.inflate(LayoutInflater.from(context))
+        popBind.recycler.layoutManager = LinearLayoutManager(context)
+        val adapter = CheckWaitingUserListAdapter(userList = tempList, isFollowList = isFollowList,context)
+        popBind.recycler.adapter = adapter
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                myApolloClient.apolloClient(app)
+                    .query(GetAuthingUsersInfoQuery(userIdList))
+                    .execute().data?.authingUsersInfo?.forEach {
+                        tempList.add(it)
+                    }
+                tempList.forEach {
+                    val followResponse = myApolloClient.apolloClient(ToastUtils.app).query(
+                        FindIsFollowQuery(
+                            where = Optional.presentIfNotNull(
+                                FollowerWhereInput(
+                                    userID = Optional.presentIfNotNull(it.id),
+                                    followerID = Optional.presentIfNotNull(user.id)
+                                )
+                            )
+                        )
+                    ).execute().data
+                    if (followResponse?.followers?.totalCount == 1) {
+                        isFollowList.add(true)
+                    } else {
+                        isFollowList.add(false)
+                    }
+                }
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.notifyDataSetChanged()
+                    popBind.progressBar.visibility = View.GONE
+                }
+            }
+
+        } catch (e: Exception) {
+            toast(e.toString())
+        }
+
+//        adapter.notifyDataSetChanged()
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            300.dp,
+            300.dp,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
     }
 
 }
