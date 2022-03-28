@@ -12,6 +12,7 @@ import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
@@ -63,10 +64,15 @@ class FansViewModel : BaseViewModel() {
 
             // 根据列表获取每一个粉丝的个人信息，然后添加到List去，最后notifyChange
             val temp = ArrayList< GetAuthingUsersInfoQuery.AuthingUsersInfo>()
-            apolloClient(app).query(GetAuthingUsersInfoQuery(userIdList))
-                .execute().data?.authingUsersInfo?.forEach {
-                    temp.add(it)
-                }
+            try {
+                apolloClient(app).query(GetAuthingUsersInfoQuery(userIdList))
+                    .execute().data?.authingUsersInfo?.forEach {
+                        temp.add(it)
+                    }
+            }catch (e: Exception){
+                toast(e.toString())
+            }
+
 
             userIdList.forEach{
                 val followResponse = apolloClient(app).query(

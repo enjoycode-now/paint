@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 
 class FollowsActivity : BaseActivity() {
     lateinit var binding: ActivityFollowsBinding
-    val followAdapter = FollowAdapter(this)
+    private val followAdapter = FollowAdapter(this)
     val followsViewModel : FollowsViewModel by lazy{
         ViewModelProvider(this)[FollowsViewModel::class.java]
     }

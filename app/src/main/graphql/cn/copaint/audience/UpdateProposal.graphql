@@ -1,0 +1,5 @@
+mutation UpdateProposal($updateProposalId: ID!, $input: UpdateProposalInput!, $addExampleKeys: AttachmentKeysInput!, $expiredAt: Datetime) {
+    updateProposal(id: $updateProposalId, input: $input, addExampleKeys: $addExampleKeys, expiredAt: $expiredAt) {
+        id
+    }
+}

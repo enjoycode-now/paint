@@ -1,6 +1,7 @@
 package cn.copaint.audience.activity
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,6 +18,7 @@ import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.ProposalWhereInput
 import cn.copaint.audience.utils.*
+import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.viewmodel.AppointmentDetailsViewModel
@@ -59,9 +61,9 @@ class AppointmentDetailsActivity : BaseActivity() {
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.swipeRefreshLayout.setOnRefreshListener {
             appointmentDetailsViewModel.askData()
-            binding.swipeRefreshLayout.isRefreshing = false
-            toast("刷新成功")
         }
+        binding.avatar.setOnClickListener { checkPublisher() }
+        binding.publisherName.setOnClickListener { checkPublisher() }
         val proposalIdObserver = Observer<String> {
             bindUiInfo()
         }
@@ -77,11 +79,15 @@ class AppointmentDetailsActivity : BaseActivity() {
         val myProposalDetailObserver = Observer<GetProposalsDetailByIdQuery.Data> {
             bindUiInfo()
         }
+        val loadingObserver = Observer<Boolean> {
+            binding.swipeRefreshLayout.isRefreshing = it
+        }
         appointmentDetailsViewModel.proposalId.observe(this, proposalIdObserver)
         appointmentDetailsViewModel.creatorNickName.observe(this, creatorNickNameObserver)
         appointmentDetailsViewModel.creatorAvatarUri.observe(this, creatorAvatarUriObserver)
         appointmentDetailsViewModel.picUrlList.observe(this, picUrlListObserver)
         appointmentDetailsViewModel.myProposalDetail.observe(this, myProposalDetailObserver)
+        appointmentDetailsViewModel.isLoading.observe(this,loadingObserver)
     }
 
     fun onBackPress(view: View) {
@@ -93,7 +99,19 @@ class AppointmentDetailsActivity : BaseActivity() {
     }
 
     fun onApplyBtn(view: View) {
-        toast("暂无操作")
+        when(binding.onApplyBtn.text){
+            "立即应征" ->{
+                appointmentDetailsViewModel.applyProposal()
+                appointmentDetailsViewModel.askData()
+            }
+            "需求变更" ->{
+                startActivity(Intent(this,PublishRequirementActivity::class.java))
+            }
+            "取消应征" ->{
+                toast("取消应征目前没有接口")
+            }
+            else ->{}
+        }
     }
 
     fun onAssessmentPainterList(view: View) {
@@ -118,15 +136,21 @@ class AppointmentDetailsActivity : BaseActivity() {
         binding.picRecyclerview.adapter?.notifyDataSetChanged()
     }
 
-    fun bindUiInfo() {
+    private fun checkPublisher(){
+        appointmentDetailsViewModel.myProposalDetail.value?.proposals?.edges?.get(0)?.node?.creator?.let {
+            startActivity(Intent(this,UserPageCreatorActivity::class.java).putExtra("creatorId",it))
+        }
+    }
+
+    private fun bindUiInfo() {
         val node =
             appointmentDetailsViewModel.myProposalDetail.value?.proposals?.edges?.get(0)?.node
-        if (AuthingUtils.user.id == node?.id) {
-            binding.onApplyBtn2.visibility = View.VISIBLE
-            binding.onApplyBtn.visibility = View.GONE
+        // 判断身份
+        if (user.id == node?.creator) {
+            binding.onApplyBtn.text = "需求变更"
         } else {
-            binding.onApplyBtn2.visibility = View.GONE
-            binding.onApplyBtn.visibility = View.VISIBLE
+            binding.onApplyBtn.text = "立即应征"
+            node?.waitingList?.forEach { item -> if(item.userID == user.id) binding.onApplyBtn.text = "取消应征"}
         }
         binding.title.text = node?.title
         binding.appointmentType.text = node?.colorModel
