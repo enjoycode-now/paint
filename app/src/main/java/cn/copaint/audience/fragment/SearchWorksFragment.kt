@@ -42,6 +42,8 @@ class SearchWorksFragment(val activity: SearchResultActivity) : Fragment() {
         binding = FragmentItemSearchWorksBinding.inflate(layoutInflater, container, false)
         binding.worksRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        binding.swipeRefreshLayout.setProgressViewEndTarget(false,150)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         adapter = FragmentSearchWorkAdapter(this)
         binding.worksRecyclerView.adapter = adapter

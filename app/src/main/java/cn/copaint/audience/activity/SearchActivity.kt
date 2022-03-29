@@ -3,13 +3,11 @@ package cn.copaint.audience.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.GetRandomTagsQuery
 import cn.copaint.audience.adapter.FlowAdapter
@@ -21,20 +19,19 @@ import cn.copaint.audience.model.RecommendTag
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import com.google.gson.JsonObject
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.lang.Exception
 
 
 class SearchActivity : BaseActivity() {
     lateinit var binding: ActivitySearchBinding
     lateinit var recommendTagAdapter: MyFlowAdapter
     val searchHistoryAdapter = SearchHistoryAdapter(this)
-    val searchHistoryList =
+    var searchHistoryList =
         mutableListOf<String>()
     val recommendList =
         mutableListOf<RecommendTag>()
@@ -114,19 +111,22 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun getSearchHistory() {
-        searchHistoryList.clear()
         val saveData =
-            getSharedPreferences("search", MODE_PRIVATE).getStringSet("searchHistory", null)
-        saveData?.forEach { s ->
-            searchHistoryList.add(s)
+            getSharedPreferences("search", MODE_PRIVATE).getString("searchHistory", "")
+
+        if (!saveData.equals("")) {
+            val gson = Gson()
+            searchHistoryList = gson.fromJson(saveData, object : TypeToken<List<String?>?>() {}.type)
         }
     }
 
     private fun saveSearchHistory() {
+        val gson = Gson()
         val editor = getSharedPreferences("search", MODE_PRIVATE).edit()
-        editor.putStringSet("searchHistory", searchHistoryList.toSet())
+        editor.putString("searchHistory", gson.toJson(searchHistoryList))
         editor.apply()
     }
+
 
     override fun onStop() {
         saveSearchHistory()
@@ -166,7 +166,7 @@ class SearchActivity : BaseActivity() {
             val s: String = recommendList[position].name
             itemBinding.itemTextview.text = s
             itemBinding.root.setOnClickListener {
-                searchHistoryList.add(0, itemBinding.itemTextview.text.toString())
+                searchHistoryList.add(0,itemBinding.itemTextview.text.toString())
                 startActivity(
                     Intent(
                         this@SearchActivity,

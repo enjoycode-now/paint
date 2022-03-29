@@ -32,6 +32,7 @@ object FileUploadUtils {
         var request: Request = Request.Builder()
             .url("http://120.78.173.15:20000/upload")
             .method("POST", body)
+            .addHeader("Connection", "close")
             .addHeader("x-file-size", byteArray.size.toString())
             .addHeader("x-file-type", "image")
             .addHeader("Content-Type", "image/*")
@@ -58,6 +59,7 @@ object FileUploadUtils {
         var request: Request = Request.Builder()
             .url("http://120.78.173.15:20000/upload")
             .method("POST", body)
+            .addHeader("Connection", "close")
             .addHeader("x-file-size", byteArray.size.toString())
             .addHeader("x-file-type", "video")
             .addHeader("Content-Type", "video/*")
@@ -74,7 +76,7 @@ object FileUploadUtils {
      * 上传图片方式2
      * 异步多线程上传，返回json结果
      */
-    suspend fun uploadPic(context: Context,byteArray: ByteArray): String {
+    suspend fun uploadPic(context: Context, byteArray: ByteArray): String {
         if (byteArray.size > maxImageFileSize) {
             ToastUtils.toast("图片超过5MB,请更换一张")
             return ""
@@ -98,7 +100,4 @@ object FileUploadUtils {
         }
         return job.await().toString()
     }
-
-
-
 }

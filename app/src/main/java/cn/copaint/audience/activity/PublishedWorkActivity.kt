@@ -320,7 +320,8 @@ class PublishedWorkActivity : BaseActivity() {
     inner class UploadPicCallBack() : Callback {
         override fun onFailure(call: Call, e: IOException) {
             Log.e("PublishedWorkActivity", e.toString())
-            toastNetError()
+//            toastNetError()
+            toast(e.toString())
             uploadPicStatus = false
         }
 
@@ -348,7 +349,7 @@ class PublishedWorkActivity : BaseActivity() {
     inner class UploadVideoCallBack() : Callback {
         override fun onFailure(call: Call, e: IOException) {
             Log.e("PublishedWorkActivity", e.toString())
-            toastNetError()
+            toast(e.toString())
             uploadVideoStatus = false
         }
 

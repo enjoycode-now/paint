@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -169,10 +170,10 @@ class PublishedWorkSecondActivity : BaseActivity() {
             currentShare.toString(),
             currentNum.toString(),
             this,
-            bind.root,
             window,
             confirmListener = ConfirmCallBack()
         )
+        confirmDialog.showAtLocation(bind.root, Gravity.CENTER, 0, 0)
     }
 
     fun shareEditTextLostFocus() {

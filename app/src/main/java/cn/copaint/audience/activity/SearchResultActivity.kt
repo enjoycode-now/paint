@@ -22,12 +22,17 @@ import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import com.bugsnag.android.Bugsnag
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SearchResultActivity : BaseActivity() {
     lateinit var binding: ActivitySearchResultBinding
     val fragmentList = mutableListOf<Fragment>(SearchWorksFragment(this),SearchAppointmentFragment(this),SearchUsersFragment(this))
     var currentFragment = 0
-    private val searchHistoryList = mutableListOf<String>()
+    private var searchHistoryList = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -46,7 +51,6 @@ class SearchResultActivity : BaseActivity() {
         binding.searchEdit.setText(intent.getStringExtra("SearchContent"))
         //默认页为作品页
         replaceFragment(fragmentList[currentFragment])
-        getSearchHistory()
 
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -58,8 +62,11 @@ class SearchResultActivity : BaseActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 // 隐藏软键盘
                 imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
-                searchHistoryList.remove(textview.text.toString())
-                searchHistoryList.add(0,textview.text.toString())
+                CoroutineScope(Dispatchers.Default).launch {
+                    searchHistoryList.remove(textview.text.toString())
+                    searchHistoryList.add(0,textview.text.toString())
+
+                }
                 fragmentList[currentFragment].onResume()
             }
             false;
@@ -72,7 +79,10 @@ class SearchResultActivity : BaseActivity() {
         transaction.replace(R.id.frameLayout, fragment).commit()
     }
 
-    fun onBackPress(view: View) {
+    fun onBackPress(view: View) = onBackPressed()
+
+    override fun onBackPressed() {
+        saveSearchHistory()
         finish()
     }
 
@@ -124,19 +134,22 @@ class SearchResultActivity : BaseActivity() {
     }
 
     private fun getSearchHistory() {
-        searchHistoryList.clear()
-        val saveData = getSharedPreferences("search", MODE_PRIVATE).getStringSet("searchHistory",null)
-        saveData?.forEach { s -> searchHistoryList.add(s) }
+        val saveData =
+            getSharedPreferences("search", MODE_PRIVATE).getString("searchHistory", "")
+
+        if (!saveData.equals("")) {
+            val gson = Gson()
+            searchHistoryList.addAll(gson.fromJson(saveData, object : TypeToken<List<String?>?>() {}.type))
+        }
     }
 
-    private fun saveSearchHistory(){
-        var editor = getSharedPreferences("search",MODE_PRIVATE).edit()
-        editor.putStringSet("searchHistory", searchHistoryList.toSet())
+    private fun saveSearchHistory() {
+        getSearchHistory()
+
+        val gson = Gson()
+        val editor = getSharedPreferences("search", MODE_PRIVATE).edit()
+        editor.putString("searchHistory", gson.toJson(searchHistoryList))
         editor.apply()
     }
 
-    override fun onStop() {
-        saveSearchHistory()
-        super.onStop()
-    }
 }

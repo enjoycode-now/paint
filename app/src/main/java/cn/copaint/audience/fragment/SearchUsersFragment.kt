@@ -43,6 +43,8 @@ class SearchUsersFragment(val activity: SearchResultActivity) : Fragment() {
             context,
             LinearLayoutManager.VERTICAL, false
         )
+        binding.swipeRefreshLayout.setProgressViewEndTarget(false,150)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         adapter = FragmentSearchUserAdapter(this)
         binding.usersRecyclerView.adapter = adapter

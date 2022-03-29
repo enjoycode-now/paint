@@ -117,7 +117,7 @@ class AppointmentDetailsActivity : BaseActivity() {
     fun onAssessmentPainterList(view: View) {
         val waitingUserList : ArrayList<String> = arrayListOf()
         appointmentDetailsViewModel.myProposalDetail?.value?.proposals?.edges?.get(0)?.node?.waitingList?.forEach { waitingUserList.add(it.userID) }
-        DialogUtils.checkWaitingUserList(waitingUserList,this,binding.root,window)
+        DialogUtils.checkWaitingUserListDialog(waitingUserList,this,binding.root,window)
     }
 
     private fun bindName() {

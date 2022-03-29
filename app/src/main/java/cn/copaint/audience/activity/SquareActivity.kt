@@ -26,9 +26,6 @@ class SquareActivity : BaseActivity() {
     var lastBackPressedTimeMillis = 0L
     var lastReloadTimeMillis = 0L
     val dataExpiredTimeMillis = 120000L // 设置2分钟缓存有效时间
-    val first = 10
-    var cursor: Any? = null
-    var hasNextPage = true
     val APPEND = 0
     val RELOAD = 1
     val squareViewModel: SquareViewModel by lazy {
@@ -56,7 +53,8 @@ class SquareActivity : BaseActivity() {
         )
         GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
         binding.proposalList.adapter = SquareAppointmentAdapter(this)
-        binding.swipeRefreshLayout.setProgressViewOffset(true, -50, 50)
+        binding.swipeRefreshLayout.setProgressViewEndTarget(false,100)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1280)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.proposalList.setListener(this, object : RecyclerListener {
             override fun loadMore() {
@@ -133,5 +131,11 @@ class SquareActivity : BaseActivity() {
     override fun onDestroy() {
         if (squareViewModel.job.isActive) squareViewModel.job.cancel()
         super.onDestroy()
+    }
+
+    fun onMyProposals(view: View) {
+        if(AuthingUtils.loginCheck()){
+            DialogUtils.checkMyProposalsDialog(this,binding.root,window)
+        }
     }
 }

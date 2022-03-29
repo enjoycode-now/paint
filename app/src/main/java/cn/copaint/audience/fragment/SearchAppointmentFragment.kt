@@ -46,6 +46,8 @@ class SearchAppointmentFragment(val activity: SearchResultActivity) : Fragment()
             context,
             LinearLayoutManager.VERTICAL, false
         )
+        binding.swipeRefreshLayout.setProgressViewEndTarget(false,150)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         adapter = FragmentSearchAppointmentsAdapter(this)
         binding.appointmentsRecyclerView.adapter = adapter

@@ -153,4 +153,6 @@ dependencies {
     implementation "org.koin:koin-android:1.0.2"
 
     implementation 'com.github.wanglu1209:PhotoViewer:0.50'
+
+    implementation("com.google.code.gson:gson:2.9.0")
 }

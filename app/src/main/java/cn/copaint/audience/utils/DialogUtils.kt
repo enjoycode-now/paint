@@ -4,19 +4,15 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Handler
-import android.text.InputFilter
 import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.FindIsFollowQuery
 import cn.copaint.audience.GetAuthingUsersInfoQuery
-import cn.copaint.audience.activity.PayActivity
-import cn.copaint.audience.activity.PublishRequirementActivity
-import cn.copaint.audience.activity.PublishedWorkActivity
+import cn.copaint.audience.activity.*
 import cn.copaint.audience.adapter.CheckWaitingUserListAdapter
 import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.databinding.*
@@ -24,13 +20,11 @@ import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
+import cn.copaint.audience.viewmodel.MyProposalsDialogViewModel
 import com.apollographql.apollo3.api.Optional
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import okhttp3.Callback
-import okhttp3.Response
 
 
 object DialogUtils {
@@ -115,7 +109,7 @@ object DialogUtils {
         }
     }
 
-
+    // 自定义输入充值金额弹窗
     fun onMoneyInputDialog(view: View,activity: PayActivity){
         val popBind = DialogPayInputCustomNumBinding.inflate(LayoutInflater.from(activity))
 
@@ -160,6 +154,7 @@ object DialogUtils {
         }
     }
 
+    // 分享内容弹窗
     fun popupShareDialog(context: Context,view: View,window: Window) {
         val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(context))
         // 弹出PopUpWindow
@@ -188,7 +183,8 @@ object DialogUtils {
         layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
     }
 
-    fun checkWaitingUserList(userIdList: ArrayList<String>,context: Context,view: View,window: Window){
+    // 查看应征画师列表弹窗
+    fun checkWaitingUserListDialog(userIdList: ArrayList<String>,context: Context,view: View,window: Window){
         val tempList = ArrayList< GetAuthingUsersInfoQuery.AuthingUsersInfo>()
         val isFollowList = ArrayList<Boolean>()
 
@@ -231,8 +227,6 @@ object DialogUtils {
                 }
             }
 
-
-
 //        adapter.notifyDataSetChanged()
         // 弹出PopUpWindow
         val layerDetailWindow = PopupWindow(
@@ -260,11 +254,11 @@ object DialogUtils {
         layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
     }
 
+    // 用户确认上传弹窗
     fun getConfirmDialog(
         share: String,
         price: String,
         context: Context,
-        view: View,
         window: Window,
         confirmListener: View.OnClickListener
     ) : PopupWindow{
@@ -301,7 +295,42 @@ object DialogUtils {
         popBind.closeBtn.setOnClickListener{
             layerDetailWindow.dismiss()
         }
-        layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+        return layerDetailWindow
+    }
+
+    // 我的约稿
+    fun checkMyProposalsDialog(activity: SquareActivity,view: View,window: Window):PopupWindow{
+
+        val popBind = DialogMyProposalsBinding.inflate(LayoutInflater.from(activity))
+//        val fragment = MyProposalsFragment()
+
+
+//        adapter.notifyDataSetChanged()
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+        popBind.dismissBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
         return layerDetailWindow
     }
 
