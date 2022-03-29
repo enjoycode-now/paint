@@ -58,7 +58,6 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             }
         }
 
-        bind.shareEditText.filters = arrayOf(MoneyInputFilter)
         bind.priceEditText.filters = arrayOf(MoneyInputFilter)
     }
 
@@ -142,10 +141,6 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
         }catch (e : Exception){
             toast(e.toString())
         }
-
-
-
-
     }
     fun shareEditTextLostFocus(){
 

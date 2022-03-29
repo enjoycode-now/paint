@@ -17,6 +17,7 @@ import cn.copaint.audience.adapter.SearchHistoryAdapter
 import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.ActivitySearchBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
+import cn.copaint.audience.model.RecommendTag
 import cn.copaint.audience.utils.StatusBarUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -96,7 +97,8 @@ class SearchActivity : BaseActivity() {
                         RecommendTag(
                             it.id,
                             it.name,
-                            it.createdAt.toString()
+                            it.createdAt.toString(),
+                            false
                         )
                     )
                 }
@@ -178,5 +180,5 @@ class SearchActivity : BaseActivity() {
     }
 }
 
-data class RecommendTag(val id: String, val name: String, val createAt: String)
+
 

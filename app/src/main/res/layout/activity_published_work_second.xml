@@ -214,9 +214,10 @@
         android:id="@+id/totalBalance"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:text="0 元贝"
+        android:text="1000 元贝"
         android:textColor="#F8566A"
         android:textSize="14sp"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/textView25"
         app:layout_constraintStart_toEndOf="@+id/textView25"
         app:layout_constraintTop_toTopOf="@+id/textView25" />

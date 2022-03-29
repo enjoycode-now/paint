@@ -48,7 +48,6 @@ class SearchResultActivity : BaseActivity() {
         replaceFragment(fragmentList[currentFragment])
         getSearchHistory()
 
-
         binding.searchEdit.setOnEditorActionListener { textview, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if(textview.text.toString() == ""){

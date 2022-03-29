@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Handler
 import android.text.InputFilter
 import android.view.*
 import android.widget.PopupWindow
@@ -28,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import okhttp3.Callback
 import okhttp3.Response
 
 
@@ -194,8 +196,9 @@ object DialogUtils {
         popBind.recycler.layoutManager = LinearLayoutManager(context)
         val adapter = CheckWaitingUserListAdapter(userList = tempList, isFollowList = isFollowList,context)
         popBind.recycler.adapter = adapter
-        try {
+
             CoroutineScope(Dispatchers.IO).launch {
+                try {
                 myApolloClient.apolloClient(app)
                     .query(GetAuthingUsersInfoQuery(userIdList))
                     .execute().data?.authingUsersInfo?.forEach {
@@ -222,11 +225,13 @@ object DialogUtils {
                     adapter.notifyDataSetChanged()
                     popBind.progressBar.visibility = View.GONE
                 }
+
+                } catch (e: Exception) {
+                    toast(e.toString())
+                }
             }
 
-        } catch (e: Exception) {
-            toast(e.toString())
-        }
+
 
 //        adapter.notifyDataSetChanged()
         // 弹出PopUpWindow
@@ -253,6 +258,51 @@ object DialogUtils {
         }
 
         layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+    }
+
+    fun getConfirmDialog(
+        share: String,
+        price: String,
+        context: Context,
+        view: View,
+        window: Window,
+        confirmListener: View.OnClickListener
+    ) : PopupWindow{
+        val popBind = DialogConfirmUploadWorkBinding.inflate(LayoutInflater.from(context))
+        popBind.share.text = popBind.share.text.toString().plus(share).plus('%')
+        popBind.price.text = popBind.price.text.toString().plus(price).plus("元贝")
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            300.dp,
+            300.dp,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = false
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+
+        }
+        popBind.confirmBtn.setOnClickListener(confirmListener)
+        popBind.cancelBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        popBind.closeBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+        return layerDetailWindow
     }
 
 }

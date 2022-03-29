@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cn.authing.core.types.User
+import cn.copaint.audience.R
 import cn.copaint.audience.databinding.ActivitySettingBinding
 import cn.copaint.audience.utils.AuthingUtils.biography
 import cn.copaint.audience.utils.AuthingUtils.user
@@ -29,7 +30,7 @@ class SettingActivity : AppCompatActivity() {
         val sharedPref = app.getSharedPreferences("Authing", Context.MODE_PRIVATE)
         sharedPref.edit().putString("token", "").apply()
         user = User(arn = "", id = "", userPoolId = "")
-        biography = "这个人没有填简介啊"
+        biography = getText(R.string.un_give_biography).toString()
         toast("退出登录成功")
         startActivity(Intent(this, HomePageActivity::class.java))
     }

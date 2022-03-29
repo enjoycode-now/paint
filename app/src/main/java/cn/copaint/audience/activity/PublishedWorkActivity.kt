@@ -12,12 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
+import cn.copaint.audience.GetRandomTagsQuery
 import cn.copaint.audience.R
 import cn.copaint.audience.adapter.FlowAdapter
+import cn.copaint.audience.apollo.myApolloClient
 import cn.copaint.audience.databinding.ActivityPublishedWorkBinding
 import cn.copaint.audience.databinding.ItemLabelCustomBinding
 import cn.copaint.audience.databinding.ItemSearchRecommendBinding
 import cn.copaint.audience.interfaces.DoubleClickListener
+import cn.copaint.audience.model.RecommendTag
 import cn.copaint.audience.utils.*
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
@@ -28,6 +31,9 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
@@ -36,10 +42,10 @@ import java.io.IOException
 /**
  * 上传作品页
  */
-class PublishedWorkActivity : AppCompatActivity() {
+class PublishedWorkActivity : BaseActivity() {
     lateinit var binding: ActivityPublishedWorkBinding
-    val recommendList =
-        mutableListOf<String>("一号机", "机甲", "绝对领域", "绝对领域剧场初雪", "最终机", "机甲格斗", "AOE", "无限世界拳击")
+    val recommendTagsList =
+        mutableListOf<RecommendTag>()
 
     var workName = ""
     var workIntroduction = ""
@@ -60,7 +66,11 @@ class PublishedWorkActivity : AppCompatActivity() {
         //防止弹出软键盘时将屏幕顶上去
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
+        initView()
+    }
+
+    override fun initView() {
+        getRecommendTagsList()
         binding.uploadCoverImage.setOnClickListener { selectPic() }
         binding.uploadVideo.setOnClickListener { selectVideo() }
         binding.workNameEditText.doAfterTextChanged { text -> workName = text.toString() }
@@ -72,6 +82,34 @@ class PublishedWorkActivity : AppCompatActivity() {
 
     fun onBackPress(view: View) {
         finish()
+    }
+
+    private fun getRecommendTagsList() {
+        recommendTagsList.clear()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = myApolloClient.apolloClient(this@PublishedWorkActivity).query(
+                    GetRandomTagsQuery()
+                ).execute()
+                response.data?.randomTags?.forEach {
+                    recommendTagsList.add(
+                        RecommendTag(
+                            it.id,
+                            it.name,
+                            it.createdAt.toString(),
+                            false
+                        )
+                    )
+                }
+            } catch (e: java.lang.Exception) {
+                toast(e.toString())
+            } finally {
+                runOnUiThread {
+                    binding.recommendRecyclerView.setAdapter(MyFlowAdapter())
+                }
+            }
+        }
+
     }
 
     fun selectPic() {
@@ -146,12 +184,12 @@ class PublishedWorkActivity : AppCompatActivity() {
     }
 
     inner class MyFlowAdapter : FlowAdapter() {
-        override val count: Int = recommendList.size + 1
+        override val count: Int = recommendTagsList.size + 1
 
 
         override fun getView(position: Int, parent: ViewGroup?): View {
             // 新增一个自定义label,位置处于最末尾
-            if (position == recommendList.lastIndex + 1) {
+            if (position == recommendTagsList.lastIndex + 1) {
                 val itemBinding = ItemLabelCustomBinding.inflate(layoutInflater)
                 itemBinding.itemTextview.isSelected = false
                 itemBinding.itemTextview.setOnClickListener(
@@ -211,7 +249,7 @@ class PublishedWorkActivity : AppCompatActivity() {
                 return itemBinding.root
             } else {
                 val itemBinding = ItemSearchRecommendBinding.inflate(layoutInflater)
-                val s: String = recommendList[position]
+                val s: String = recommendTagsList[position].name
                 itemBinding.itemTextview.text = s
                 itemBinding.itemTextview.isSelected = false
                 itemBinding.root.setOnClickListener {
@@ -231,7 +269,7 @@ class PublishedWorkActivity : AppCompatActivity() {
                         )
                     }
                     it.isSelected = !it.isSelected
-                    toast(s)
+                    recommendTagsList[position].isSelected = it.isSelected
                 }
                 return itemBinding.root
             }
@@ -277,7 +315,6 @@ class PublishedWorkActivity : AppCompatActivity() {
         intent.putExtra("workIntroduction", workIntroduction)
         intent.putExtra("coverPicUrl", coverPicUrl)
         intent.putExtra("videoUrl", videoUrl)
-
     }
 
     inner class UploadPicCallBack() : Callback {
@@ -300,7 +337,9 @@ class PublishedWorkActivity : AppCompatActivity() {
             uploadPicStatus = true
             if (uploadVideoStatus){
                 if(progressDialog.isShowing) progressDialog.dismiss()
-                startActivity(intent)
+                val tagsIdList : ArrayList<String> = arrayListOf()
+                recommendTagsList.forEach { tagsIdList.add(it.id) }
+                startActivity(intent.putExtra("tagsIdList",tagsIdList))
             }
         }
     }
@@ -325,7 +364,9 @@ class PublishedWorkActivity : AppCompatActivity() {
             uploadVideoStatus = true
             if (uploadPicStatus){
                 if(progressDialog.isShowing) progressDialog.dismiss()
-                startActivity(intent)
+                val tagsIdList : ArrayList<String> = arrayListOf()
+                recommendTagsList.forEach { tagsIdList.add(it.id) }
+                startActivity(intent.putExtra("tagsIdList",tagsIdList))
             }
         }
 

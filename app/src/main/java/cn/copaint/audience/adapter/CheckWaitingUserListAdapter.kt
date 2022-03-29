@@ -51,7 +51,8 @@ class CheckWaitingUserListAdapter(private val userList: ArrayList<GetAuthingUser
             isFollow: Boolean,
             context: Context
         ) {
-            itemBind.nicikname.text = userinfo.nickname ?: "此用户未命名"
+            itemBind.nicikname.text = userinfo.nickname ?: context.getText(R.string.un_give_name)
+            itemBind.biography.text = userinfo.biography ?: context.getText(R.string.un_give_biography)
             if (userinfo.photo == "" || userinfo.photo?.endsWith("svg") == true) {
                 Glide.with(context).load(R.drawable.avatar_sample).into(itemBind.avatar)
             } else {
