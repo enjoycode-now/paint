@@ -19,6 +19,7 @@ import cn.copaint.audience.type.ProposalStatus
 import cn.copaint.audience.type.ProposalWhereInput
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
+import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import com.luck.picture.lib.thread.PictureThreadUtils.runOnUiThread
@@ -96,6 +97,9 @@ class CommonItemFragment(val parentFragmentName: String, val type: Int) : Fragme
     }
 
     fun askData() {
+        if(parentFragmentName!="MyProposals"||type!=0){
+            toast("该页面的逻辑正在施工...")
+        }
         if (parentFragmentName == "MyProposals") {
             conditionsList.add(
                 ProposalWhereInput(

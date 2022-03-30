@@ -53,8 +53,8 @@ class SquareActivity : BaseActivity() {
         )
         GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
         binding.proposalList.adapter = SquareAppointmentAdapter(this)
-        binding.swipeRefreshLayout.setProgressViewEndTarget(false,100)
-        binding.swipeRefreshLayout.setDistanceToTriggerSync(1280)
+        binding.swipeRefreshLayout.setProgressViewOffset(false, -50, 200)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.proposalList.setListener(this, object : RecyclerListener {
             override fun loadMore() {
