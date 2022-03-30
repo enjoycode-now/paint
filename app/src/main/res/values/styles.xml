@@ -9,5 +9,9 @@
         <item name="android:textSize">@dimen/tablayout_textsize</item>
     </style>
 
+    <style name="TabLayoutSmallTextStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/tab_purple_border_radius_10</item>
+    </style>
 
 </resources>

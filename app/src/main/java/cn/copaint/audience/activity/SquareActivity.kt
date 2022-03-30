@@ -135,7 +135,7 @@ class SquareActivity : BaseActivity() {
 
     fun onMyProposals(view: View) {
         if(AuthingUtils.loginCheck()){
-            DialogUtils.checkMyProposalsDialog(this,binding.root,window)
+            startActivity(Intent(this,MyProposalsActivity::class.java).putExtra("currentUserId",user.id))
         }
     }
 }

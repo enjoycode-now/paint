@@ -48,6 +48,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity
+            android:name=".activity.MyProposalsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.AppointmentDetailsActivity"
             android:exported="false" />
         <activity
@@ -103,6 +106,7 @@
             android:theme="@style/Theme.WhiteBoardWacom.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

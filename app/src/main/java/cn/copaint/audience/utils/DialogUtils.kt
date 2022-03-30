@@ -4,12 +4,10 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.FindIsFollowQuery
 import cn.copaint.audience.GetAuthingUsersInfoQuery
@@ -24,7 +22,6 @@ import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
-import cn.copaint.audience.viewmodel.MyProposalsDialogViewModel
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
@@ -309,43 +306,6 @@ object DialogUtils {
         }
         return layerDetailWindow
     }
-
-    // 我的约稿
-    fun checkMyProposalsDialog(activity: SquareActivity, view: View, window: Window): PopupWindow {
-
-        val popBind = DialogMyProposalsBinding.inflate(LayoutInflater.from(activity))
-//        val fragment = MyProposalsFragment()
-
-
-//        adapter.notifyDataSetChanged()
-        // 弹出PopUpWindow
-        val layerDetailWindow = PopupWindow(
-            popBind.root,
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            true
-        )
-        layerDetailWindow.isOutsideTouchable = true
-        // 设置弹窗时背景变暗
-        var layoutParams = window.attributes
-        layoutParams.alpha = 0.4f // 设置透明度
-        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        window.attributes = layoutParams
-
-        // 弹窗消失时背景恢复
-        layerDetailWindow.setOnDismissListener {
-            layoutParams = window.attributes
-            layoutParams.alpha = 1f
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            window.attributes = layoutParams
-        }
-        popBind.dismissBtn.setOnClickListener {
-            layerDetailWindow.dismiss()
-        }
-        layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
-        return layerDetailWindow
-    }
-
 
     // 定向约稿弹窗
     fun selectPainterDialog(currentId: String, activity:PublishRequirementActivity, window: Window,confirmListener: View.OnClickListener) : PopupWindow{
