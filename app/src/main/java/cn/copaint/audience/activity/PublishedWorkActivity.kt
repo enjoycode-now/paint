@@ -294,10 +294,10 @@ class PublishedWorkActivity : BaseActivity() {
             toast("请选择作画视频")
             return
         }
-        if (!AuthingUtils.loginCheck()){
+        if (!AuthingUtils.loginCheck()) {
             toast("发布作品前，请先登录")
         }
-        progressDialog = DialogUtils.getLoadingDialog(this,false,"文件上传中，请稍候...");
+        progressDialog = DialogUtils.getLoadingDialog(this, false, "文件上传中，请稍候...");
         progressDialog.show()
         progressDialog.setCanceledOnTouchOutside(false)
         uploadPicStatus = false
@@ -319,15 +319,15 @@ class PublishedWorkActivity : BaseActivity() {
 
     inner class UploadPicCallBack() : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Log.e("PublishedWorkActivity", e.toString())
-//            toastNetError()
-            toast(e.toString())
             uploadPicStatus = false
+            Log.e("PublishedWorkActivity", e.toString())
+            toast(e.toString())
         }
 
         override fun onResponse(call: Call, response: Response) {
             val str = try {
-                JSONObject(response.body?.string()?:"").takeIf { !it.isNull("key") }?.getString("key")
+                JSONObject(response.body?.string() ?: "").takeIf { !it.isNull("key") }
+                    ?.getString("key")
             } catch (e: Exception) {
                 toast(e.toString())
                 return
@@ -336,11 +336,11 @@ class PublishedWorkActivity : BaseActivity() {
             intent.putExtra("coverPicUrlKey", str)
             toast("图片上传成功")
             uploadPicStatus = true
-            if (uploadVideoStatus){
-                if(progressDialog.isShowing) progressDialog.dismiss()
-                val tagsIdList : ArrayList<String> = arrayListOf()
-                recommendTagsList.forEach { tagsIdList.add(it.id) }
-                startActivity(intent.putExtra("tagsIdList",tagsIdList))
+            if (uploadVideoStatus) {
+                if (progressDialog.isShowing) progressDialog.dismiss()
+                val tagsIdList: ArrayList<String> = arrayListOf()
+                recommendTagsList.forEach { if (it.isSelected) tagsIdList.add(it.id) }
+                startActivity(intent.putExtra("tagsIdList", tagsIdList))
             }
         }
     }
@@ -348,9 +348,9 @@ class PublishedWorkActivity : BaseActivity() {
 
     inner class UploadVideoCallBack() : Callback {
         override fun onFailure(call: Call, e: IOException) {
+            uploadVideoStatus = false
             Log.e("PublishedWorkActivity", e.toString())
             toast(e.toString())
-            uploadVideoStatus = false
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -363,11 +363,11 @@ class PublishedWorkActivity : BaseActivity() {
             intent.putExtra("videoUrlKey", str)
             toast("视频上传成功")
             uploadVideoStatus = true
-            if (uploadPicStatus){
-                if(progressDialog.isShowing) progressDialog.dismiss()
-                val tagsIdList : ArrayList<String> = arrayListOf()
-                recommendTagsList.forEach { tagsIdList.add(it.id) }
-                startActivity(intent.putExtra("tagsIdList",tagsIdList))
+            if (uploadPicStatus) {
+                if (progressDialog.isShowing) progressDialog.dismiss()
+                val tagsIdList: ArrayList<String> = arrayListOf()
+                recommendTagsList.forEach { if (it.isSelected) tagsIdList.add(it.id) }
+                startActivity(intent.putExtra("tagsIdList", tagsIdList))
             }
         }
 

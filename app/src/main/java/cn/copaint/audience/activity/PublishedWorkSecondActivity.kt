@@ -75,7 +75,6 @@ class PublishedWorkSecondActivity : BaseActivity() {
                 else -> {}
             }
         }
-        bind.priceEditText.filters = arrayOf(MoneyInputFilter)
     }
 
     fun onMinusReleaseShareNum(view: View) {

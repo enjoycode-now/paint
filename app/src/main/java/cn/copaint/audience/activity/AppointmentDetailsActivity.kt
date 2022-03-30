@@ -56,8 +56,8 @@ class AppointmentDetailsActivity : BaseActivity() {
             LinearLayoutManager.VERTICAL, false
         )
         binding.picRecyclerview.adapter = VericalLinearPhotoAdapter(this)
-        binding.swipeRefreshLayout.setProgressViewOffset(true, -100, 100)
-        binding.swipeRefreshLayout.setDistanceToTriggerSync(100)
+        binding.swipeRefreshLayout.setProgressViewOffset(false, -50, 200)
+        binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.swipeRefreshLayout.setOnRefreshListener {
             appointmentDetailsViewModel.askData()

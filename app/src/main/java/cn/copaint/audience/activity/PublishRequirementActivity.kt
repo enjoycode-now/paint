@@ -1,8 +1,16 @@
 package cn.copaint.audience.activity
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,9 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
+import cn.copaint.audience.GetAuthingUsersInfoQuery
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.GridImageAdapter
 import cn.copaint.audience.databinding.ActivityPublishRequirementBinding
 import cn.copaint.audience.type.ProposalType
+import cn.copaint.audience.utils.AuthingUtils.user
 import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.FileUploadUtils.uploadPic
 import cn.copaint.audience.utils.GlideEngine
@@ -49,6 +60,7 @@ class PublishRequirementActivity : AppCompatActivity() {
     lateinit var launcherResult: ActivityResultLauncher<Intent>
     var proposalTitle:String= ""
     var proposalDescription :String = ""
+    var selectedPaintUserInfo :GetAuthingUsersInfoQuery.AuthingUsersInfo? = null
     var requirementType = "" //需求类型
     var dealLine = Optional.presentIfNotNull(Date())  // 截稿日期
     var workStyle: String = "机甲风" // 作品风格
@@ -77,7 +89,10 @@ class PublishRequirementActivity : AppCompatActivity() {
 
         binding.proposalTitle.doAfterTextChanged { text -> proposalTitle = text.toString() }
         binding.proposalDescription.doAfterTextChanged { text -> proposalDescription = text.toString() }
-
+        binding.selectPainter.setOnClickListener {
+            val dialog = DialogUtils.selectPainterDialog(user.id,this,window, confirmListener = myConfirmListener())
+            dialog.showAtLocation(binding.root,Gravity.BOTTOM,0,0)
+        }
         mAdapter.setOnItemClickListener(object : GridImageAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 // 预览图片、视频、音频
@@ -258,6 +273,7 @@ class PublishRequirementActivity : AppCompatActivity() {
                     intent.putExtra("example",example)
                     intent.putExtra("proposalTitle",proposalTitle)
                     intent.putExtra("proposalDescription",proposalDescription)
+                    intent.putExtra("invitedPainterId",selectedPaintUserInfo?.id)
                     startActivity(intent)
                 }
             }else{
@@ -271,5 +287,22 @@ class PublishRequirementActivity : AppCompatActivity() {
         toast("缺少后端接口，请忽略此按钮的交互逻辑")
     }
 
+
+    inner class myConfirmListener: View.OnClickListener{
+        override fun onClick(v: View?) {
+            selectedPaintUserInfo?.let { it ->
+                val str  = resources.getText(R.string.un_give_name)
+                val spanStr = SpannableString(str)
+                spanStr.setSpan(ForegroundColorSpan(Color.parseColor("#939393")),0,str.length,Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                spanStr.setSpan(StyleSpan(Typeface.NORMAL),0,str.length,Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                binding.explainText1.text = it.nickname ?:spanStr
+                it.photo?.let {
+                    it2->GlideEngine.loadImage(this@PublishRequirementActivity,
+                        it2,binding.circleImageView)
+                }
+            }
+        }
+
+    }
 
 }

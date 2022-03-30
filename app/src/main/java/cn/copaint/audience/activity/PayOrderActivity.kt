@@ -113,6 +113,7 @@ class PayOrderActivity : AppCompatActivity() {
         val proposalTitle = intent.getStringExtra("proposalTitle") ?: ""
         val proposalDescription = intent.getStringExtra("proposalDescription") ?: ""
         val example = intent.getStringArrayListExtra("example")
+        val invitedPainterId = intent.getStringExtra("invitedPainterId")
 
         val job = CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -126,7 +127,7 @@ class PayOrderActivity : AppCompatActivity() {
                             size = "1920x1080",
                             balance = perPrice,
                             stock = stock,
-                            inviteUserID = Optional.Absent
+                            inviteUserID = Optional.presentIfNotNull(invitedPainterId)
                         ),
                         AttachmentKeysInput(Optional.presentIfNotNull(example)),
                         expiredAt = "2022-10-01" // 记住一定要是yyyy-MM-dd

@@ -40,7 +40,8 @@ class SquareViewModel : BaseViewModel() {
                         where = Optional.presentIfNotNull(
                             ProposalWhereInput(
                                 expiredAtGT = Optional.presentIfNotNull(currentRcfDateStr),
-                                proposalType = Optional.presentIfNotNull(ProposalType.PUBLIC)
+                                proposalType = Optional.presentIfNotNull(ProposalType.PUBLIC),
+                                inviteUserID = Optional.presentIfNotNull(null)
                             )
                         )
                     )

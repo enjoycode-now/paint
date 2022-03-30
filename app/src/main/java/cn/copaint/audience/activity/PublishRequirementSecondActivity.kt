@@ -58,7 +58,6 @@ class PublishRequirementSecondActivity : AppCompatActivity() {
             }
         }
 
-        bind.priceEditText.filters = arrayOf(MoneyInputFilter)
     }
 
 

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
@@ -12,9 +13,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.FindIsFollowQuery
 import cn.copaint.audience.GetAuthingUsersInfoQuery
+import cn.copaint.audience.GetFollowersListQuery
 import cn.copaint.audience.activity.*
 import cn.copaint.audience.adapter.CheckWaitingUserListAdapter
+import cn.copaint.audience.adapter.SelectPainterAdapter
 import cn.copaint.audience.apollo.myApolloClient
+import cn.copaint.audience.apollo.myApolloClient.apolloClient
 import cn.copaint.audience.databinding.*
 import cn.copaint.audience.type.FollowerWhereInput
 import cn.copaint.audience.utils.AuthingUtils.user
@@ -22,6 +26,7 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.viewmodel.MyProposalsDialogViewModel
 import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.exception.ApolloException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -110,7 +115,7 @@ object DialogUtils {
     }
 
     // 自定义输入充值金额弹窗
-    fun onMoneyInputDialog(view: View,activity: PayActivity){
+    fun onMoneyInputDialog(view: View, activity: PayActivity) {
         val popBind = DialogPayInputCustomNumBinding.inflate(LayoutInflater.from(activity))
 
         // 弹出PopUpWindow
@@ -138,7 +143,7 @@ object DialogUtils {
         }
         layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
         popBind.moneyEditText.filters = arrayOf(MoneyInputFilter)
-        popBind.tv.setOnClickListener{
+        popBind.tv.setOnClickListener {
             popBind.moneyEditText.requestFocus()
         }
         popBind.submitBtn.setOnClickListener {
@@ -149,13 +154,14 @@ object DialogUtils {
                 activity.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 activity.window.attributes = layoutParams
             }
-            activity.payViewModel.currentNum.value = popBind.moneyEditText.text.toString().toDouble()
+            activity.payViewModel.currentNum.value =
+                popBind.moneyEditText.text.toString().toDouble()
             layerDetailWindow.dismiss()
         }
     }
 
     // 分享内容弹窗
-    fun popupShareDialog(context: Context,view: View,window: Window) {
+    fun popupShareDialog(context: Context, view: View, window: Window) {
         val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(context))
         // 弹出PopUpWindow
         val layerDetailWindow = PopupWindow(
@@ -184,17 +190,23 @@ object DialogUtils {
     }
 
     // 查看应征画师列表弹窗
-    fun checkWaitingUserListDialog(userIdList: ArrayList<String>,context: Context,view: View,window: Window){
-        val tempList = ArrayList< GetAuthingUsersInfoQuery.AuthingUsersInfo>()
+    fun checkWaitingUserListDialog(
+        userIdList: ArrayList<String>,
+        context: Context,
+        view: View,
+        window: Window
+    ) {
+        val tempList = ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>()
         val isFollowList = ArrayList<Boolean>()
 
         val popBind = DialogCheckWaitingUserListBinding.inflate(LayoutInflater.from(context))
         popBind.recycler.layoutManager = LinearLayoutManager(context)
-        val adapter = CheckWaitingUserListAdapter(userList = tempList, isFollowList = isFollowList,context)
+        val adapter =
+            CheckWaitingUserListAdapter(userList = tempList, isFollowList = isFollowList, context)
         popBind.recycler.adapter = adapter
 
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
                 myApolloClient.apolloClient(app)
                     .query(GetAuthingUsersInfoQuery(userIdList))
                     .execute().data?.authingUsersInfo?.forEach {
@@ -222,10 +234,10 @@ object DialogUtils {
                     popBind.progressBar.visibility = View.GONE
                 }
 
-                } catch (e: Exception) {
-                    toast(e.toString())
-                }
+            } catch (e: Exception) {
+                toast(e.toString())
             }
+        }
 
 //        adapter.notifyDataSetChanged()
         // 弹出PopUpWindow
@@ -261,7 +273,7 @@ object DialogUtils {
         context: Context,
         window: Window,
         confirmListener: View.OnClickListener
-    ) : PopupWindow{
+    ): PopupWindow {
         val popBind = DialogConfirmUploadWorkBinding.inflate(LayoutInflater.from(context))
         popBind.share.text = popBind.share.text.toString().plus(share).plus('%')
         popBind.price.text = popBind.price.text.toString().plus(price).plus("元贝")
@@ -289,17 +301,17 @@ object DialogUtils {
 
         }
         popBind.confirmBtn.setOnClickListener(confirmListener)
-        popBind.cancelBtn.setOnClickListener{
+        popBind.cancelBtn.setOnClickListener {
             layerDetailWindow.dismiss()
         }
-        popBind.closeBtn.setOnClickListener{
+        popBind.closeBtn.setOnClickListener {
             layerDetailWindow.dismiss()
         }
         return layerDetailWindow
     }
 
     // 我的约稿
-    fun checkMyProposalsDialog(activity: SquareActivity,view: View,window: Window):PopupWindow{
+    fun checkMyProposalsDialog(activity: SquareActivity, view: View, window: Window): PopupWindow {
 
         val popBind = DialogMyProposalsBinding.inflate(LayoutInflater.from(activity))
 //        val fragment = MyProposalsFragment()
@@ -327,10 +339,142 @@ object DialogUtils {
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             window.attributes = layoutParams
         }
-        popBind.dismissBtn.setOnClickListener{
+        popBind.dismissBtn.setOnClickListener {
             layerDetailWindow.dismiss()
         }
         layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
+        return layerDetailWindow
+    }
+
+
+    // 定向约稿弹窗
+    fun selectPainterDialog(currentId: String, activity:PublishRequirementActivity, window: Window,confirmListener: View.OnClickListener) : PopupWindow{
+        val tempList = ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>()
+        val popBind = DialogSelectPainterBinding.inflate(LayoutInflater.from(activity ))
+        popBind.recycler.layoutManager = LinearLayoutManager(activity)
+        val adapter =
+            SelectPainterAdapter(userList = tempList,activity)
+        popBind.recycler.adapter = adapter
+        popBind.swipeRefreshLayout.isRefreshing = true
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = try {
+                apolloClient(app).query(
+                    GetFollowersListQuery(
+                        where = Optional.presentIfNotNull(
+                            FollowerWhereInput(
+                                followerID = Optional.presentIfNotNull(
+                                    currentId
+                                )
+                            )
+                        )
+                    )
+                )
+                    .execute().data
+            } catch (e: ApolloException) {
+                toast(e.toString())
+                return@launch
+            } catch (e: java.lang.Exception) {
+                toast(e.toString())
+                return@launch
+            }
+            // 获取全部粉丝的userid
+            val userIdList = mutableListOf<String>()
+            response?.followers?.edges?.forEach {
+                it?.node?.userID?.let { userId -> userIdList.add(userId) }
+            }
+            // 根据列表获取每一个粉丝的个人信息，然后添加到List去，最后notifyChange
+            try {
+                tempList.clear()
+                apolloClient(app)
+                    .query(GetAuthingUsersInfoQuery(userIdList))
+                    .execute().data?.authingUsersInfo?.let {
+                        tempList.addAll(it)
+                    }
+            } catch (e: java.lang.Exception) {
+                toast(e.toString())
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                adapter.notifyDataSetChanged()
+                popBind.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+        popBind.swipeRefreshLayout.setOnRefreshListener{
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = try {
+                    apolloClient(app).query(
+                        GetFollowersListQuery(
+                            where = Optional.presentIfNotNull(
+                                FollowerWhereInput(
+                                    followerID = Optional.presentIfNotNull(
+                                        currentId
+                                    )
+                                )
+                            )
+                        )
+                    )
+                        .execute().data
+                } catch (e: ApolloException) {
+                    toast(e.toString())
+                    return@launch
+                } catch (e: java.lang.Exception) {
+                    toast(e.toString())
+                    return@launch
+                }
+                // 获取全部粉丝的userid
+                val userIdList = mutableListOf<String>()
+                response?.followers?.edges?.forEach {
+                    it?.node?.userID?.let { userId -> userIdList.add(userId) }
+                }
+                // 根据列表获取每一个粉丝的个人信息，然后添加到List去，最后notifyChange
+                try {
+                    tempList.clear()
+                    apolloClient(app)
+                        .query(GetAuthingUsersInfoQuery(userIdList))
+                        .execute().data?.authingUsersInfo?.let {
+                            tempList.addAll(it)
+                        }
+                } catch (e: java.lang.Exception) {
+                    toast(e.toString())
+                }
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.notifyDataSetChanged()
+                    popBind.swipeRefreshLayout.isRefreshing = false
+                }
+            }
+        }
+
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            true
+        )
+        layerDetailWindow.isOutsideTouchable = true
+        popBind.dismissBtn.setOnClickListener{
+            layerDetailWindow.dismiss()
+        }
+        popBind.submitBtn.setOnClickListener {
+            layerDetailWindow.dismiss()
+            adapter.selectedPainter?.let {
+                activity.selectedPaintUserInfo = adapter.selectedPainter!!
+                confirmListener.onClick(activity.binding.root)
+            }
+        }
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
         return layerDetailWindow
     }
 
