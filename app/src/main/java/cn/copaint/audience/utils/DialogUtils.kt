@@ -8,10 +8,12 @@ import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.copaint.audience.FindIsFollowQuery
 import cn.copaint.audience.GetAuthingUsersInfoQuery
 import cn.copaint.audience.GetFollowersListQuery
+import cn.copaint.audience.R
 import cn.copaint.audience.activity.*
 import cn.copaint.audience.adapter.CheckWaitingUserListAdapter
 import cn.copaint.audience.adapter.SelectPainterAdapter
@@ -24,9 +26,11 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.exception.ApolloException
+import com.google.common.io.Resources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.annotation.Resource
 
 
 object DialogUtils {
@@ -100,6 +104,7 @@ object DialogUtils {
             layerDetailWindow.dismiss()
         }
         popBind.publishRequirementBtn.setOnClickListener {
+            if (AuthingUtils.loginCheck())
             activity.startActivity(Intent(activity, PublishRequirementActivity::class.java))
             layerDetailWindow.dismiss()
         }
@@ -204,13 +209,13 @@ object DialogUtils {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                myApolloClient.apolloClient(app)
+                apolloClient(app)
                     .query(GetAuthingUsersInfoQuery(userIdList))
                     .execute().data?.authingUsersInfo?.forEach {
                         tempList.add(it)
                     }
                 tempList.forEach {
-                    val followResponse = myApolloClient.apolloClient(ToastUtils.app).query(
+                    val followResponse = apolloClient(app).query(
                         FindIsFollowQuery(
                             where = Optional.presentIfNotNull(
                                 FollowerWhereInput(
@@ -240,8 +245,8 @@ object DialogUtils {
         // 弹出PopUpWindow
         val layerDetailWindow = PopupWindow(
             popBind.root,
-            300.dp,
-            300.dp,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             true
         )
         layerDetailWindow.isOutsideTouchable = true

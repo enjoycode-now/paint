@@ -18,8 +18,7 @@ object swipeRefreshListener {
             val swipeRefreshLayout = this@setListener.parent
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                lastVisibleItem =
-                    (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                lastVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -41,7 +40,7 @@ object swipeRefreshListener {
                 // 在滚动空闲时
                 else{
                     // 还没浏览的item数量不到10个时，开启协程静默加载新数据
-                    if (lastVisibleItem + 10 >= recyclerView.adapter?.itemCount ?: Int.MAX_VALUE) {
+                    if ( lastVisibleItem + 10 >= recyclerView.adapter?.itemCount ?: Int.MAX_VALUE) {
                         //下拉刷新的时候不可以加载更多
                         if (swipeRefreshLayout is SwipeRefreshLayout) {
                             if (!swipeRefreshLayout.isRefreshing) {

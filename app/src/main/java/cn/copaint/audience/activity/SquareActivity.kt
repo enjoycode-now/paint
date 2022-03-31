@@ -64,6 +64,7 @@ class SquareActivity : BaseActivity() {
         binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
         binding.swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#B5A0FD"))
         binding.proposalList.setListener(this, object : RecyclerListener {
+
             override fun loadMore() {
                 if (squareViewModel.hasNextPage) {
                     toast("加载更多...")
@@ -103,7 +104,6 @@ class SquareActivity : BaseActivity() {
         if (System.currentTimeMillis() - lastReloadTimeMillis > dataExpiredTimeMillis) {
             squareViewModel.cursor = null
             binding.animationView.visibility = View.VISIBLE
-            binding.swipeRefreshLayout.isRefreshing = true
             squareViewModel.askProposalsInfo(RELOAD)
             lastReloadTimeMillis = System.currentTimeMillis()
         }
