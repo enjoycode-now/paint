@@ -14,4 +14,13 @@
         <item name="android:background">@drawable/tab_purple_border_radius_10</item>
     </style>
 
+    <style name="popupWindowStyle">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+
+    <style name="popupWindowStyle2">
+        <item name="android:windowEnterAnimation">@anim/popup_show2</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide2</item>
+    </style>
 </resources>

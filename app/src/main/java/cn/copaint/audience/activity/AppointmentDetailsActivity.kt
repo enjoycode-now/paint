@@ -105,10 +105,11 @@ class AppointmentDetailsActivity : BaseActivity() {
                 appointmentDetailsViewModel.askData()
             }
             "需求变更" ->{
+                toast("需求变更的具体逻辑还在施工...")
                 startActivity(Intent(this,PublishRequirementActivity::class.java))
             }
             "取消应征" ->{
-                toast("取消应征目前没有接口")
+                toast("取消应征目前没有接口,请耐心等待...")
             }
             else ->{}
         }

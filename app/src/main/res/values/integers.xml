@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="dialog_animation_default_duration">1000</integer>
+    <integer name="dialog_animation_duration_500">500</integer>
+    <integer name="dialog_animation_duration_700">700</integer>
+    <integer name="dialog_animation_duration_300">300</integer>
+</resources>

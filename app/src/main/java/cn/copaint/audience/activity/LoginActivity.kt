@@ -3,11 +3,14 @@ package cn.copaint.audience.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import cn.copaint.audience.databinding.ActivityLoginBinding
 import cn.copaint.audience.utils.AuthingUtils.authenticationClient
+import cn.copaint.audience.utils.DialogUtils
 import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import com.bugsnag.android.Bugsnag
@@ -22,6 +25,7 @@ import java.io.IOException
 class LoginActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityLoginBinding
+    var dialog: PopupWindow? = null
     private var phoneNumber = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,14 +48,14 @@ class LoginActivity : AppCompatActivity() {
         binding.phoneText.doAfterTextChanged {
             phoneNumber = binding.phoneText.text.toString()
             binding.submitButton.setColorFilter(
-                if (isPhoneNumber(it.toString()))Color.rgb(181, 160, 255)
+                if (isPhoneNumber(it.toString())) Color.rgb(181, 160, 255)
                 else Color.rgb(228, 220, 252)
             )
         }
     }
 
     fun onSubmit(view: View) {
-        if (!isPhoneNumber(phoneNumber))toast("请输入正确的手机号")
+        if (!isPhoneNumber(phoneNumber)) toast("请输入正确的手机号")
         else if (!binding.checkbox.isChecked) toast("请同意《用户协议》《隐私政策》")
         else {
             val intent = Intent(this, VerificationCodeActivity::class.java)
@@ -91,4 +95,21 @@ class LoginActivity : AppCompatActivity() {
         for (i in str) if (i !in '0'..'9') return false
         return true
     }
+    fun onUserAgreementDialog(view: View) {
+        if (dialog?.isShowing == true) {
+            return
+        }
+        dialog = DialogUtils.userAgreementDialog(this, window)
+        dialog?.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+    }
+    fun onPrivacyPolicyDialog(view: View) {
+        if (dialog?.isShowing == true) {
+            return
+        }
+        dialog = DialogUtils.privacyPolicyDialog(this, window)
+        dialog?.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+    }
+
+
+
 }

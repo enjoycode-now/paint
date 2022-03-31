@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.text.Html
+import android.text.Html.FROM_HTML_MODE_COMPACT
 import android.view.*
 import android.widget.PopupWindow
 import android.widget.ProgressBar
@@ -75,7 +77,6 @@ object DialogUtils {
     }
 
     /**
-     *
      * @param view activity的root view
      * @param activity 当前活动
      * @return
@@ -116,7 +117,9 @@ object DialogUtils {
         }
     }
 
-    // 自定义输入充值金额弹窗
+    /**
+     * 自定义输入充值金额弹窗
+     */
     fun onMoneyInputDialog(view: View, activity: PayActivity) {
         val popBind = DialogPayInputCustomNumBinding.inflate(LayoutInflater.from(activity))
 
@@ -162,7 +165,10 @@ object DialogUtils {
         }
     }
 
-    // 分享内容弹窗
+
+    /**
+     * 分享内容弹窗
+     */
     fun popupShareDialog(context: Context, view: View, window: Window) {
         val popBind = DialogSharepageMoreBinding.inflate(LayoutInflater.from(context))
         // 弹出PopUpWindow
@@ -191,7 +197,9 @@ object DialogUtils {
         layerDetailWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0)
     }
 
-    // 查看应征画师列表弹窗
+    /**
+     * 查看应征画师列表弹窗
+     */
     fun checkWaitingUserListDialog(
         userIdList: ArrayList<String>,
         context: Context,
@@ -268,7 +276,9 @@ object DialogUtils {
         layerDetailWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
     }
 
-    // 用户确认上传弹窗
+    /**
+     * 用户确认上传弹窗
+     */
     fun getConfirmDialog(
         share: String,
         price: String,
@@ -312,7 +322,9 @@ object DialogUtils {
         return layerDetailWindow
     }
 
-    // 定向约稿弹窗
+    /**
+     * 定向约稿弹窗,选择约稿画师
+     */
     fun selectPainterDialog(currentId: String, activity:PublishRequirementActivity, window: Window,confirmListener: View.OnClickListener) : PopupWindow{
         val tempList = ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>()
         val popBind = DialogSelectPainterBinding.inflate(LayoutInflater.from(activity ))
@@ -428,10 +440,80 @@ object DialogUtils {
         }
         // 设置弹窗时背景变暗
         var layoutParams = window.attributes
+        layerDetailWindow.animationStyle = R.style.popupWindowStyle2
         layoutParams.alpha = 0.4f // 设置透明度
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         window.attributes = layoutParams
 
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        return layerDetailWindow
+    }
+
+    /**
+     * 用户协议弹窗
+     */
+    fun userAgreementDialog(context: Context, window: Window) : PopupWindow{
+        val popBind = DialogUserAgreementBinding.inflate(LayoutInflater.from(context))
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            (ScreenUtils.getScreenPoint(context).x * 0.9).toInt(),
+            (ScreenUtils.getScreenPoint(context).y * 0.8).toInt(),
+            true
+        )
+        layerDetailWindow.animationStyle = R.style.popupWindowStyle
+        layerDetailWindow.isOutsideTouchable = true
+
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        popBind.closeBtn.setOnClickListener {
+            layerDetailWindow.dismiss()
+        }
+        // 弹窗消失时背景恢复
+        layerDetailWindow.setOnDismissListener {
+            layoutParams = window.attributes
+            layoutParams.alpha = 1f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+        }
+
+        return layerDetailWindow
+    }
+
+    /**
+     * 隐私政策弹窗
+     */
+    fun privacyPolicyDialog(context: Context, window: Window) : PopupWindow{
+        val popBind = DialogPrivacyPolocyBinding.inflate(LayoutInflater.from(context))
+        // 弹出PopUpWindow
+        val layerDetailWindow = PopupWindow(
+            popBind.root,
+            (ScreenUtils.getScreenPoint(context).x * 0.9).toInt(),
+            (ScreenUtils.getScreenPoint(context).y * 0.8).toInt(),
+            true
+        )
+        layerDetailWindow.animationStyle = R.style.popupWindowStyle
+        layerDetailWindow.isOutsideTouchable = true
+        // 设置弹窗时背景变暗
+        var layoutParams = window.attributes
+        layoutParams.alpha = 0.4f // 设置透明度
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+
+        popBind.closeBtn.setOnClickListener {
+            layerDetailWindow.dismiss()
+        }
         // 弹窗消失时背景恢复
         layerDetailWindow.setOnDismissListener {
             layoutParams = window.attributes
