@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class SelectPainterAdapter(private val userList: ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>, val activity: PublishRequirementActivity) :
+class SelectPainterAdapter(private val userList: ArrayList<GetAuthingUsersInfoQuery.AuthingUsersInfo>, val activity: PublishRequirementActivity,val view:View) :
     RecyclerView.Adapter<SelectPainterAdapter.ViewHolder>() {
     var selectedPainter :GetAuthingUsersInfoQuery.AuthingUsersInfo? = activity.selectedPaintUserInfo
 
@@ -57,10 +57,12 @@ class SelectPainterAdapter(private val userList: ArrayList<GetAuthingUsersInfoQu
             itemBind.radioBtn.setOnClickListener {
                 selectedPainter = userinfo
                 notifyDataSetChanged()
+                view.isEnabled = true
             }
             itemBind.root.setOnClickListener {
                 selectedPainter = userinfo
                 notifyDataSetChanged()
+                view.isEnabled = true
             }
         }
     }

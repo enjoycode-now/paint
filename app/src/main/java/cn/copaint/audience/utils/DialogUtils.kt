@@ -313,7 +313,7 @@ object DialogUtils {
         val popBind = DialogSelectPainterBinding.inflate(LayoutInflater.from(activity ))
         popBind.recycler.layoutManager = LinearLayoutManager(activity)
         val adapter =
-            SelectPainterAdapter(userList = tempList,activity)
+            SelectPainterAdapter(userList = tempList,activity,popBind.submitBtn)
         popBind.recycler.adapter = adapter
         popBind.swipeRefreshLayout.isRefreshing = true
         CoroutineScope(Dispatchers.IO).launch {
