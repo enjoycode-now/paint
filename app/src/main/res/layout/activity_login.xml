@@ -11,21 +11,21 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         app:layout_constraintBottom_toTopOf="@+id/phoneNumberCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.502"
+
         app:srcCompat="@drawable/ic_round_white"
         tools:ignore="ContentDescription,PxUsage" />
-
     <androidx.cardview.widget.CardView
         android:id="@+id/phoneNumberCard"
         android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_height="54dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +60,7 @@
                 android:background="@null"
                 android:hint="@string/please_input_phone_number"
                 android:inputType="phone"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/submitButton"
                 app:layout_constraintStart_toEndOf="@+id/im_login_left"
@@ -96,7 +96,7 @@
         android:layout_marginTop="48dp"
         android:src="@drawable/ic_select_nor"
         android:text="@string/readAndAgree"
-        android:textSize="16dp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/text2"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +110,7 @@
         android:gravity="center_vertical"
         android:text="@string/userAgreementAndPrivacyPolicy"
         android:textColor="#17A1EC"
-        android:textSize="16dp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/checkbox"

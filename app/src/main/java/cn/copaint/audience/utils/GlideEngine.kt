@@ -132,6 +132,25 @@ object GlideEngine: ImageEngine {
             .into(imageView)
     }
 
+    /**
+     * 加载本地图片资源
+     *
+     * @param context   上下文
+     * @param resourceId id
+     * @param imageView 承载图片ImageView
+     */
+    fun loadResourceId(context: Context, resourceId: Int, imageView: ImageView) {
+        if (!ActivityCompatHelper.assertValidRequest(context)) {
+            return
+        }
+        Glide.with(context)
+            .load(resourceId)
+            .override(200, 200)
+            .centerCrop()
+            .placeholder(R.drawable.ps_image_placeholder)
+            .into(imageView)
+    }
+
     override fun pauseRequests(context: Context?) {
         if (context != null) {
             Glide.with(context).pauseRequests()

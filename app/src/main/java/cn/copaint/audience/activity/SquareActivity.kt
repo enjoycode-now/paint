@@ -7,6 +7,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.copaint.audience.R
 import cn.copaint.audience.adapter.SquareAppointmentAdapter
 import cn.copaint.audience.databinding.ActivitySquareBinding
 import cn.copaint.audience.interfaces.RecyclerListener
@@ -18,6 +19,7 @@ import cn.copaint.audience.utils.ToastUtils.app
 import cn.copaint.audience.utils.ToastUtils.toast
 import cn.copaint.audience.viewmodel.SquareViewModel
 import com.bugsnag.android.Bugsnag
+import com.bumptech.glide.Glide
 import kotlin.collections.ArrayList
 
 class SquareActivity : BaseActivity() {
@@ -51,7 +53,12 @@ class SquareActivity : BaseActivity() {
             this,
             LinearLayoutManager.VERTICAL, false
         )
-        GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
+        if (user.id != ""){
+            GlideEngine.loadGridImage(this, user.photo ?: "", binding.userAvatar)
+        }else{
+            GlideEngine.loadResourceId(this, R.drawable.ic_person, binding.userAvatar)
+        }
+
         binding.proposalList.adapter = SquareAppointmentAdapter(this)
         binding.swipeRefreshLayout.setProgressViewOffset(false, -50, 200)
         binding.swipeRefreshLayout.setDistanceToTriggerSync(1000)
@@ -96,6 +103,7 @@ class SquareActivity : BaseActivity() {
         if (System.currentTimeMillis() - lastReloadTimeMillis > dataExpiredTimeMillis) {
             squareViewModel.cursor = null
             binding.animationView.visibility = View.VISIBLE
+            binding.swipeRefreshLayout.isRefreshing = true
             squareViewModel.askProposalsInfo(RELOAD)
             lastReloadTimeMillis = System.currentTimeMillis()
         }

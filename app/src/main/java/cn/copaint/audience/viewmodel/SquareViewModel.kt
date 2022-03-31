@@ -41,7 +41,7 @@ class SquareViewModel : BaseViewModel() {
                             ProposalWhereInput(
                                 expiredAtGT = Optional.presentIfNotNull(currentRcfDateStr),
                                 proposalType = Optional.presentIfNotNull(ProposalType.PUBLIC),
-                                inviteUserID = Optional.presentIfNotNull(null)
+                                inviteUserID = Optional.Absent
                             )
                         )
                     )
@@ -67,7 +67,7 @@ class SquareViewModel : BaseViewModel() {
                         return@let Proposal(
                             it.node?.id,
                             it.node?.title,
-                            it.node?.description,
+                            it.node?.description?.substring(0,if(it.node.description.length >60) 60 else it.node.description.length ),
                             it.node?.colorModel,
                             it.node?.expiredAt.toString(),
                             it.node?.createdAt.toString(),

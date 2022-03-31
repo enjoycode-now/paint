@@ -56,7 +56,7 @@
     <string name="search">search</string>
     <string name="homePage">首页</string>
     <string name="userPage">我的</string>
-    <string name="please_input_phone_number">请输入手机号</string>
+    <string name="please_input_phone_number"><font size="15">请输入手机号</font></string>
     <string name="readAndAgree">已阅读并同意</string>
     <string name="userAgreementAndPrivacyPolicy">《用户协议》《隐私政策》</string>
     <string name="buyYuanBei">购买元贝</string>
@@ -100,4 +100,5 @@
     <string name="loading">loading...</string>
     <string name="follow">关注</string>
     <string name="version_code">v0.0.1</string>
+
 </resources>
