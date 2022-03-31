@@ -35,11 +35,9 @@
                 app:tint="#999999" />
 
             <View
-                android:layout_width="30dp"
+                android:layout_width="42dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="12dp"
                 android:onClick="onBackPress"
-                app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
